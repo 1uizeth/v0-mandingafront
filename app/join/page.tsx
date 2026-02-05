@@ -31,7 +31,7 @@ const MOCK_WALLET_ENS = "user.eth"
 // Step type
 type Step = 1 | 2 | 3
 
-// Stepper matching reference: large circles with connecting lines
+// Stepper: small circles with number, label on right, line through
 function NumericStepper({ currentStep }: { currentStep: Step }) {
   const steps = [
     { num: 1, label: "Agreement" },
@@ -40,28 +40,28 @@ function NumericStepper({ currentStep }: { currentStep: Step }) {
   ]
 
   return (
-    <div className="flex items-start gap-0">
+    <div className="flex items-center gap-0">
       {steps.map((step, index) => (
-        <div key={step.num} className="flex items-start">
-          {/* Step with circle and label */}
-          <div className="flex flex-col items-center">
+        <div key={step.num} className="flex items-center">
+          {/* Circle + Label inline */}
+          <div className="flex items-center gap-1.5">
             <div 
-              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-colors ${
+              className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold transition-colors ${
                 step.num < currentStep 
-                  ? "bg-[#1A1A1A] text-white" // Completed - checkmark
+                  ? "bg-[#1A1A1A] text-white"
                   : step.num === currentStep 
-                  ? "bg-[#1A1A1A] text-white" // Current - number
-                  : "border-2 border-[#E0E0E0] text-[#BDBDBD] bg-white" // Upcoming - outlined
+                  ? "bg-[#1A1A1A] text-white"
+                  : "border border-[#E0E0E0] text-[#BDBDBD] bg-white"
               }`}
             >
               {step.num < currentStep ? (
-                <Check className="w-5 h-5" strokeWidth={2.5} />
+                <Check className="w-3.5 h-3.5" strokeWidth={2.5} />
               ) : (
                 step.num
               )}
             </div>
             <span 
-              className={`text-xs mt-2 transition-colors whitespace-nowrap ${
+              className={`text-sm transition-colors whitespace-nowrap ${
                 step.num <= currentStep 
                   ? "text-[#1A1A1A] font-medium" 
                   : "text-[#BDBDBD]"
@@ -71,10 +71,10 @@ function NumericStepper({ currentStep }: { currentStep: Step }) {
             </span>
           </div>
           
-          {/* Connecting line (not after last step) */}
+          {/* Connecting line */}
           {index < steps.length - 1 && (
             <div 
-              className={`w-10 h-0.5 mt-5 transition-colors ${
+              className={`w-8 h-px mx-2 transition-colors ${
                 step.num < currentStep 
                   ? "bg-[#1A1A1A]" 
                   : "bg-[#E0E0E0]"
@@ -134,7 +134,7 @@ function TermsStep({ onSign }: { onSign: () => void }) {
         <label className="flex items-center gap-2.5 cursor-pointer">
           <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)}
             className="w-4 h-4 rounded border-[#E5E5E5] text-[#1A1A1A] focus:ring-[#1A1A1A]" />
-          <span className="text-sm text-[#1A1A1A]">I understand and agree to these terms.</span>
+          <span className="text-sm text-[#1A1A1A]">I understand and agree to these terms and accept all risks.</span>
         </label>
         <Button onClick={onSign} disabled={!agreed}
           className={`shrink-0 rounded-full px-8 py-5 text-sm font-semibold lg:w-auto w-full ${
@@ -218,7 +218,7 @@ function PreviewStep({ onBack, onContinue }: { onBack: () => void; onContinue: (
   )
 }
 
-// Step 3: Final Review - 2-column layout for no-scroll
+// Step 3: Final Review - single column per master prompt
 function ConfirmStep({ 
   onBack, 
   onConfirm,
@@ -237,63 +237,57 @@ function ConfirmStep({
       <h2 className="text-lg font-semibold text-[#1A1A1A]">Final Review</h2>
       <p className="text-sm text-[#666666] mt-1">Confirm and execute your membership.</p>
 
-      {/* 2-column layout on lg */}
-      <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Left: Agreement proof + Summary */}
-        <div className="space-y-4">
-          {/* Agreement signed block */}
-          <div className="p-3 bg-[#FAFAFA] rounded-lg border border-[#E5E5E5]">
-            <div className="flex items-center gap-2 text-sm">
-              <Check className="w-4 h-4 text-[#1A1A1A]" />
-              <span className="text-[#1A1A1A] font-medium">Agreement signed</span>
-              <span className="text-[#666666]">{formattedDate}</span>
-            </div>
-            <p className="text-xs text-[#666666] mt-1.5">
-              This transaction will register your membership and activate your obligations.
-            </p>
-          </div>
-
-          {/* Summary */}
-          <div className="text-sm space-y-0">
-            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-              <span className="text-[#666666]">Circle</span>
-              <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.amount)} {circleData.title}</span>
-            </div>
-            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-              <span className="text-[#666666]">First payment</span>
-              <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.monthlyAmount)} USDC</span>
-            </div>
-            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-              <span className="text-[#666666]">Duration</span>
-              <span className="font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
-            </div>
-            <div className="flex justify-between py-1.5">
-              <span className="text-[#666666]">Total commitment</span>
-              <span className="font-semibold text-[#1A1A1A]">${formatNumber(circleData.totalWithFees)}</span>
-            </div>
-          </div>
+      {/* Summary Section */}
+      <div className="mt-4 text-sm space-y-0">
+        <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+          <span className="text-[#666666]">Circle</span>
+          <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.amount)} {circleData.title}</span>
         </div>
+        <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+          <span className="text-[#666666]">First payment</span>
+          <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.monthlyAmount)} USDC</span>
+        </div>
+        <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+          <span className="text-[#666666]">Duration</span>
+          <span className="font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
+        </div>
+        <div className="flex justify-between py-1.5">
+          <span className="text-[#666666]">Total</span>
+          <span className="font-semibold text-[#1A1A1A]">${formatNumber(circleData.totalWithFees)}</span>
+        </div>
+      </div>
 
-        {/* Right: Transaction Execution steps */}
-        <div>
-          <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Transaction Execution</h3>
-          <div className="space-y-2 text-sm">
-            {[
-              { step: 1, label: `Pay first installment ($${formatNumber(circleData.monthlyAmount)} USDC)` },
-              { step: 2, label: "Mint NFT position" },
-              { step: 3, label: "Claim tokens" },
-              { step: 4, label: "Activate position" }
-            ].map((item) => (
-              <div key={item.step} className="flex items-center gap-2.5 py-1">
-                <div className="w-5 h-5 rounded-full border border-[#E0E0E0] flex items-center justify-center text-xs text-[#999999]">
-                  {item.step}
-                </div>
-                <span className="text-[#666666]">{item.label}</span>
+      {/* Agreement Status Card */}
+      <div className="mt-4 p-3 bg-[#FAFAFA] rounded-lg border border-[#E5E5E5]">
+        <div className="flex items-center gap-2 text-sm">
+          <Check className="w-4 h-4 text-[#1A1A1A]" />
+          <span className="text-[#1A1A1A] font-medium">Agreement signed</span>
+        </div>
+        <p className="text-xs text-[#666666] mt-1">{formattedDate}</p>
+        <p className="text-xs text-[#666666] mt-2">
+          This transaction will register your membership and activate your obligations.
+        </p>
+      </div>
+
+      {/* Transaction Execution Component */}
+      <div className="mt-4">
+        <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Transaction Execution</h3>
+        <div className="space-y-2 text-sm">
+          {[
+            { step: 1, label: `Pay first installment ($${formatNumber(circleData.monthlyAmount)})` },
+            { step: 2, label: "Mint NFT position" },
+            { step: 3, label: "Claim tokens" },
+            { step: 4, label: "Activate position" }
+          ].map((item) => (
+            <div key={item.step} className="flex items-center gap-2.5 py-0.5">
+              <div className="w-5 h-5 rounded-full border border-[#E0E0E0] flex items-center justify-center text-xs text-[#999999]">
+                {item.step}
               </div>
-            ))}
-          </div>
-          <p className="text-xs text-[#999999] mt-3">Each step will require a wallet signature.</p>
+              <span className="text-[#666666]">{item.label}</span>
+            </div>
+          ))}
         </div>
+        <p className="text-xs text-[#999999] mt-2">Each step requires wallet approval.</p>
       </div>
 
       {/* CTAs */}
@@ -352,68 +346,59 @@ export default function JoinCirclePage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Header: Back in left margin, Title + Stepper in content area */}
-      <header className="w-full pt-6 lg:pt-8 pb-4">
-        <div className="mx-auto max-w-[1100px] px-6 lg:px-10">
-          {/* Grid: [Left margin for Back] [Content: Title + Stepper] */}
-          <div className="grid items-center" style={{ gridTemplateColumns: 'minmax(60px, 120px) 1fr' }}>
-            {/* Left margin: Back button centered in margin area */}
-            <div className="flex justify-center">
-              <Link
-                href="/"
-                className="inline-flex items-center gap-1.5 text-[#666666] transition-colors hover:text-[#1A1A1A]"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span className="text-sm font-medium">Back</span>
-              </Link>
+      {/* Full-width Back Area at top */}
+      <div className="w-full border-b border-[#F0F0F0]">
+        <div className="mx-auto max-w-[680px] px-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 py-3 text-[#666666] transition-colors hover:text-[#1A1A1A]"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="text-sm font-medium">Back</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* Header: Title + Stepper aligned to card */}
+      <header className="w-full pt-5 pb-4">
+        <div className="mx-auto max-w-[680px] px-6">
+          <div className="flex items-center justify-between gap-4">
+            <h1 className="text-lg font-semibold text-[#1A1A1A]">
+              {"Join $" + formatNumber(circleData.amount) + " Circle"}
+            </h1>
+
+            {/* Stepper - desktop shows full, mobile shows compact */}
+            <div className="hidden lg:block">
+              <NumericStepper currentStep={currentStep} />
             </div>
-
-            {/* Content area: Title left, Stepper right */}
-            <div className="flex items-center justify-between gap-4">
-              <h1 className="text-lg font-semibold text-[#1A1A1A]">
-                {"Join $" + formatNumber(circleData.amount) + " Circle"}
-              </h1>
-
-              {/* Stepper - desktop shows full, mobile shows compact */}
-              <div className="hidden lg:block">
-                <NumericStepper currentStep={currentStep} />
-              </div>
-              <div className="lg:hidden">
-                <MobileStepper currentStep={currentStep} />
-              </div>
+            <div className="lg:hidden">
+              <MobileStepper currentStep={currentStep} />
             </div>
           </div>
         </div>
       </header>
 
       <main className="flex-1 flex flex-col pb-8">
-        {/* Same grid for content alignment */}
-        <div className="mx-auto max-w-[1100px] w-full px-6 lg:px-10">
-          <div className="grid" style={{ gridTemplateColumns: 'minmax(60px, 120px) 1fr' }}>
-            {/* Empty left margin */}
-            <div />
-            
-            {/* Content column */}
-            <div>
-              {currentStep === 1 && (
-                <TermsStep 
-                  onSign={handleSignAgreement}
-                />
-              )}
-              {currentStep === 2 && (
-                <PreviewStep 
-                  onBack={() => handleBack(1)} 
-                  onContinue={handlePreviewContinue} 
-                />
-              )}
-              {currentStep === 3 && (
-                <ConfirmStep 
-                  onBack={() => handleBack(2)} 
-                  onConfirm={handleConfirm}
-                  agreementSignedAt={agreementSignedAt}
-                />
-              )}
-            </div>
+        <div className="mx-auto max-w-[680px] w-full px-6">
+          <div>
+            {currentStep === 1 && (
+              <TermsStep 
+                onSign={handleSignAgreement}
+              />
+            )}
+            {currentStep === 2 && (
+              <PreviewStep 
+                onBack={() => handleBack(1)} 
+                onContinue={handlePreviewContinue} 
+              />
+            )}
+            {currentStep === 3 && (
+              <ConfirmStep 
+                onBack={() => handleBack(2)} 
+                onConfirm={handleConfirm}
+                agreementSignedAt={agreementSignedAt}
+              />
+            )}
           </div>
         </div>
       </main>
