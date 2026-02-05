@@ -84,25 +84,24 @@ function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boo
         </div>
       </div>
 
-      {/* Desktop Header (1024px+) - 5-column grid: [Back] [flex] [Title] [flex] [Connect/ENS] */}
-      {/* This guarantees true centering: Title is in column 3, flanked by equal 1fr spacers */}
+      {/* Desktop Header (1024px+) - 3-column grid with equal widths like the cards grid */}
+      {/* This guarantees the title stays centered regardless of left/right content size */}
       <div 
         className="hidden lg:grid items-center min-h-[72px]"
-        style={{ gridTemplateColumns: 'auto 1fr max-content 1fr auto' }}
+        style={{ gridTemplateColumns: '1fr 1fr 1fr' }}
       >
-        {/* Column 1: Back button - start aligned */}
-        <Link
-          href="#"
-          className="justify-self-start flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70 whitespace-nowrap min-w-0"
-        >
-          <ArrowLeft className="h-5 w-5 flex-shrink-0" />
-          <span>Back</span>
-        </Link>
+        {/* Column 1: Back button - start aligned within its column */}
+        <div className="justify-self-start">
+          <Link
+            href="#"
+            className="inline-flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70 whitespace-nowrap"
+          >
+            <ArrowLeft className="h-5 w-5 flex-shrink-0" />
+            <span>Back</span>
+          </Link>
+        </div>
 
-        {/* Column 2: Flexible spacer (1fr) */}
-        <div />
-
-        {/* Column 3: Title block - centered (max-content width) */}
+        {/* Column 2: Title block - centered within its column */}
         <div className="justify-self-center text-center flex flex-col items-center gap-1 whitespace-nowrap">
           <h1 className="text-5xl font-bold text-[#1A1A1A]">
             ${formatNumber(circleData.amount)}
@@ -110,23 +109,22 @@ function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boo
           <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
         </div>
 
-        {/* Column 4: Flexible spacer (1fr) - balances column 2 */}
-        <div />
-
-        {/* Column 5: Connect wallet button or ENS name - end aligned */}
-        {isWalletConnected ? (
-          <div className="justify-self-end rounded-full border border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] whitespace-nowrap min-w-0">
-            {MOCK_WALLET_ENS}
-          </div>
-        ) : (
-          <Button 
-            variant="outline" 
-            className="justify-self-end rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent whitespace-nowrap min-w-0"
-            onClick={onConnectWallet}
-          >
-            Connect wallet
-          </Button>
-        )}
+        {/* Column 3: Connect wallet button or ENS name - end aligned within its column */}
+        <div className="justify-self-end">
+          {isWalletConnected ? (
+            <div className="rounded-full border border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] whitespace-nowrap">
+              {MOCK_WALLET_ENS}
+            </div>
+          ) : (
+            <Button 
+              variant="outline" 
+              className="rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent whitespace-nowrap"
+              onClick={onConnectWallet}
+            >
+              Connect wallet
+            </Button>
+          )}
+        </div>
       </div>
     </header>
   )
