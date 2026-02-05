@@ -33,7 +33,7 @@ type Step = 1 | 2 | 3
 // Signing state for step 1 and step 3
 type SigningState = "idle" | "signing" | "success"
 
-// Segmented Progress Bar component (Stripe-style)
+// Segmented Progress Bar component (Stripe-style) - heavier visual weight
 function ProgressBar({ currentStep }: { currentStep: Step }) {
   const milestones = [
     { num: 1, label: "Agreement" },
@@ -42,29 +42,28 @@ function ProgressBar({ currentStep }: { currentStep: Step }) {
   ]
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      {/* Segmented bar */}
-      <div className="flex items-center gap-1">
-        {milestones.map((milestone, index) => (
-          <div key={milestone.num} className="flex-1 flex items-center">
-            {/* Segment */}
+    <div className="w-full">
+      {/* Segmented bar - thicker for more visual weight */}
+      <div className="flex items-center gap-1.5">
+        {milestones.map((milestone) => (
+          <div key={milestone.num} className="flex-1">
             <div 
-              className={`h-1.5 w-full rounded-full transition-colors ${
+              className={`h-1 w-full rounded-full transition-colors ${
                 milestone.num <= currentStep 
                   ? "bg-[#1A1A1A]" 
-                  : "bg-[#E5E5E5]"
+                  : "bg-[#E0E0E0]"
               }`}
             />
           </div>
         ))}
       </div>
       
-      {/* Labels below segments */}
+      {/* Labels below segments - slightly larger */}
       <div className="flex items-center justify-between mt-3">
         {milestones.map((milestone) => (
           <span 
             key={milestone.num}
-            className={`text-xs font-medium transition-colors ${
+            className={`text-[13px] font-medium transition-colors ${
               milestone.num < currentStep 
                 ? "text-[#1A1A1A]" 
                 : milestone.num === currentStep 
@@ -73,7 +72,7 @@ function ProgressBar({ currentStep }: { currentStep: Step }) {
             }`}
           >
             {milestone.num < currentStep && (
-              <Check className="w-3 h-3 inline-block mr-1 -mt-0.5" />
+              <Check className="w-3.5 h-3.5 inline-block mr-1 -mt-0.5" />
             )}
             {milestone.label}
           </span>
@@ -83,42 +82,19 @@ function ProgressBar({ currentStep }: { currentStep: Step }) {
   )
 }
 
-// Header component - Personal commitment flow style
-function Header({ currentStep }: { currentStep: Step }) {
+// Minimal header - just Back button, aligned with content
+function Header() {
   return (
-    <header 
-      className="mx-auto max-w-[1280px] w-full px-6 md:px-10"
-      style={{ 
-        paddingTop: 'clamp(24px, 4vh, 48px)', 
-        paddingBottom: 'clamp(16px, 3vh, 32px)' 
-      }}
-    >
-      {/* Top bar: Back + Wallet */}
-      <div className="flex items-center justify-between mb-6">
+    <header className="w-full px-6 md:px-10 pt-8 md:pt-10">
+      <div className="max-w-[640px] mx-auto">
         <Link
           href="/"
-          className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
+          className="inline-flex items-center gap-2 text-[#666666] font-medium transition-colors hover:text-[#1A1A1A]"
         >
-          <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
-          <span className="text-sm md:text-base whitespace-nowrap">Back</span>
+          <ArrowLeft className="h-4 w-4" />
+          <span className="text-sm">Back</span>
         </Link>
-        <div className="rounded-full border border-[#E5E5E5] px-4 py-1.5 text-sm font-medium text-[#1A1A1A]">
-          {MOCK_WALLET_ENS}
-        </div>
       </div>
-
-      {/* Main title - Personal and commitment-focused */}
-      <div className="text-center mb-8">
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#1A1A1A] text-balance">
-          {MOCK_WALLET_ENS} is joining a ${formatNumber(circleData.amount)} circle {circleData.title}
-        </h1>
-        <p className="text-sm md:text-base text-[#666666] mt-2">
-          Complete the steps below to confirm your participation
-        </p>
-      </div>
-
-      {/* Progress bar */}
-      <ProgressBar currentStep={currentStep} />
     </header>
   )
 }
@@ -137,11 +113,13 @@ function TermsStep({
 
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 md:p-8">
-      <h2 className="text-xl font-semibold text-[#1A1A1A]">Terms and Participation Agreement</h2>
-      
-      <p className="text-sm text-[#666666] mt-2">
-        By joining this circle, you are entering a legally binding, on-chain financial agreement.
-      </p>
+      {/* Card header with clear hierarchy */}
+      <div className="pb-5 border-b border-[#F0F0F0]">
+        <h2 className="text-lg font-semibold text-[#1A1A1A]">Terms and Participation Agreement</h2>
+        <p className="text-sm text-[#666666] mt-1">
+          By joining this circle, you enter a binding on-chain agreement.
+        </p>
+      </div>
 
       {/* Contract-style terms document with two-digit numbering */}
       <div className="mt-6 p-5 bg-[#FAFAFA] rounded-lg border border-[#E5E5E5] font-mono text-sm">
@@ -524,9 +502,19 @@ export default function JoinCirclePage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <Header currentStep={currentStep} />
+      <Header />
 
-      <main className="flex-1 flex flex-col mx-auto max-w-[640px] w-full px-6 md:px-10 pb-12 pt-8">
+      <main className="flex-1 flex flex-col mx-auto max-w-[640px] w-full px-6 md:px-10 pb-12">
+        {/* Section title - H2, not hero */}
+        <h1 className="text-2xl md:text-[28px] font-semibold text-[#1A1A1A] text-center leading-tight mb-6">
+          {"You're joining a $" + formatNumber(circleData.amount) + " circle " + circleData.title}
+        </h1>
+
+        {/* Progress bar - same width as card */}
+        <div className="mb-8">
+          <ProgressBar currentStep={currentStep} />
+        </div>
+
         {/* Step content */}
         {currentStep === 1 && (
           <TermsStep 
