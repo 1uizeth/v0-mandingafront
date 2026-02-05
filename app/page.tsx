@@ -91,7 +91,7 @@ function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boo
         </div>
       </div>
 
-      {/* Desktop Header (1024px+) - 3-column grid with equal widths */}
+      {/* Desktop Header (1024px+) - 3-column grid: left auto-center auto-right */}
       <div 
         className="hidden lg:grid items-center min-h-[72px]"
         style={{ gridTemplateColumns: '1fr auto 1fr' }}
