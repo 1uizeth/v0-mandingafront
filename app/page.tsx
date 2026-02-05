@@ -174,7 +174,7 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
         {/* Content row: text left, amount right - single line layout */}
         <div className="flex items-center justify-between gap-4">
           <span className="text-base font-semibold text-[#1A1A1A]">First payout happens after you join</span>
-          <span className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.payoutAmount)}</span>
+          <span className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.amount)}</span>
         </div>
       </div>
     )
@@ -197,7 +197,7 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
       {/* Content row: text left, amount right - single line layout */}
       <div className="flex items-center justify-between gap-4">
         <span className="text-base font-semibold text-[#1A1A1A]">Always due on the 1st, every month</span>
-        <span className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.payoutAmount)}</span>
+        <span className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.amount)}</span>
       </div>
     </div>
   )
