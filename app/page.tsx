@@ -122,8 +122,8 @@ function EarlyEntryTag() {
           <Info className="h-5 w-5 text-purple-600 stroke-[1.5] flex-shrink-0 mt-0.5" />
           <p className="font-semibold text-purple-600 text-base">Early entry</p>
         </div>
-        <p className="text-purple-500 text-sm leading-relaxed line-clamp-2 pl-8">
-          First slots are reserved for early-entry members - highest chance to be selected early.
+        <p className="text-purple-500 text-sm leading-relaxed pl-8">
+          First slots are reserved for early-entry members — highest chance to be selected early.
         </p>
       </div>
     </div>
