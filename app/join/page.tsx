@@ -31,8 +31,8 @@ const MOCK_WALLET_ENS = "user.eth"
 // Step type
 type Step = 1 | 2 | 3
 
-// Stepper: small circles with number, label on right, line through
-function NumericStepper({ currentStep }: { currentStep: Step }) {
+// Stepper: clickable, only completed steps enabled
+function NumericStepper({ currentStep, onStepClick }: { currentStep: Step; onStepClick?: (step: Step) => void }) {
   const steps = [
     { num: 1, label: "Agreement" },
     { num: 2, label: "Review" },
@@ -41,48 +41,43 @@ function NumericStepper({ currentStep }: { currentStep: Step }) {
 
   return (
     <div className="flex items-center gap-0">
-      {steps.map((step, index) => (
-        <div key={step.num} className="flex items-center">
-          {/* Circle + Label inline */}
-          <div className="flex items-center gap-1.5">
-            <div 
-              className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold transition-colors ${
-                step.num < currentStep 
-                  ? "bg-[#1A1A1A] text-white"
-                  : step.num === currentStep 
-                  ? "bg-[#1A1A1A] text-white"
-                  : "border border-[#E0E0E0] text-[#BDBDBD] bg-white"
-              }`}
+      {steps.map((step, index) => {
+        const isCompleted = step.num < currentStep
+        const isCurrent = step.num === currentStep
+        const isClickable = isCompleted && onStepClick
+
+        return (
+          <div key={step.num} className="flex items-center">
+            <button
+              type="button"
+              onClick={() => isClickable && onStepClick(step.num as Step)}
+              disabled={!isClickable}
+              className={`flex items-center gap-1.5 ${isClickable ? "cursor-pointer hover:opacity-80" : "cursor-default"}`}
             >
-              {step.num < currentStep ? (
-                <Check className="w-3.5 h-3.5" strokeWidth={2.5} />
-              ) : (
-                step.num
-              )}
-            </div>
-            <span 
-              className={`text-sm transition-colors whitespace-nowrap ${
-                step.num <= currentStep 
-                  ? "text-[#1A1A1A] font-medium" 
-                  : "text-[#BDBDBD]"
-              }`}
-            >
-              {step.label}
-            </span>
+              <div 
+                className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold transition-colors ${
+                  isCompleted || isCurrent
+                    ? "bg-[#1A1A1A] text-white"
+                    : "border border-[#E0E0E0] text-[#BDBDBD] bg-white"
+                }`}
+              >
+                {isCompleted ? <Check className="w-3.5 h-3.5" strokeWidth={2.5} /> : step.num}
+              </div>
+              <span 
+                className={`text-sm transition-colors whitespace-nowrap ${
+                  step.num <= currentStep ? "text-[#1A1A1A] font-medium" : "text-[#BDBDBD]"
+                }`}
+              >
+                {step.label}
+              </span>
+            </button>
+            
+            {index < steps.length - 1 && (
+              <div className={`w-8 h-px mx-2 transition-colors ${isCompleted ? "bg-[#1A1A1A]" : "bg-[#E0E0E0]"}`} />
+            )}
           </div>
-          
-          {/* Connecting line */}
-          {index < steps.length - 1 && (
-            <div 
-              className={`w-8 h-px mx-2 transition-colors ${
-                step.num < currentStep 
-                  ? "bg-[#1A1A1A]" 
-                  : "bg-[#E0E0E0]"
-              }`}
-            />
-          )}
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
@@ -147,70 +142,63 @@ function TermsStep({ onSign }: { onSign: () => void }) {
   )
 }
 
-// Step 2: Review - Financial summary only (per master prompt)
-function PreviewStep({ onBack, onContinue }: { onBack: () => void; onContinue: () => void }) {
+// Step 2: Review - Single column, no back button (per master prompt)
+function PreviewStep({ onContinue }: { onContinue: () => void }) {
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 lg:p-6">
       <h2 className="text-lg font-semibold text-[#1A1A1A]">Review</h2>
       <p className="text-sm text-[#666666] mt-1">Verify your commitment before proceeding.</p>
 
-      {/* 2-column: Commitment left, Network right */}
-      <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Left: Your Commitment */}
-        <div>
-          <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Your Commitment</h3>
-          <div className="text-sm space-y-0">
-            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-              <span className="text-[#666666]">Monthly payment</span>
-              <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.monthlyAmount)} USDC</span>
-            </div>
-            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-              <span className="text-[#666666]">Duration</span>
-              <span className="font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
-            </div>
-            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-              <span className="text-[#666666]">Subtotal ({circleData.totalMonths} x ${circleData.monthlyAmount})</span>
-              <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.totalCommitment)}</span>
-            </div>
-            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-              <span className="text-[#666666]">Platform fee (7%)</span>
-              <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.protocolFee)}</span>
-            </div>
-            <div className="flex justify-between py-2 mt-1">
-              <span className="font-medium text-[#1A1A1A]">Total</span>
-              <span className="font-semibold text-[#1A1A1A]">${formatNumber(circleData.totalWithFees)}</span>
-            </div>
+      {/* Your Commitment - single column */}
+      <div className="mt-4">
+        <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Your Commitment</h3>
+        <div className="text-sm space-y-0">
+          <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+            <span className="text-[#666666]">Monthly payment</span>
+            <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.monthlyAmount)} USDC</span>
           </div>
-        </div>
-
-        {/* Right: Network & Fees */}
-        <div>
-          <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Network & Fees</h3>
-          <div className="text-sm space-y-0">
-            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-              <span className="text-[#666666]">Chain</span>
-              <span className="font-medium text-[#1A1A1A]">Arc</span>
-            </div>
-            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-              <span className="text-[#666666]">Currency</span>
-              <span className="font-medium text-[#1A1A1A]">USDC (native)</span>
-            </div>
-            <div className="flex justify-between py-1.5">
-              <span className="text-[#666666]">Estimated gas</span>
-              <span className="font-medium text-[#1A1A1A]">~${circleData.estimatedGas}</span>
-            </div>
+          <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+            <span className="text-[#666666]">Duration</span>
+            <span className="font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
+          </div>
+          <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+            <span className="text-[#666666]">Subtotal</span>
+            <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.totalCommitment)}</span>
+          </div>
+          <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+            <span className="text-[#666666]">Platform fee (7%)</span>
+            <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.protocolFee)}</span>
+          </div>
+          <div className="flex justify-between py-2 mt-1">
+            <span className="font-medium text-[#1A1A1A]">Total</span>
+            <span className="font-semibold text-[#1A1A1A]">${formatNumber(circleData.totalWithFees)}</span>
           </div>
         </div>
       </div>
 
-      {/* CTAs */}
-      <div className="mt-5 flex gap-3">
-        <Button variant="outline" onClick={onBack}
-          className="flex-1 rounded-full border-[#E5E5E5] px-6 py-5 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent">
-          Back
-        </Button>
+      {/* Network & Fees - single column */}
+      <div className="mt-4">
+        <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Network & Fees</h3>
+        <div className="text-sm space-y-0">
+          <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+            <span className="text-[#666666]">Chain</span>
+            <span className="font-medium text-[#1A1A1A]">Arc</span>
+          </div>
+          <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+            <span className="text-[#666666]">Currency</span>
+            <span className="font-medium text-[#1A1A1A]">USDC (native)</span>
+          </div>
+          <div className="flex justify-between py-1.5">
+            <span className="text-[#666666]">Estimated gas</span>
+            <span className="font-medium text-[#1A1A1A]">~${circleData.estimatedGas}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Single CTA - no back button */}
+      <div className="mt-5">
         <Button onClick={onContinue}
-          className="flex-1 rounded-full bg-[#1A1A1A] px-6 py-5 text-sm font-semibold text-white hover:bg-[#333333]">
+          className="w-full rounded-full bg-[#1A1A1A] px-6 py-5 text-sm font-semibold text-white hover:bg-[#333333]">
           Continue
         </Button>
       </div>
@@ -218,24 +206,31 @@ function PreviewStep({ onBack, onContinue }: { onBack: () => void; onContinue: (
   )
 }
 
-// Step 3: Final Review - single column per master prompt
+// Step 3: Confirm - with execution simulation
 function ConfirmStep({ 
-  onBack, 
   onConfirm,
-  agreementSignedAt
+  agreementSignedAt,
+  executionStep,
+  isExecuting
 }: { 
-  onBack: () => void
   onConfirm: () => void
   agreementSignedAt: Date | null
+  executionStep: number
+  isExecuting: boolean
 }) {
   const formattedDate = agreementSignedAt 
     ? agreementSignedAt.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })
     : 'Just now'
 
+  const txSteps = [
+    { step: 1, label: "Pay installment" },
+    { step: 2, label: "Mint position & claim tokens" }
+  ]
+
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 lg:p-6">
-      <h2 className="text-lg font-semibold text-[#1A1A1A]">Final Review</h2>
-      <p className="text-sm text-[#666666] mt-1">Confirm and execute your membership.</p>
+      <h2 className="text-lg font-semibold text-[#1A1A1A]">Confirm</h2>
+      <p className="text-sm text-[#666666] mt-1">Execute your membership transaction.</p>
 
       {/* Summary Section */}
       <div className="mt-4 text-sm space-y-0">
@@ -252,7 +247,7 @@ function ConfirmStep({
           <span className="font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
         </div>
         <div className="flex justify-between py-1.5">
-          <span className="text-[#666666]">Total</span>
+          <span className="text-[#666666]">Total commitment</span>
           <span className="font-semibold text-[#1A1A1A]">${formatNumber(circleData.totalWithFees)}</span>
         </div>
       </div>
@@ -273,32 +268,50 @@ function ConfirmStep({
       <div className="mt-4">
         <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Transaction Execution</h3>
         <div className="space-y-2 text-sm">
-          {[
-            { step: 1, label: `Pay first installment ($${formatNumber(circleData.monthlyAmount)})` },
-            { step: 2, label: "Mint NFT position" },
-            { step: 3, label: "Claim tokens" },
-            { step: 4, label: "Activate position" }
-          ].map((item) => (
-            <div key={item.step} className="flex items-center gap-2.5 py-0.5">
-              <div className="w-5 h-5 rounded-full border border-[#E0E0E0] flex items-center justify-center text-xs text-[#999999]">
-                {item.step}
+          {txSteps.map((item) => {
+            const isComplete = executionStep > item.step
+            const isActive = executionStep === item.step && isExecuting
+            const isPending = executionStep < item.step
+
+            return (
+              <div key={item.step} className="flex items-center gap-2.5 py-1">
+                <div 
+                  className={`w-5 h-5 rounded-full flex items-center justify-center text-xs transition-all ${
+                    isComplete 
+                      ? "bg-[#1A1A1A] text-white" 
+                      : isActive
+                      ? "border-2 border-[#1A1A1A] text-[#1A1A1A]"
+                      : "border border-[#E0E0E0] text-[#999999]"
+                  }`}
+                >
+                  {isComplete ? (
+                    <Check className="w-3 h-3" strokeWidth={2.5} />
+                  ) : isActive ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    item.step
+                  )}
+                </div>
+                <span className={isComplete ? "text-[#1A1A1A]" : "text-[#666666]"}>{item.label}</span>
               </div>
-              <span className="text-[#666666]">{item.label}</span>
-            </div>
-          ))}
+            )
+          })}
         </div>
         <p className="text-xs text-[#999999] mt-2">Each step requires wallet approval.</p>
       </div>
 
-      {/* CTAs */}
-      <div className="mt-5 flex gap-3">
-        <Button variant="outline" onClick={onBack}
-          className="flex-1 rounded-full border-[#E5E5E5] px-6 py-5 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent">
-          Back
-        </Button>
-        <Button onClick={onConfirm}
-          className="flex-1 rounded-full bg-[#1A1A1A] px-6 py-5 text-sm font-semibold text-white hover:bg-[#333333]">
-          Confirm & Join
+      {/* Single CTA - no back button */}
+      <div className="mt-5">
+        <Button 
+          onClick={onConfirm}
+          disabled={isExecuting}
+          className={`w-full rounded-full px-6 py-5 text-sm font-semibold ${
+            isExecuting 
+              ? "bg-[#E5E5E5] text-[#999999] cursor-not-allowed" 
+              : "bg-[#1A1A1A] text-white hover:bg-[#333333]"
+          }`}
+        >
+          {isExecuting ? "Processing..." : "Confirm & Join"}
         </Button>
       </div>
     </div>
@@ -310,6 +323,8 @@ export default function JoinCirclePage() {
   const [currentStep, setCurrentStep] = useState<Step>(1)
   const [agreementSignedAt, setAgreementSignedAt] = useState<Date | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
+  const [executionStep, setExecutionStep] = useState(0)
+  const [isExecuting, setIsExecuting] = useState(false)
 
   // Show toast notification
   const showToast = (message: string) => {
@@ -331,17 +346,29 @@ export default function JoinCirclePage() {
     setCurrentStep(3)
   }
 
-  // Step 3: Confirm transaction
+  // Step 3: Confirm transaction with execution simulation
   const handleConfirm = () => {
-    showToast("Processing transaction...")
+    setIsExecuting(true)
+    showToast("Processing transactions...")
+    
+    // Simulate execution cascade
+    setExecutionStep(1)
     setTimeout(() => {
-      router.push("/")
-    }, 2000)
+      setExecutionStep(2)
+      setTimeout(() => {
+        setExecutionStep(3) // All done
+        setTimeout(() => {
+          router.push("/")
+        }, 500)
+      }, 800)
+    }, 800)
   }
 
-  // Back navigation
-  const handleBack = (toStep: Step) => {
-    setCurrentStep(toStep)
+  // Stepper click navigation (only to completed steps)
+  const handleStepClick = (step: Step) => {
+    if (step < currentStep) {
+      setCurrentStep(step)
+    }
   }
 
   return (
@@ -369,7 +396,7 @@ export default function JoinCirclePage() {
 
             {/* Stepper - desktop shows full, mobile shows compact */}
             <div className="hidden lg:block">
-              <NumericStepper currentStep={currentStep} />
+              <NumericStepper currentStep={currentStep} onStepClick={handleStepClick} />
             </div>
             <div className="lg:hidden">
               <MobileStepper currentStep={currentStep} />
@@ -382,21 +409,17 @@ export default function JoinCirclePage() {
         <div className="mx-auto max-w-[680px] w-full px-6">
           <div>
             {currentStep === 1 && (
-              <TermsStep 
-                onSign={handleSignAgreement}
-              />
+              <TermsStep onSign={handleSignAgreement} />
             )}
             {currentStep === 2 && (
-              <PreviewStep 
-                onBack={() => handleBack(1)} 
-                onContinue={handlePreviewContinue} 
-              />
+              <PreviewStep onContinue={handlePreviewContinue} />
             )}
             {currentStep === 3 && (
               <ConfirmStep 
-                onBack={() => handleBack(2)} 
                 onConfirm={handleConfirm}
                 agreementSignedAt={agreementSignedAt}
+                executionStep={executionStep}
+                isExecuting={isExecuting}
               />
             )}
           </div>
