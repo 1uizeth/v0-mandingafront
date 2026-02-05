@@ -18,6 +18,8 @@ const circleData = {
   monthlyAmount: 892,
   totalMonths: 24,
   totalCommitment: 21408,
+  protocolFee: 1498, // 7% fee
+  totalWithFees: 22906,
   ensDomain: "housing.mandinga.eth",
   dingaTokens: 21408,
   estimatedGas: 0.12,
@@ -28,9 +30,6 @@ const MOCK_WALLET_ENS = "user.eth"
 
 // Step type
 type Step = 1 | 2 | 3
-
-// Signing state for step 1 and step 3
-type SigningState = "idle" | "signing" | "success"
 
 // Progress bar with labels - each label centered under its segment
 function ProgressBar({ currentStep }: { currentStep: Step }) {
@@ -68,117 +67,64 @@ function ProgressBar({ currentStep }: { currentStep: Step }) {
   )
 }
 
-// Step 1: Terms & Participation Agreement
+// Step 1: Terms & Participation Agreement - Compact 4 clauses
 function TermsStep({ 
-  onContinue, 
-  signingState, 
   onSign 
 }: { 
-  onContinue: () => void
-  signingState: SigningState
   onSign: () => void
 }) {
   const [agreed, setAgreed] = useState(false)
 
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 md:p-8">
-      {/* Card header with clear hierarchy */}
-      <div className="pb-5 border-b border-[#F0F0F0]">
-        <h2 className="text-lg font-semibold text-[#1A1A1A]">Terms and Participation Agreement</h2>
-        <p className="text-sm text-[#666666] mt-1">
-          By joining this circle, you enter a binding on-chain agreement.
-        </p>
-      </div>
+      {/* Card header */}
+      <h2 className="text-lg font-semibold text-[#1A1A1A]">Terms and Participation Agreement</h2>
+      <p className="text-sm text-[#666666] mt-1">
+        Please review before joining this circle.
+      </p>
 
-      {/* Contract-style terms document with two-digit numbering */}
+      {/* Contract-style terms - compact 4 clauses only */}
       <div className="mt-6 p-5 bg-[#FAFAFA] rounded-lg border border-[#E5E5E5] font-mono text-sm">
         <p className="text-[#1A1A1A] leading-relaxed mb-5">
           If you accept these terms, you agree that:
         </p>
 
-        <ol className="space-y-3">
+        <ol className="space-y-4">
           <li className="flex">
             <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">01.</span>
             <div className="text-[#666666]">
-              <span className="text-[#1A1A1A] font-medium">You will pay ${formatNumber(circleData.monthlyAmount)} USDC every month for {circleData.totalMonths} months.</span>
-              <br />Missing payments may reduce your benefits or remove you from the circle.
+              <span className="text-[#1A1A1A] font-medium">Shared Financial Risk</span>
+              <br />This is a collective financial system. {"Other members' behavior may affect outcomes. Delays or defaults may occur."}
             </div>
           </li>
 
           <li className="flex">
             <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">02.</span>
             <div className="text-[#666666]">
-              <span className="text-[#1A1A1A] font-medium">You will receive 1 NFT that represents your position.</span>
-              <br />If you lose it, you lose your position.
+              <span className="text-[#1A1A1A] font-medium">Missed Payments & Enforcement</span>
+              <br />If you miss payments, penalties may apply, your position may be reduced, and your benefits may be restricted. All rules are enforced automatically.
             </div>
           </li>
 
           <li className="flex">
             <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">03.</span>
             <div className="text-[#666666]">
-              <span className="text-[#1A1A1A] font-medium">You will receive DINGA tokens that track your contributions and payout rights.</span>
-              <br />These are used for settlement and rewards.
+              <span className="text-[#1A1A1A] font-medium">Blockchain Finality</span>
+              <br />All transactions are irreversible. Payments, NFTs, and tokens cannot be reversed once confirmed.
             </div>
           </li>
 
           <li className="flex">
             <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">04.</span>
             <div className="text-[#666666]">
-              <span className="text-[#1A1A1A] font-medium">Each month, one member receives ${formatNumber(circleData.amount)} USDC.</span>
-              <br />Payout order is determined by rules and randomness. Early payout is not guaranteed.
-            </div>
-          </li>
-
-          <li className="flex">
-            <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">05.</span>
-            <div className="text-[#666666]">
-              <span className="text-[#1A1A1A] font-medium">If you miss payments:</span>
-              <br />Your priority may drop, penalties may apply, and buyback value may be reduced.
-            </div>
-          </li>
-
-          <li className="flex">
-            <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">06.</span>
-            <div className="text-[#666666]">
-              <span className="text-[#1A1A1A] font-medium">All rules are enforced automatically by smart contracts.</span>
-              <br />No human can override execution.
-            </div>
-          </li>
-
-          <li className="flex">
-            <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">07.</span>
-            <div className="text-[#666666]">
-              <span className="text-[#1A1A1A] font-medium">All blockchain transactions are final.</span>
-              <br />Payments, NFTs, and tokens cannot be reversed.
-            </div>
-          </li>
-
-          <li className="flex">
-            <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">08.</span>
-            <div className="text-[#666666]">
-              <span className="text-[#1A1A1A] font-medium">This is a shared financial system.</span>
-              <br />{"Other members' behavior affects outcomes. Delays or defaults may occur."}
-            </div>
-          </li>
-
-          <li className="flex">
-            <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">09.</span>
-            <div className="text-[#666666]">
-              <span className="text-[#1A1A1A] font-medium">You are responsible for any legal or tax obligations in your country.</span>
-            </div>
-          </li>
-
-          <li className="flex">
-            <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">10.</span>
-            <div className="text-[#666666]">
-              <span className="text-[#1A1A1A] font-medium">By continuing, you confirm that you understand the risks.</span>
-              <br />All rules are enforced automatically by smart contracts. No human can override execution.
+              <span className="text-[#1A1A1A] font-medium">Legal Responsibility</span>
+              <br />You are responsible for any legal or tax obligations in your country related to participation.
             </div>
           </li>
         </ol>
       </div>
 
-      {/* Checkbox */}
+      {/* Checkbox - updated language */}
       <label className="flex items-start gap-3 mt-6 cursor-pointer">
         <input
           type="checkbox"
@@ -186,76 +132,63 @@ function TermsStep({
           onChange={(e) => setAgreed(e.target.checked)}
           className="mt-0.5 w-5 h-5 rounded border-[#E5E5E5] text-[#1A1A1A] focus:ring-[#1A1A1A]"
         />
-        <span className="text-sm text-[#1A1A1A] font-medium">
-          I understand these terms and agree to be legally bound by them
-        </span>
+        <div className="text-sm text-[#1A1A1A]">
+          <span className="font-medium">I understand these terms and agree to be legally bound by them.</span>
+          <br />
+          <span className="text-[#666666]">I acknowledge the risks and that all rules are enforced automatically by smart contracts.</span>
+        </div>
       </label>
 
-      {/* CTA */}
+      {/* CTA - no inline loader, just button */}
       <div className="mt-6">
-        {signingState === "signing" ? (
-          <div className="flex flex-col items-center gap-4 py-4">
-            <Loader2 className="h-8 w-8 text-[#1A1A1A] animate-spin" />
-            <p className="text-sm text-[#666666]">Waiting for signature...</p>
-            <Button 
-              disabled
-              className="w-full rounded-full bg-[#E5E5E5] px-8 py-6 text-base font-semibold text-[#999999] cursor-not-allowed"
-            >
-              Signing...
-            </Button>
-          </div>
-        ) : (
-          <>
-            <Button 
-              onClick={onSign}
-              disabled={!agreed}
-              className={`w-full rounded-full px-8 py-6 text-base font-semibold transition-colors ${
-                agreed 
-                  ? "bg-[#1A1A1A] text-white hover:bg-[#333333]" 
-                  : "bg-[#E5E5E5] text-[#999999] cursor-not-allowed"
-              }`}
-            >
-              Sign and Accept Terms
-            </Button>
-            <p className="text-xs text-[#999999] text-center mt-3">
-              This signature does not move funds. It confirms your agreement.
-            </p>
-          </>
-        )}
+        <Button 
+          onClick={onSign}
+          disabled={!agreed}
+          className={`w-full rounded-full px-8 py-6 text-base font-semibold transition-colors ${
+            agreed 
+              ? "bg-[#1A1A1A] text-white hover:bg-[#333333]" 
+              : "bg-[#E5E5E5] text-[#999999] cursor-not-allowed"
+          }`}
+        >
+          Sign and Accept Terms
+        </Button>
       </div>
     </div>
   )
 }
 
-// Step 2: Transaction Preview
+// Step 2: Transaction Preview - with 7% fee, no purple cards
 function PreviewStep({ onBack, onContinue }: { onBack: () => void; onContinue: () => void }) {
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 md:p-8">
-      <h2 className="text-xl font-semibold text-[#1A1A1A]">Transaction Preview</h2>
-      
-      <p className="text-sm text-[#666666] mt-2">
+      <h2 className="text-lg font-semibold text-[#1A1A1A]">Transaction Preview</h2>
+      <p className="text-sm text-[#666666] mt-1">
         Review what will happen when you join.
       </p>
 
       {/* Section: Your Commitment */}
       <div className="mt-6">
         <h3 className="text-sm font-semibold text-[#1A1A1A] uppercase tracking-wide">Your Commitment</h3>
-        <div className="mt-3 space-y-2">
-          <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+        <div className="mt-3 space-y-0">
+          <div className="flex items-center justify-between py-2.5 border-b border-[#F0F0F0]">
             <span className="text-sm text-[#666666]">Monthly payment</span>
             <span className="text-sm font-medium text-[#1A1A1A]">${formatNumber(circleData.monthlyAmount)} USDC</span>
           </div>
-          <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+          <div className="flex items-center justify-between py-2.5 border-b border-[#F0F0F0]">
             <span className="text-sm text-[#666666]">Duration</span>
             <span className="text-sm font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
           </div>
-          <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+          <div className="flex items-center justify-between py-2.5 border-b border-[#F0F0F0]">
             <span className="text-sm text-[#666666]">Total commitment</span>
             <span className="text-sm font-medium text-[#1A1A1A]">${formatNumber(circleData.totalCommitment)}</span>
           </div>
-          <div className="flex items-center justify-between py-2">
-            <span className="text-sm text-[#666666]">Admin fee</span>
-            <span className="text-sm font-medium text-[#1A1A1A]">Included</span>
+          <div className="flex items-center justify-between py-2.5 border-b border-[#F0F0F0]">
+            <span className="text-sm text-[#666666]">Protocol fee (7%)</span>
+            <span className="text-sm font-medium text-[#1A1A1A]">${formatNumber(circleData.protocolFee)}</span>
+          </div>
+          <div className="flex items-center justify-between py-2.5">
+            <span className="text-sm text-[#1A1A1A] font-medium">Total incl. fees</span>
+            <span className="text-sm font-semibold text-[#1A1A1A]">${formatNumber(circleData.totalWithFees)}</span>
           </div>
         </div>
       </div>
@@ -263,39 +196,37 @@ function PreviewStep({ onBack, onContinue }: { onBack: () => void; onContinue: (
       {/* Section: What You Receive */}
       <div className="mt-6">
         <h3 className="text-sm font-semibold text-[#1A1A1A] uppercase tracking-wide">What You Receive</h3>
-        <div className="mt-3 space-y-2">
-          <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+        <div className="mt-3 space-y-0">
+          <div className="flex items-center justify-between py-2.5 border-b border-[#F0F0F0]">
             <span className="text-sm text-[#666666]">NFT Quota</span>
             <span className="text-sm font-medium text-[#1A1A1A]">1 position</span>
           </div>
-          <div className="flex items-center justify-between py-2">
-            <span className="text-sm text-[#666666]">DINGA tokens</span>
-            <span className="text-sm font-medium text-[#7C3AED]">{formatNumber(circleData.dingaTokens)} DINGA</span>
+          <div className="flex items-center justify-between py-2.5">
+            <span className="text-sm text-[#666666]">DINGA Tokens</span>
+            <span className="text-sm font-medium text-[#1A1A1A]">{formatNumber(circleData.dingaTokens)} DINGA</span>
           </div>
         </div>
         
-        <div className="mt-3 p-3 bg-[#F5F3FF] rounded-lg border border-[#E9E5FF]">
-          <p className="text-xs text-[#7C3AED]">
-            DINGA tokens represent your economic claim in this circle. They track your contribution and are used for payouts and settlement.
-          </p>
-        </div>
+        {/* Info text - neutral gray, not purple */}
+        <p className="text-xs text-[#666666] mt-3 flex items-start gap-1.5">
+          <span className="text-[#999999]">i</span>
+          DINGA tokens track your contribution and payout rights.
+        </p>
       </div>
 
       {/* Section: Smart Contract Actions */}
       <div className="mt-6">
         <h3 className="text-sm font-semibold text-[#1A1A1A] uppercase tracking-wide">Smart Contract Actions</h3>
-        <div className="mt-3 space-y-2">
+        <div className="mt-3 space-y-1.5">
           {[
-            `Pay first installment ($${formatNumber(circleData.monthlyAmount)} USDC)`,
+            "Pay first installment",
             "Mint NFT quota",
-            "Issue DINGA ERC20 tokens",
+            "Issue DINGA tokens",
             "Register participation",
             "Activate payout eligibility"
           ].map((action, i) => (
             <div key={i} className="flex items-center gap-2 py-1">
-              <div className="w-5 h-5 rounded-full bg-[#E8F5E9] flex items-center justify-center">
-                <Check className="w-3 h-3 text-[#2E7D32]" />
-              </div>
+              <Check className="w-4 h-4 text-[#1A1A1A]" />
               <span className="text-sm text-[#666666]">{action}</span>
             </div>
           ))}
@@ -305,18 +236,18 @@ function PreviewStep({ onBack, onContinue }: { onBack: () => void; onContinue: (
       {/* Section: Network & Fees */}
       <div className="mt-6">
         <h3 className="text-sm font-semibold text-[#1A1A1A] uppercase tracking-wide">Network & Fees</h3>
-        <div className="mt-3 space-y-2">
-          <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+        <div className="mt-3 space-y-0">
+          <div className="flex items-center justify-between py-2.5 border-b border-[#F0F0F0]">
             <span className="text-sm text-[#666666]">Network</span>
             <span className="text-sm font-medium text-[#1A1A1A]">Arc</span>
           </div>
-          <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+          <div className="flex items-center justify-between py-2.5 border-b border-[#F0F0F0]">
             <span className="text-sm text-[#666666]">Currency</span>
             <span className="text-sm font-medium text-[#1A1A1A]">USDC (native)</span>
           </div>
-          <div className="flex items-center justify-between py-2">
+          <div className="flex items-center justify-between py-2.5">
             <span className="text-sm text-[#666666]">Estimated gas</span>
-            <span className="text-sm font-medium text-[#1A1A1A]">~${circleData.estimatedGas} USDC</span>
+            <span className="text-sm font-medium text-[#1A1A1A]">~${circleData.estimatedGas}</span>
           </div>
         </div>
       </div>
@@ -341,92 +272,114 @@ function PreviewStep({ onBack, onContinue }: { onBack: () => void; onContinue: (
   )
 }
 
-// Step 3: Confirm & Execute
+// Step 3: Final Review - with agreement signed date
 function ConfirmStep({ 
   onBack, 
-  signingState, 
-  onConfirm 
+  onConfirm,
+  agreementSignedAt
 }: { 
   onBack: () => void
-  signingState: SigningState
   onConfirm: () => void
+  agreementSignedAt: Date | null
 }) {
+  // Format the signed date
+  const formattedDate = agreementSignedAt 
+    ? agreementSignedAt.toLocaleString('en-US', { 
+        month: 'short', 
+        day: 'numeric', 
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      })
+    : 'Just now'
+
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 md:p-8">
-      <h2 className="text-xl font-semibold text-[#1A1A1A]">Final Review</h2>
-      
-      <p className="text-sm text-[#666666] mt-2">
+      <h2 className="text-lg font-semibold text-[#1A1A1A]">Final Review</h2>
+      <p className="text-sm text-[#666666] mt-1">
         Confirm your transaction to join the circle.
       </p>
 
       {/* Summary */}
-      <div className="mt-6 space-y-2">
-        <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+      <div className="mt-6 space-y-0">
+        <div className="flex items-center justify-between py-2.5 border-b border-[#F0F0F0]">
           <span className="text-sm text-[#666666]">Circle</span>
           <span className="text-sm font-medium text-[#1A1A1A]">${formatNumber(circleData.amount)} {circleData.title}</span>
         </div>
-        <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+        <div className="flex items-center justify-between py-2.5 border-b border-[#F0F0F0]">
           <span className="text-sm text-[#666666]">Monthly</span>
           <span className="text-sm font-medium text-[#1A1A1A]">${formatNumber(circleData.monthlyAmount)}</span>
         </div>
-        <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+        <div className="flex items-center justify-between py-2.5 border-b border-[#F0F0F0]">
           <span className="text-sm text-[#666666]">Duration</span>
           <span className="text-sm font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
         </div>
-        <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+        <div className="flex items-center justify-between py-2.5 border-b border-[#F0F0F0]">
           <span className="text-sm text-[#666666]">NFT</span>
           <span className="text-sm font-medium text-[#1A1A1A]">1 quota</span>
         </div>
-        <div className="flex items-center justify-between py-2">
+        <div className="flex items-center justify-between py-2.5 border-b border-[#F0F0F0]">
           <span className="text-sm text-[#666666]">DINGA</span>
-          <span className="text-sm font-medium text-[#7C3AED]">{formatNumber(circleData.dingaTokens)} tokens</span>
+          <span className="text-sm font-medium text-[#1A1A1A]">{formatNumber(circleData.dingaTokens)} tokens</span>
+        </div>
+        <div className="flex items-center justify-between py-2.5">
+          <span className="text-sm text-[#666666]">Agreement signed</span>
+          <span className="text-sm font-medium text-[#1A1A1A]">Yes — {formattedDate}</span>
         </div>
       </div>
 
-      {/* Important notice */}
+      {/* Reminder box - neutral gray, not orange */}
       <div className="mt-6 p-4 bg-[#FAFAFA] rounded-lg border border-[#E5E5E5]">
         <p className="text-sm text-[#666666]">
-          This transaction will permanently register you in the circle.
+          You signed the participation agreement on {formattedDate}. This transaction will register your membership and activate your obligations.
         </p>
       </div>
 
-      {/* Warning */}
-      <div className="mt-4 p-4 bg-[#FFF7ED] rounded-lg border border-[#FFEDD5]">
-        <p className="text-sm text-[#C2410C]">
-          <strong>Important:</strong> Payments are mandatory. Failure to pay may result in penalties and loss of position.
-        </p>
-      </div>
-
-      {/* CTA */}
+      {/* Transaction explanation */}
       <div className="mt-6">
-        {signingState === "signing" ? (
-          <div className="flex flex-col items-center gap-4 py-4">
-            <Loader2 className="h-8 w-8 text-[#1A1A1A] animate-spin" />
-            <p className="text-sm text-[#666666]">Processing transaction...</p>
-            <Button 
-              disabled
-              className="w-full rounded-full bg-[#E5E5E5] px-8 py-6 text-base font-semibold text-[#999999] cursor-not-allowed"
-            >
-              Processing...
-            </Button>
-          </div>
-        ) : (
-          <div className="flex gap-3">
-            <Button 
-              variant="outline"
-              onClick={onBack}
-              className="flex-1 rounded-full border-[#E5E5E5] px-6 py-6 text-base font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent"
-            >
-              Back
-            </Button>
-            <Button 
-              onClick={onConfirm}
-              className="flex-1 rounded-full bg-[#1A1A1A] px-6 py-6 text-base font-semibold text-white hover:bg-[#333333]"
-            >
-              Confirm & Join
-            </Button>
-          </div>
-        )}
+        <p className="text-sm text-[#666666] mb-3">This transaction will:</p>
+        <ul className="space-y-1.5 text-sm text-[#666666]">
+          <li className="flex items-center gap-2">
+            <span className="text-[#1A1A1A]">•</span>
+            Charge your first installment
+          </li>
+          <li className="flex items-center gap-2">
+            <span className="text-[#1A1A1A]">•</span>
+            Mint your NFT quota
+          </li>
+          <li className="flex items-center gap-2">
+            <span className="text-[#1A1A1A]">•</span>
+            Issue DINGA tokens
+          </li>
+          <li className="flex items-center gap-2">
+            <span className="text-[#1A1A1A]">•</span>
+            Register your position
+          </li>
+          <li className="flex items-center gap-2">
+            <span className="text-[#1A1A1A]">•</span>
+            Activate payout eligibility
+          </li>
+        </ul>
+        <p className="text-xs text-[#999999] mt-3">
+          All actions depend on the signed agreement.
+        </p>
+      </div>
+
+      {/* CTAs - no inline loader */}
+      <div className="mt-8 flex gap-3">
+        <Button 
+          variant="outline"
+          onClick={onBack}
+          className="flex-1 rounded-full border-[#E5E5E5] px-6 py-6 text-base font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent"
+        >
+          Back
+        </Button>
+        <Button 
+          onClick={onConfirm}
+          className="flex-1 rounded-full bg-[#1A1A1A] px-6 py-6 text-base font-semibold text-white hover:bg-[#333333]"
+        >
+          Confirm & Join
+        </Button>
       </div>
     </div>
   )
@@ -435,17 +388,27 @@ function ConfirmStep({
 export default function JoinCirclePage() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState<Step>(1)
+  const [agreementSignedAt, setAgreementSignedAt] = useState<Date | null>(null)
+  const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [step1SigningState, setStep1SigningState] = useState<SigningState>("idle")
   const [step3SigningState, setStep3SigningState] = useState<SigningState>("idle")
 
-  // Step 1: Sign agreement
+  // Show toast notification
+  const showToast = (message: string) => {
+    setToastMessage(message)
+    setTimeout(() => setToastMessage(null), 3000)
+  }
+
+  // Step 1: Sign agreement - use toast instead of inline loader
   const handleSignAgreement = () => {
     setStep1SigningState("signing")
+    showToast("Signing agreement...")
     // Simulate wallet signature
     setTimeout(() => {
+      setAgreementSignedAt(new Date())
       setStep1SigningState("success")
       setCurrentStep(2)
-    }, 2000)
+    }, 1500)
   }
 
   // Step 2: Continue to confirm
@@ -453,15 +416,16 @@ export default function JoinCirclePage() {
     setCurrentStep(3)
   }
 
-  // Step 3: Confirm transaction
+  // Step 3: Confirm transaction - use toast instead of inline loader
   const handleConfirm = () => {
     setStep3SigningState("signing")
+    showToast("Processing transaction...")
     // Simulate transaction
     setTimeout(() => {
-      setStep3SigningState("success")
-      // Redirect to dashboard
+      // Redirect to dashboard - no intermediate success screen
       router.push("/")
-    }, 3000)
+      setStep3SigningState("success")
+    }, 2000)
   }
 
   // Back navigation
@@ -513,8 +477,6 @@ export default function JoinCirclePage() {
               {/* Step content */}
               {currentStep === 1 && (
                 <TermsStep 
-                  onContinue={() => setCurrentStep(2)} 
-                  signingState={step1SigningState}
                   onSign={handleSignAgreement}
                 />
               )}
@@ -527,14 +489,22 @@ export default function JoinCirclePage() {
               {currentStep === 3 && (
                 <ConfirmStep 
                   onBack={() => handleBack(2)} 
-                  signingState={step3SigningState}
                   onConfirm={handleConfirm}
+                  agreementSignedAt={agreementSignedAt}
                 />
               )}
             </div>
           </div>
         </div>
       </main>
+
+      {/* Toast notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#1A1A1A] text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 z-50">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          <span className="text-sm font-medium">{toastMessage}</span>
+        </div>
+      )}
     </div>
   )
 }
