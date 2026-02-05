@@ -139,7 +139,7 @@ function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boo
 // Dates use whitespace-nowrap to prevent year from wrapping to new line
 function TimelineCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white py-12 px-5 h-full flex flex-col justify-center">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5">
       <div>
         <p className="text-sm text-[#666666]">Started on</p>
         <p className="text-base font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.startDate}</p>
@@ -301,18 +301,19 @@ function CircleGrid({
 // Layout: Title → Description → Dots Grid
 function PaymentVisualizationCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white py-12 px-5 flex flex-col gap-4 h-full justify-center">
-      <h2 className="text-lg font-semibold text-[#1A1A1A]">
-        Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
-      </h2>
-
-      {/* Description - same style as ENS/Arc descriptions */}
-      <p className="text-sm text-[#999999]">
-        Early entry: priority access to payouts in the first 8 months.
-      </p>
-
-      {/* Dots grid */}
+    <div className="rounded-xl border border-[#E5E5E5] bg-white py-12 px-5 flex flex-col justify-between h-full gap-4">
+      {/* Top: Title + Description */}
       <div>
+        <h2 className="text-lg font-semibold text-[#1A1A1A]">
+          Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
+        </h2>
+        <p className="text-sm text-[#999999] mt-2">
+          Early entry: priority access to payouts in the first 8 months.
+        </p>
+      </div>
+
+      {/* Bottom: Dots grid */}
+      <div className="flex items-end">
         <CircleGrid 
           totalDots={circleData.totalMonths}
           filledDot={circleData.currentMonth}
@@ -565,55 +566,51 @@ export default function FundingCirclePage() {
           <div style={{ gridArea: 'arc' }}><ArcCard /></div>
         </div>
 
-        {/* DESKTOP (1024px+): Strict 3-column CSS grid with explicit row tracks */}
+        {/* DESKTOP (1024px+): Strict 2-row layout with aligned baselines */}
         <div 
           className="hidden lg:grid gap-5 w-full items-stretch"
           style={{
             gridTemplateColumns: '1fr 1fr 1fr',
-            gridTemplateRows: 'auto auto 160px',
+            gridTemplateRows: 'auto 160px',
             alignContent: 'start'
           }}
         >
-          {/* Left Column */}
-          {/* Slots card - col 1, row 1 */}
-          <div style={{ gridColumn: 1, gridRow: 1, height: '100%', width: '100%' }}>
-            <SlotsCard />
-          </div>
+          {/* TOP AREA - Row 1: Variable height across columns, aligned baseline */}
           
-          {/* Started/Ends card - col 1, row 2 (stretches to fill row height) */}
-          <div style={{ gridColumn: 1, gridRow: 2, height: '100%', width: '100%' }} className="flex flex-col justify-start">
+          {/* Left Column Top Area: Slots + Started/Ends stack */}
+          <div style={{ gridColumn: 1, gridRow: 1 }} className="flex flex-col gap-5">
+            <SlotsCard />
             <TimelineCard />
           </div>
           
-          {/* Payout card - col 1, row 3 (height controlled by row 3) */}
-          <div style={{ gridColumn: 1, gridRow: 3, height: '100%', width: '100%' }}>
-            <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
-          </div>
-
-          {/* Center Column */}
-          {/* Pay $892/mo card - col 2, rows 1-2 (spans 2 rows, ends at Active members bottom) */}
-          <div style={{ gridColumn: 2, gridRow: '1 / span 2', height: '100%', width: '100%' }} className="flex flex-col justify-start">
+          {/* Center Column Top Area: Pay card (height matches Column 3 top area) */}
+          <div 
+            style={{ gridColumn: 2, gridRow: 1, height: '100%', width: '100%' }}
+            className="flex flex-col justify-between"
+          >
             <PaymentVisualizationCard />
           </div>
           
-          {/* Installments card - col 2, row 3 (height controlled by row 3) */}
-          <div style={{ gridColumn: 2, gridRow: 3, height: '100%', width: '100%' }}>
-            <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
-          </div>
-
-          {/* Right Column */}
-          {/* ENS card - col 3, row 1 */}
-          <div style={{ gridColumn: 3, gridRow: 1, height: '100%', width: '100%' }}>
+          {/* Right Column Top Area: ENS + Active members stack */}
+          <div style={{ gridColumn: 3, gridRow: 1 }} className="flex flex-col gap-5">
             <EnsCard />
-          </div>
-          
-          {/* Active members card - col 3, row 2 */}
-          <div style={{ gridColumn: 3, gridRow: 2, height: '100%', width: '100%' }}>
             <MembersCard />
           </div>
+
+          {/* BOTTOM AREA - Row 2: Fixed uniform height across all columns */}
           
-          {/* Arc card - col 3, row 3 (height controlled by row 3) */}
-          <div style={{ gridColumn: 3, gridRow: 3, height: '100%', width: '100%' }}>
+          {/* Left Column Bottom: Payout card */}
+          <div style={{ gridColumn: 1, gridRow: 2, height: '100%', width: '100%' }}>
+            <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
+          </div>
+          
+          {/* Center Column Bottom: Installments card */}
+          <div style={{ gridColumn: 2, gridRow: 2, height: '100%', width: '100%' }}>
+            <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
+          </div>
+          
+          {/* Right Column Bottom: Arc card */}
+          <div style={{ gridColumn: 3, gridRow: 2, height: '100%', width: '100%' }}>
             <ArcCard />
           </div>
         </div>
