@@ -80,14 +80,8 @@ function Header() {
       </div>
 
       {/* Desktop Header (1024px+) - 4-part layout with separate lanes */}
-      {/* Grid: [Back] [Active pill area] [Title] [Connect wallet] */}
-      <div 
-        className="hidden lg:grid items-center"
-        style={{
-          gridTemplateColumns: 'auto 1fr auto 1fr auto',
-          gap: '20px'
-        }}
-      >
+      {/* Grid: [Back] [Active pill area] [Title] [Spacer] [Connect wallet] */}
+      <div className="hidden lg:grid items-center gap-5 grid-cols-[auto_1fr_auto_1fr_auto]">
         {/* Left edge: Back button */}
         <Link
           href="#"
