@@ -92,7 +92,7 @@ function MobileStepper({ currentStep }: { currentStep: Step }) {
   )
 }
 
-// Step 1: Terms - compact 2x2 grid, checkbox+button inline on desktop
+// Step 1: Terms - single column vertical list
 function TermsStep({ onSign }: { onSign: () => void }) {
   const [agreed, setAgreed] = useState(false)
 
@@ -108,12 +108,12 @@ function TermsStep({ onSign }: { onSign: () => void }) {
       <h2 className="text-lg font-semibold text-[#1A1A1A]">Terms and Participation Agreement</h2>
       <p className="text-sm text-[#666666] mt-1">Please review before joining.</p>
 
-      {/* 2x2 grid on lg */}
+      {/* Single column vertical list */}
       <div className="mt-4 p-4 bg-[#FAFAFA] rounded-lg border border-[#E5E5E5]">
-        <p className="font-mono text-sm text-[#1A1A1A] mb-3">If you accept, you agree that:</p>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <p className="font-mono text-sm text-[#1A1A1A] mb-4">If you accept, you agree that:</p>
+        <div className="flex flex-col gap-4">
           {terms.map((t) => (
-            <div key={t.num} className="font-mono text-sm flex gap-2">
+            <div key={t.num} className="font-mono text-sm flex gap-3">
               <span className="text-[#1A1A1A] font-semibold shrink-0">{t.num}.</span>
               <div>
                 <span className="text-[#1A1A1A] font-medium">{t.title}</span>
@@ -124,12 +124,12 @@ function TermsStep({ onSign }: { onSign: () => void }) {
         </div>
       </div>
 
-      {/* Footer: checkbox + CTA inline on lg */}
-      <div className="mt-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      {/* Footer: checkbox + CTA inline */}
+      <div className="mt-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <label className="flex items-center gap-2.5 cursor-pointer">
           <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)}
             className="w-4 h-4 rounded border-[#E5E5E5] text-[#1A1A1A] focus:ring-[#1A1A1A]" />
-          <span className="text-sm text-[#1A1A1A]">I understand and agree to these terms and accept all risks.</span>
+          <span className="text-sm text-[#1A1A1A] whitespace-nowrap">I understand and agree to these terms and accept all risks.</span>
         </label>
         <Button onClick={onSign} disabled={!agreed}
           className={`shrink-0 rounded-full px-8 py-5 text-sm font-semibold lg:w-auto w-full ${
@@ -371,24 +371,34 @@ export default function JoinCirclePage() {
     }
   }
 
+  // Back button handler - navigate within flow or exit
+  const handleBack = () => {
+    if (currentStep > 1) {
+      setCurrentStep((currentStep - 1) as Step)
+    } else {
+      router.push("/")
+    }
+  }
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Full-width Back Area at top */}
       <div className="w-full border-b border-[#F0F0F0]">
-        <div className="mx-auto max-w-[680px] px-6">
-          <Link
-            href="/"
+        <div className="mx-auto max-w-[760px] px-6">
+          <button
+            type="button"
+            onClick={handleBack}
             className="inline-flex items-center gap-1.5 py-3 text-[#666666] transition-colors hover:text-[#1A1A1A]"
           >
             <ArrowLeft className="h-4 w-4" />
             <span className="text-sm font-medium">Back</span>
-          </Link>
+          </button>
         </div>
       </div>
 
       {/* Header: Title + Stepper aligned to card */}
       <header className="w-full pt-5 pb-4">
-        <div className="mx-auto max-w-[680px] px-6">
+        <div className="mx-auto max-w-[760px] px-6">
           <div className="flex items-center justify-between gap-4">
             <h1 className="text-lg font-semibold text-[#1A1A1A]">
               {"Join $" + formatNumber(circleData.amount) + " Circle"}
@@ -406,7 +416,7 @@ export default function JoinCirclePage() {
       </header>
 
       <main className="flex-1 flex flex-col pb-8">
-        <div className="mx-auto max-w-[680px] w-full px-6">
+        <div className="mx-auto max-w-[760px] w-full px-6">
           <div>
             {currentStep === 1 && (
               <TermsStep onSign={handleSignAgreement} />
