@@ -5,7 +5,6 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useEffect, useRef, useState } from "react"
 
-
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -567,22 +566,22 @@ export default function FundingCirclePage() {
         </div>
 
         {/* DESKTOP (1024px+): 3-column layout with equal-width columns */}
-        <div className="hidden lg:grid gap-5 w-full" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
+        <div className="hidden lg:grid gap-5 w-full items-stretch" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
           {/* Left column: Slots card at top, then Timeline, Payout */}
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-5 h-full justify-between">
             <SlotsCard />
             <TimelineCard />
             <PayoutCard />
           </div>
           
           {/* Center column */}
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-5 h-full justify-between">
             <PaymentVisualizationCard />
             <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
           
           {/* Right column */}
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-5 h-full justify-between">
             <EnsCard />
             <MembersCard />
             <ArcCard />
