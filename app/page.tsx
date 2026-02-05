@@ -49,17 +49,32 @@ function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boo
         paddingBottom: 'clamp(24px, 4vh, 48px)' 
       }}
     >
-      {/* Mobile + Tablet Header (<1024px): 2-row layout */}
-      <div className="flex lg:hidden flex-col gap-4">
-        {/* Row 1: Back (left) + Connect wallet / ENS (right) */}
-        <div className="flex items-center justify-between">
+      {/* Mobile + Tablet Header (<1024px): 3-column grid for stable centering */}
+      <div 
+        className="grid lg:hidden items-center"
+        style={{ gridTemplateColumns: '1fr auto 1fr' }}
+      >
+        {/* Column 1: Back button - start aligned */}
+        <div className="justify-self-start">
           <Link
             href="#"
-            className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
+            className="inline-flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
           >
             <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
             <span className="text-sm md:text-base whitespace-nowrap">Back</span>
           </Link>
+        </div>
+
+        {/* Column 2: Title - always centered */}
+        <div className="justify-self-center text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-[#1A1A1A]">
+            ${formatNumber(circleData.amount)}
+          </h1>
+          <p className="text-sm md:text-base text-[#1A1A1A]">{circleData.title}</p>
+        </div>
+
+        {/* Column 3: Wallet - end aligned */}
+        <div className="justify-self-end">
           {isWalletConnected ? (
             <div className="rounded-full border border-[#E5E5E5] px-4 py-1.5 text-sm font-medium text-[#1A1A1A]">
               {MOCK_WALLET_ENS}
@@ -74,23 +89,14 @@ function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boo
             </Button>
           )}
         </div>
-        
-        {/* Row 2: Title only - centered */}
-        <div className="text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-[#1A1A1A]">
-            ${formatNumber(circleData.amount)}
-          </h1>
-          <p className="text-sm md:text-base text-[#1A1A1A]">{circleData.title}</p>
-        </div>
       </div>
 
-      {/* Desktop Header (1024px+) - 3-column grid with equal widths like the cards grid */}
-      {/* This guarantees the title stays centered regardless of left/right content size */}
+      {/* Desktop Header (1024px+) - 3-column grid with equal widths */}
       <div 
         className="hidden lg:grid items-center min-h-[72px]"
-        style={{ gridTemplateColumns: '1fr 1fr 1fr' }}
+        style={{ gridTemplateColumns: '1fr auto 1fr' }}
       >
-        {/* Column 1: Back button - start aligned within its column */}
+        {/* Column 1: Back button - start aligned */}
         <div className="justify-self-start">
           <Link
             href="#"
@@ -101,7 +107,7 @@ function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boo
           </Link>
         </div>
 
-        {/* Column 2: Title block - centered within its column */}
+        {/* Column 2: Title - always centered */}
         <div className="justify-self-center text-center flex flex-col items-center gap-1 whitespace-nowrap">
           <h1 className="text-5xl font-bold text-[#1A1A1A]">
             ${formatNumber(circleData.amount)}
@@ -109,7 +115,7 @@ function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boo
           <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
         </div>
 
-        {/* Column 3: Connect wallet button or ENS name - end aligned within its column */}
+        {/* Column 3: Wallet - end aligned */}
         <div className="justify-self-end">
           {isWalletConnected ? (
             <div className="rounded-full border border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] whitespace-nowrap">
