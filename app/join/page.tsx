@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
-
+import Header from "@/components/Header" // Declare the Header component
 
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
@@ -66,26 +66,6 @@ function ProgressBar({ currentStep }: { currentStep: Step }) {
         </div>
       ))}
     </div>
-  )
-}
-
-// Header with Back button and title on same row
-function Header() {
-  return (
-    <header className="w-full px-6 md:px-10 pt-8 md:pt-10 pb-6">
-      <div className="max-w-[640px] mx-auto flex items-center gap-4">
-        <Link
-          href="/"
-          className="flex items-center gap-1.5 text-[#666666] transition-colors hover:text-[#1A1A1A] shrink-0"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span className="text-sm font-medium">Back</span>
-        </Link>
-        <h1 className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">
-          {"You're joining a $" + formatNumber(circleData.amount) + " circle " + circleData.title}
-        </h1>
-      </div>
-    </header>
   )
 }
 
@@ -492,37 +472,69 @@ export default function JoinCirclePage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <Header />
+      {/* Header area with Back button in left margin, stepper in content column */}
+      <header className="w-full pt-8 md:pt-10 pb-6">
+        <div className="mx-auto max-w-[880px] px-6 md:px-10">
+          {/* Grid: [Back in margin] [Content area] - Back aligns to stepper row */}
+          <div className="grid" style={{ gridTemplateColumns: 'minmax(80px, 120px) minmax(0, 640px)' }}>
+            {/* Back button - vertically centered to stepper */}
+            <div className="flex items-center">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-1.5 text-[#666666] transition-colors hover:text-[#1A1A1A]"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span className="text-sm font-medium">Back</span>
+              </Link>
+            </div>
 
-      <main className="flex-1 flex flex-col mx-auto max-w-[640px] w-full px-6 md:px-10 pb-12">
-        {/* Progress bar - same width as card */}
-        <div className="mb-6">
-          <ProgressBar currentStep={currentStep} />
+            {/* Title + Stepper column */}
+            <div>
+              {/* Title - left aligned, same size as card heading */}
+              <h1 className="text-lg font-semibold text-[#1A1A1A] mb-5">
+                {"Join $" + formatNumber(circleData.amount) + " Devcon 2026 Circle"}
+              </h1>
+
+              {/* Progress bar */}
+              <ProgressBar currentStep={currentStep} />
+            </div>
+          </div>
         </div>
+      </header>
 
-        {/* Step content */}
-        {currentStep === 1 && (
-          <TermsStep 
-            onContinue={() => setCurrentStep(2)} 
-            signingState={step1SigningState}
-            onSign={handleSignAgreement}
-          />
-        )}
-        
-        {currentStep === 2 && (
-          <PreviewStep 
-            onBack={() => handleBack(1)} 
-            onContinue={handlePreviewContinue} 
-          />
-        )}
-        
-        {currentStep === 3 && (
-          <ConfirmStep 
-            onBack={() => handleBack(2)} 
-            signingState={step3SigningState}
-            onConfirm={handleConfirm}
-          />
-        )}
+      <main className="flex-1 flex flex-col pb-12">
+        {/* Same grid structure for content alignment */}
+        <div className="mx-auto max-w-[880px] w-full px-6 md:px-10">
+          <div className="grid" style={{ gridTemplateColumns: 'minmax(80px, 120px) minmax(0, 640px)' }}>
+            {/* Empty left column (margin) */}
+            <div />
+
+            {/* Content column */}
+            <div>
+              {/* Step content */}
+              {currentStep === 1 && (
+                <TermsStep 
+                  onContinue={() => setCurrentStep(2)} 
+                  signingState={step1SigningState}
+                  onSign={handleSignAgreement}
+                />
+              )}
+              {currentStep === 2 && (
+                <PreviewStep 
+                  onBack={() => handleBack(1)} 
+                  onContinue={handlePreviewContinue} 
+                />
+              )}
+              {currentStep === 3 && (
+                <ConfirmStep 
+                  onBack={() => handleBack(2)} 
+                  signingState={step3SigningState}
+                  onConfirm={handleConfirm}
+                />
+              )}
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   )
