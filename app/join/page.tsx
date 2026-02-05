@@ -237,7 +237,9 @@ function ConfirmStep({
     ? agreementSignedAt.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })
     : 'Just now'
 
+  // All execution steps including agreement (step 0 is always complete)
   const txSteps = [
+    { step: 0, label: "Agreement signed" },
     { step: 1, label: "Pay installment" },
     { step: 2, label: "Mint position & claim tokens" }
   ]
@@ -272,25 +274,14 @@ function ConfirmStep({
           </div>
         </div>
 
-        {/* Agreement Status Card */}
-        <div className="mt-4 p-3 bg-[#FAFAFA] rounded-lg border border-[#E5E5E5]">
-          <div className="flex items-center gap-2 text-sm">
-            <Check className="w-4 h-4 text-[#1A1A1A]" />
-            <span className="text-[#1A1A1A] font-medium">Agreement signed</span>
-          </div>
-          <p className="text-xs text-[#666666] mt-1">{formattedDate}</p>
-          <p className="text-xs text-[#666666] mt-2">
-            This transaction will register your membership and activate your obligations.
-          </p>
-        </div>
-
-        {/* Transaction Execution Component */}
+        {/* Transaction Execution - Agreement as first completed step */}
         <div className="mt-4">
           <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Transaction Execution</h3>
           <div className="space-y-2 text-sm">
             {txSteps.map((item) => {
-              const isComplete = executionStep > item.step
-              const isActive = executionStep === item.step && isExecuting
+              // Step 0 (Agreement) is always complete
+              const isComplete = item.step === 0 || executionStep > item.step
+              const isActive = item.step !== 0 && executionStep === item.step && isExecuting
 
               return (
                 <div key={item.step} className="flex items-center gap-2.5 py-1">
@@ -404,23 +395,23 @@ export default function JoinCirclePage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Full-width Back Area at top */}
-      <div className="w-full border-b border-[#F0F0F0]">
+      {/* Header with Back + Title + Stepper - matching main page spacing */}
+      <header 
+        className="w-full border-b border-[#F0F0F0]"
+        style={{ paddingTop: 'clamp(32px, 6vh, 64px)', paddingBottom: 'clamp(16px, 2vh, 24px)' }}
+      >
         <div className="mx-auto max-w-[760px] px-6">
+          {/* Back button row */}
           <button
             type="button"
             onClick={handleBack}
-            className="inline-flex items-center gap-1.5 py-3 text-[#666666] transition-colors hover:text-[#1A1A1A]"
+            className="inline-flex items-center gap-1.5 text-[#666666] transition-colors hover:text-[#1A1A1A] mb-4"
           >
             <ArrowLeft className="h-4 w-4" />
             <span className="text-sm font-medium">Back</span>
           </button>
-        </div>
-      </div>
 
-      {/* Header: Title + Stepper aligned to card */}
-      <header className="w-full pt-5 pb-4">
-        <div className="mx-auto max-w-[760px] px-6">
+          {/* Title + Stepper row */}
           <div className="flex items-center justify-between gap-4">
             <h1 className="text-lg font-semibold text-[#1A1A1A]">
               {"Join $" + formatNumber(circleData.amount) + " Circle"}
@@ -437,7 +428,7 @@ export default function JoinCirclePage() {
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col pb-8">
+      <main className="flex-1 flex flex-col pb-8" style={{ paddingTop: 'clamp(16px, 3vh, 32px)' }}>
         <div className="mx-auto max-w-[760px] w-full px-6">
           <div>
             {currentStep === 1 && (
