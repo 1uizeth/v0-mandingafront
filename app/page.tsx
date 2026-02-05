@@ -1,6 +1,9 @@
+"use client"
+
 import { ArrowLeft, ExternalLink, Info } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { useEffect, useRef, useState } from "react"
 
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
@@ -36,66 +39,44 @@ const circleData = {
 function Header() {
   return (
     <header className="mx-auto max-w-[1280px] px-6 md:px-10 py-6">
-      {/* Mobile Header (<768px) */}
-      <div className="flex flex-col gap-4 md:hidden">
-        <div className="flex items-center justify-between">
-          <Link
-            href="#"
-            className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span className="text-sm">Back</span>
-          </Link>
-          <div className="rounded-lg bg-[#F5F5F5] px-4 py-2">
-            <span className="text-sm font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
-          </div>
-        </div>
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-[#1A1A1A]">
-            ${formatNumber(circleData.amount)}
-          </h1>
-          <p className="text-base text-[#1A1A1A]">{circleData.title}</p>
-        </div>
-        <div className="flex justify-center">
-          <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
+      {/* Mobile + Tablet Header (<1024px): Active LEFT, Title CENTER, Slots RIGHT - all same row */}
+      <div className="flex lg:hidden flex-col gap-4">
+        {/* Back button row */}
+        <Link
+          href="#"
+          className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70 w-fit"
+        >
+          <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
+          <span className="text-sm md:text-base">Back</span>
+        </Link>
+        
+        {/* Main header row: Active | Title | Slots */}
+        <div className="flex items-center justify-between gap-4">
+          {/* Active badge - LEFT */}
+          <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5 flex-shrink-0">
             <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
             <span className="text-sm font-medium text-[#2E7D32]">Active</span>
+          </div>
+          
+          {/* Title - CENTER */}
+          <div className="text-center flex-1 min-w-0">
+            <h1 className="text-3xl md:text-4xl font-bold text-[#1A1A1A]">
+              ${formatNumber(circleData.amount)}
+            </h1>
+            <p className="text-sm md:text-base text-[#1A1A1A]">{circleData.title}</p>
+          </div>
+          
+          {/* Slots badge - RIGHT */}
+          <div className="rounded-lg bg-[#F5F5F5] px-3 md:px-4 py-2 flex-shrink-0">
+            <span className="text-xs md:text-sm font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
           </div>
         </div>
       </div>
 
-      {/* Tablet Header (768px - 1023px) */}
-      <div className="hidden md:flex lg:hidden flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <Link
-            href="#"
-            className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            <span>Back</span>
-          </Link>
-          <div className="rounded-lg bg-[#F5F5F5] px-4 py-2">
-            <span className="text-sm font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
-          </div>
-        </div>
-        <div className="text-center">
-          <h1 className="text-5xl font-bold text-[#1A1A1A]">
-            ${formatNumber(circleData.amount)}
-          </h1>
-          <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
-        </div>
-        <div className="flex justify-center">
-          <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
-            <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
-            <span className="text-sm font-medium text-[#2E7D32]">Active</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Desktop Header (1024px+) - 3 column grid */}
+      {/* Desktop Header (1024px+) - 3 column grid aligned with content */}
       <div className="hidden lg:grid grid-cols-3 gap-6 items-center">
-        {/* Column 1: Back button left, Active badge right */}
-        <div className="flex items-center justify-between">
+        {/* Column 1: Back button left */}
+        <div className="flex items-center gap-6">
           <Link
             href="#"
             className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
@@ -118,8 +99,8 @@ function Header() {
           <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
         </div>
 
-        {/* Column 3: Slots badge far right */}
-        <div className="flex justify-end">
+        {/* Column 3: Slots badge aligned to LEFT edge of column 3 */}
+        <div className="flex justify-start">
           <div className="rounded-lg bg-[#F5F5F5] px-4 py-2">
             <span className="text-sm font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
           </div>
@@ -132,28 +113,12 @@ function Header() {
 // INFO TAG: Early Entry (compact, fixed height)
 function EarlyEntryTag() {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-purple-100 bg-purple-50 p-5 min-h-[80px] max-h-[100px]">
+    <div className="flex items-center gap-3 rounded-xl border border-purple-100 bg-purple-50 p-5 min-h-[80px]">
       <Info className="h-5 w-5 text-purple-600 stroke-[1.5] flex-shrink-0" />
       <div>
         <p className="font-semibold text-purple-600 text-base">Early entry</p>
         <p className="text-purple-500 text-sm">Selected for initial payouts</p>
       </div>
-    </div>
-  )
-}
-
-// INFO TAG: Terms Notice (compact, fixed height)
-function TermsTag() {
-  return (
-    <div className="flex items-start gap-3 rounded-xl border border-[#E5E5E5] bg-white p-5 min-h-[80px]">
-      <Info className="h-5 w-5 text-[#999999] stroke-[1.5] flex-shrink-0 mt-0.5" />
-      <p className="text-sm text-[#666666]">
-        Read the{" "}
-        <Link href="#" className="font-medium text-[#1A1A1A] underline underline-offset-2 hover:opacity-70">
-          Terms and Conditions
-        </Link>{" "}
-        before joining a circle
-      </p>
     </div>
   )
 }
@@ -202,82 +167,110 @@ function PayoutCard() {
   )
 }
 
-// Helper function to render circle with proper color
-function Circle({ index }: { index: number }) {
-  const monthNumber = index + 1
-  const isCurrent = monthNumber === circleData.currentMonth
-  const isEarlyEntry = circleData.earlyEntryMonths.includes(monthNumber)
-  
-  let bgColor = "bg-[#E5E5E5]"
-  if (isCurrent) bgColor = "bg-[#1A1A1A]"
-  else if (isEarlyEntry) bgColor = "bg-[#C4B5FD]"
-  
-  return <div className={`w-full h-full rounded-full ${bgColor}`} />
+// WIDTH-DRIVEN CIRCLE GRID COMPONENT
+// Uses ResizeObserver to measure available width and calculates optimal columns
+function ResponsiveCircleGrid() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [gridConfig, setGridConfig] = useState({ cols: 12, size: 32, gap: 8 })
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const calculateGrid = () => {
+      const availableWidth = container.offsetWidth
+      const gap = availableWidth < 420 ? 6 : 8
+      
+      // Try column candidates from highest to lowest
+      const candidates = [12, 10, 8, 6, 5, 4]
+      
+      for (const cols of candidates) {
+        const sizeCandidate = Math.floor((availableWidth - gap * (cols - 1)) / cols)
+        
+        // Accept first candidate where size is between 22 and 32
+        if (sizeCandidate >= 22 && sizeCandidate <= 32) {
+          setGridConfig({
+            cols,
+            size: Math.min(32, Math.max(22, sizeCandidate)),
+            gap
+          })
+          return
+        }
+      }
+      
+      // Fallback: use 4 columns with calculated size
+      const fallbackSize = Math.floor((availableWidth - gap * 3) / 4)
+      setGridConfig({
+        cols: 4,
+        size: Math.min(32, Math.max(18, fallbackSize)),
+        gap
+      })
+    }
+
+    // Initial calculation
+    calculateGrid()
+
+    // Setup ResizeObserver
+    const resizeObserver = new ResizeObserver(() => {
+      calculateGrid()
+    })
+    
+    resizeObserver.observe(container)
+    
+    return () => {
+      resizeObserver.disconnect()
+    }
+  }, [])
+
+  const circles = Array.from({ length: circleData.totalMonths }, (_, i) => i)
+
+  return (
+    <div ref={containerRef} className="w-full overflow-hidden">
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${gridConfig.cols}, ${gridConfig.size}px)`,
+          gap: `${gridConfig.gap}px`,
+          justifyContent: 'start',
+          width: 'max-content'
+        }}
+      >
+        {circles.map((i) => {
+          const monthNumber = i + 1
+          const isCurrent = monthNumber === circleData.currentMonth
+          const isEarlyEntry = circleData.earlyEntryMonths.includes(monthNumber)
+          
+          let bgColor = "#E5E5E5" // Default gray
+          if (isCurrent) bgColor = "#1A1A1A" // Circle 1: black
+          else if (isEarlyEntry) bgColor = "#C4B5FD" // Circles 2-8: purple
+          
+          return (
+            <div
+              key={i}
+              style={{
+                width: `${gridConfig.size}px`,
+                height: `${gridConfig.size}px`,
+                borderRadius: '50%',
+                backgroundColor: bgColor
+              }}
+            />
+          )
+        })}
+      </div>
+    </div>
+  )
 }
 
 // FULL CARD: Payment Visualization (circles + description)
 function PaymentVisualizationCard() {
-  const circles = Array.from({ length: circleData.totalMonths }, (_, i) => i)
-  
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
       <h2 className="text-lg font-semibold text-[#1A1A1A]">
         Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
       </h2>
 
-      {/* 
-        RESPONSIVE CIRCLE GRID - Only ONE grid visible at a time:
-        - Mobile (<768px): 6×4, 24px circles, 6px gap
-        - Tablet (768px - 1023px): 6×4, 32px circles, 8px gap
-        - Desktop (1024px+): 12×2, 32px circles, 8px gap
-      */}
-      
-      {/* Mobile (<768px): 4 cols × 6 rows - fixed 24px circles, 6px gap */}
-      <div 
-        className="mt-6 grid md:hidden"
-        style={{ gridTemplateColumns: 'repeat(4, 24px)', gap: '6px' }}
-      >
-        {circles.map((i) => (
-          <div key={`mobile-${i}`} className="w-6 h-6">
-            <Circle index={i} />
-          </div>
-        ))}
-      </div>
-
-      {/* Tablet (768px - 1023px): 6 cols × 4 rows - fixed 28px circles, 8px gap */}
-      <div 
-        className="mt-6 hidden md:grid lg:hidden"
-        style={{ gridTemplateColumns: 'repeat(6, 28px)', gap: '8px' }}
-      >
-        {circles.map((i) => (
-          <div key={`tablet-${i}`} className="w-7 h-7">
-            <Circle index={i} />
-          </div>
-        ))}
-      </div>
-
-      {/* Desktop narrow (1024px - 1279px): 8 cols × 3 rows - fixed 32px circles, 8px gap */}
-      <div 
-        className="mt-6 hidden lg:grid xl:hidden"
-        style={{ gridTemplateColumns: 'repeat(8, 32px)', gap: '8px' }}
-      >
-        {circles.map((i) => (
-          <div key={`desktop-narrow-${i}`} className="w-8 h-8">
-            <Circle index={i} />
-          </div>
-        ))}
-      </div>
-
-      {/* Desktop wide (1280px+): 12 cols × 2 rows - fixed 32px circles, 8px gap */}
-      <div 
-        className="mt-6 hidden xl:grid"
-        style={{ gridTemplateColumns: 'repeat(12, 32px)', gap: '8px' }}
-      >
-        {circles.map((i) => (
-          <div key={`desktop-wide-${i}`} className="w-8 h-8">
-            <Circle index={i} />
-          </div>
-        ))}
+      <div className="mt-6">
+        <ResponsiveCircleGrid />
       </div>
 
       <p className="mt-6 text-sm text-[#666666] leading-relaxed">
@@ -324,7 +317,7 @@ function InstallmentCard() {
 // FULL CARD: ENS Integration
 function EnsCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 min-h-[120px]">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -414,7 +407,6 @@ export default function FundingCirclePage() {
           <InstallmentCard />
           <EnsCard />
           <MembersAndArcCard />
-          <TermsTag />
         </div>
 
         {/* TABLET (768px - 1023px): 2 columns with spanning */}
@@ -445,14 +437,9 @@ export default function FundingCirclePage() {
           <div className="col-span-2">
             <MembersAndArcCard />
           </div>
-          
-          {/* Terms spans full width */}
-          <div className="col-span-2">
-            <TermsTag />
-          </div>
         </div>
 
-        {/* DESKTOP (1024px+): 3 columns */}
+        {/* DESKTOP (1024px+): 3 columns - balanced rectangular block */}
         <div className="hidden lg:grid grid-cols-3 gap-6">
           {/* Left Column */}
           <div className="space-y-6">
@@ -461,17 +448,16 @@ export default function FundingCirclePage() {
             <PayoutCard />
           </div>
 
-          {/* Center Column - TWO separate cards */}
+          {/* Center Column */}
           <div className="space-y-6">
             <PaymentVisualizationCard />
             <InstallmentCard />
           </div>
 
-          {/* Right Column - 3 cards */}
+          {/* Right Column - ends with Members+Arc */}
           <div className="space-y-6">
             <EnsCard />
             <MembersAndArcCard />
-            <TermsTag />
           </div>
         </div>
       </main>
