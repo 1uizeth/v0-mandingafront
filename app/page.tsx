@@ -323,10 +323,10 @@ function CircleGrid({
 }
 
 // FULL CARD: Payment Visualization
-// Layout: Title → Description → Dots Grid
+// Layout: Title → Description → Dots Grid (fills card height)
 function PaymentVisualizationCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4 h-full justify-between">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4 w-full h-full justify-between">
       <div>
         <h2 className="text-lg font-semibold text-[#1A1A1A]">
           Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
@@ -579,59 +579,60 @@ export default function FundingCirclePage() {
           className="hidden lg:grid gap-5 w-full"
           style={{
             gridTemplateColumns: '1fr 1fr 1fr',
-            gridTemplateRows: 'auto auto 180px',
-            alignContent: 'start',
-            alignItems: 'stretch'
+            gridTemplateRows: 'minmax(0, 1fr) minmax(0, 1fr) 180px',
+            alignContent: 'stretch',
+            alignItems: 'stretch',
+            minHeight: '600px'
           }}
         >
           {/* ROW 1 */}
           
           {/* Row 1, Col 1: Active (Slots) */}
-          <div style={{ gridColumn: 1, gridRow: 1 }}>
+          <div style={{ gridColumn: 1, gridRow: 1, height: '100%' }}>
             <SlotsCard />
           </div>
           
           {/* Row 1, Col 2: Pay $892/mo (spans rows 1-2) */}
           <div 
-            style={{ gridColumn: 2, gridRow: '1 / span 2', height: '100%' }}
+            style={{ gridColumn: 2, gridRow: '1 / span 2', height: '100%', width: '100%' }}
             className="flex flex-col justify-between"
           >
             <PaymentVisualizationCard />
           </div>
           
           {/* Row 1, Col 3: ENS */}
-          <div style={{ gridColumn: 3, gridRow: 1 }}>
+          <div style={{ gridColumn: 3, gridRow: 1, height: '100%' }}>
             <EnsCard />
           </div>
 
           {/* ROW 2 */}
           
           {/* Row 2, Col 1: Started/Ends */}
-          <div style={{ gridColumn: 1, gridRow: 2, height: '100%' }}>
+          <div style={{ gridColumn: 1, gridRow: 2, height: '100%', width: '100%' }}>
             <TimelineCard />
           </div>
           
           {/* Row 2, Col 2: (empty - Pay card already spans here) */}
           
           {/* Row 2, Col 3: Active members */}
-          <div style={{ gridColumn: 3, gridRow: 2 }}>
+          <div style={{ gridColumn: 3, gridRow: 2, height: '100%' }}>
             <MembersCard />
           </div>
 
           {/* ROW 3: Bottom compact cards (180px fixed height) */}
           
           {/* Row 3, Col 1: Payout */}
-          <div style={{ gridColumn: 1, gridRow: 3, height: '100%' }}>
+          <div style={{ gridColumn: 1, gridRow: 3, height: '100%', width: '100%' }}>
             <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
           
           {/* Row 3, Col 2: Installments */}
-          <div style={{ gridColumn: 2, gridRow: 3, height: '100%' }}>
+          <div style={{ gridColumn: 2, gridRow: 3, height: '100%', width: '100%' }}>
             <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
           
           {/* Row 3, Col 3: Arc */}
-          <div style={{ gridColumn: 3, gridRow: 3, height: '100%' }}>
+          <div style={{ gridColumn: 3, gridRow: 3, height: '100%', width: '100%' }}>
             <ArcCard />
           </div>
         </div>
