@@ -37,77 +37,98 @@ const circleData = {
   ],
 }
 
+// Layout constants shared between header and cards grid
+const LAYOUT = {
+  maxWidth: 1280,
+  gap: 20, // gap-5 = 20px
+  padding: 40, // px-10 = 40px on desktop
+}
+
+// Compute column width: (maxWidth - 2*gap) / 3
+const COL_WIDTH = (LAYOUT.maxWidth - 2 * LAYOUT.gap) / 3
+
 function Header() {
   return (
     <header className="mx-auto max-w-[1280px] px-6 md:px-10 py-6">
-      {/* Mobile + Tablet Header (<1024px): Single row with Active LEFT | Title CENTER | Slots RIGHT */}
+      {/* Mobile + Tablet Header (<1024px): 2-row layout */}
       <div className="flex lg:hidden flex-col gap-4">
-        {/* Back button row */}
-        <Link
-          href="#"
-          className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70 w-fit"
-        >
-          <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
-          <span className="text-sm md:text-base">Back</span>
-        </Link>
+        {/* Row 1: Back (left) + Connect wallet (right) */}
+        <div className="flex items-center justify-between">
+          <Link
+            href="#"
+            className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
+          >
+            <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
+            <span className="text-sm md:text-base whitespace-nowrap">Back</span>
+          </Link>
+          <Button variant="outline" className="rounded-full border-[#E5E5E5] px-4 py-1.5 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent">
+            Connect wallet
+          </Button>
+        </div>
         
-        {/* Main header row: Active | Title | Slots - using CSS Grid for precise control */}
+        {/* Row 2: Active (left of title) | Title (center) | Slots (right of title) */}
         <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
-          {/* Active badge - LEFT aligned */}
+          {/* Active badge */}
           <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
             <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
             <span className="text-sm font-medium text-[#2E7D32]">Active</span>
           </div>
           
-          {/* Title - CENTER */}
-          <div className="text-center">
+          {/* Title - centered */}
+          <div className="text-center min-w-0">
             <h1 className="text-3xl md:text-4xl font-bold text-[#1A1A1A]">
               ${formatNumber(circleData.amount)}
             </h1>
             <p className="text-sm md:text-base text-[#1A1A1A]">{circleData.title}</p>
           </div>
           
-          {/* Slots badge - RIGHT aligned */}
+          {/* Slots badge */}
           <div className="rounded-lg bg-[#F5F5F5] px-3 md:px-4 py-2">
-            <span className="text-xs md:text-sm font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
+            <span className="text-xs md:text-sm font-medium text-[#666666] whitespace-nowrap">{circleData.slotsLeft} slots left</span>
           </div>
         </div>
       </div>
 
-      {/* Desktop Header (1024px+) - Absolute centering for title, edge-aligned Back/Connect */}
-      <div className="hidden lg:block relative">
-        {/* Back button - absolute left */}
+      {/* Desktop Header (1024px+) - CSS Grid with 5 columns for true centering */}
+      {/* Grid: [Back] [Active wrapper = col1 width, right-aligned] [Title = max-content, centered] [spacer] [Connect] */}
+      <div 
+        className="hidden lg:grid items-center gap-4"
+        style={{
+          gridTemplateColumns: `auto ${COL_WIDTH}px max-content 1fr auto`,
+        }}
+      >
+        {/* Column 1: Back button */}
         <Link
           href="#"
-          className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
+          className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
         >
           <ArrowLeft className="h-5 w-5" />
-          <span>Back</span>
+          <span className="whitespace-nowrap">Back</span>
         </Link>
 
-        {/* Title - mathematically centered */}
-        <div className="flex flex-col items-center justify-center text-center py-2">
+        {/* Column 2: Fixed-width wrapper equal to col1 width, Active pill aligned right inside */}
+        <div className="flex justify-end">
+          <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
+            <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
+            <span className="text-sm font-medium text-[#2E7D32]">Active</span>
+          </div>
+        </div>
+
+        {/* Column 3: Title block - max-content, naturally centered due to equal flexible space on sides */}
+        <div className="text-center">
           <h1 className="text-5xl font-bold text-[#1A1A1A]">
             ${formatNumber(circleData.amount)}
           </h1>
           <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
         </div>
 
-        {/* Connect wallet - absolute right */}
-        <div className="absolute right-0 top-1/2 -translate-y-1/2">
-          <Button variant="outline" className="rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent">
-            Connect wallet
-          </Button>
-        </div>
+        {/* Column 4: Flexible spacer (1fr) - balances with column 2's fixed width */}
+        <div />
 
-        {/* Active pill - positioned to align with right edge of column 1 (calc: 33.33% of container width minus pill width) */}
-        <div 
-          className="absolute top-1/2 -translate-y-1/2 flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5"
-          style={{ left: 'calc(33.33% - 85px)' }}
-        >
-          <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
-          <span className="text-sm font-medium text-[#2E7D32]">Active</span>
-        </div>
+        {/* Column 5: Connect wallet button */}
+        <Button variant="outline" className="rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent whitespace-nowrap">
+          Connect wallet
+        </Button>
       </div>
     </header>
   )
