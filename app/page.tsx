@@ -565,26 +565,32 @@ export default function FundingCirclePage() {
           <div style={{ gridArea: 'arc' }}><ArcCard /></div>
         </div>
 
-        {/* DESKTOP (1024px+): 3-column layout with equal-width columns */}
-        <div className="hidden lg:grid gap-5 w-full items-stretch" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
-          {/* Left column: Slots card at top, then Timeline, Payout */}
-          <div className="flex flex-col gap-5 h-full justify-between">
+        {/* DESKTOP (1024px+): 3-column layout with controlled stretching */}
+        <div className="hidden lg:grid gap-5 w-full h-screen" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
+          {/* Left column: Slots (fixed) → Started/Ends (flex-1 stretch) → Payout (fixed compact height) */}
+          <div className="flex flex-col gap-5 h-full">
             <SlotsCard />
-            <TimelineCard />
-            <PayoutCard />
+            <div className="flex-1 flex flex-col justify-start">
+              <TimelineCard />
+            </div>
+            <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
           
-          {/* Center column */}
-          <div className="flex flex-col gap-5 h-full justify-between">
-            <PaymentVisualizationCard />
+          {/* Center column: Pay card (flex-1 stretch) → Installments (fixed compact height) */}
+          <div className="flex flex-col gap-5 h-full">
+            <div className="flex-1 flex flex-col justify-start">
+              <PaymentVisualizationCard />
+            </div>
             <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
           
-          {/* Right column */}
-          <div className="flex flex-col gap-5 h-full justify-between">
+          {/* Right column: ENS (fixed) → Members (fixed) → Arc (fixed, same height as compact cards) */}
+          <div className="flex flex-col gap-5 h-full">
             <EnsCard />
             <MembersCard />
-            <ArcCard />
+            <div style={{ height: 'var(--compact-card-height, 200px)' }}>
+              <ArcCard />
+            </div>
           </div>
         </div>
       </main>
