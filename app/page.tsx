@@ -353,7 +353,7 @@ function InstallmentCard() {
 }
 
 // FULL CARD: ENS Integration
-// Header row at top, description below, ENS chip as primary element
+// Layout: Header → ENS pill (visual) → Description (like Payment card pattern)
 function EnsCard() {
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col min-h-0">
@@ -375,17 +375,17 @@ function EnsCard() {
         </a>
       </div>
 
-      {/* Description - muted, allowed to wrap naturally */}
-      <p className="text-sm text-[#999999] mt-2">
-        Public ENS name for this circle's vault.
-      </p>
-
-      {/* Body - ENS chip as primary element */}
-      <div className="flex-1 flex items-center justify-start mt-3">
-        <div className="w-full rounded-lg bg-[#E3F2FD] px-4 py-3">
+      {/* ENS pill - visual element (like circle grid in Payment card) */}
+      <div className="flex-1 flex items-center justify-start mt-4">
+        <div className="w-full rounded-full bg-[#E3F2FD] px-5 py-3 text-center">
           <span className="text-sm font-medium text-[#1976D2]">{circleData.ensDomain}</span>
         </div>
       </div>
+
+      {/* Description - muted, at bottom (like Payment card pattern) */}
+      <p className="text-sm text-[#999999] mt-4">
+        Public ENS name for this circle's vault.
+      </p>
     </div>
   )
 }
