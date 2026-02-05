@@ -15,7 +15,7 @@ const circleData = {
   monthlyAmount: 892,
   totalMonths: 24,
   currentMonth: 1,
-  earlyEntryMonths: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24],
+  earlyEntryMonths: [2, 3, 4, 5, 6, 7, 8],
   payoutProgress: 1,
   installmentProgress: 1,
   dueAmount: 892,
@@ -36,27 +36,27 @@ function Header() {
       <div className="flex items-center gap-4">
         <Link
           href="#"
-          className="flex items-center gap-2 rounded-full bg-background px-4 py-2 font-semibold text-foreground transition-opacity hover:opacity-70"
+          className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
         >
           <ArrowLeft className="h-5 w-5" />
           <span>Back</span>
         </Link>
 
-        <div className="flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2">
-          <span className="h-2 w-2 rounded-sm bg-emerald-400" />
-          <span className="font-semibold text-emerald-500">Active</span>
+        <div className="flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5">
+          <span className="h-2 w-2 rounded-full bg-emerald-400" />
+          <span className="font-medium text-emerald-500">Active</span>
         </div>
       </div>
 
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-foreground/80 md:text-5xl">
+        <h1 className="text-4xl font-bold text-[#1A1A1A] md:text-5xl">
           ${circleData.amount.toLocaleString()}
         </h1>
-        <p className="text-lg text-foreground/80">{circleData.title}</p>
+        <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
       </div>
 
-      <div className="rounded-full bg-muted px-4 py-2">
-        <span className="font-semibold text-muted-foreground">{circleData.slotsLeft} slots left</span>
+      <div className="rounded-lg border border-[#E5E5E5] px-4 py-2">
+        <span className="font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
       </div>
     </header>
   )
@@ -64,50 +64,54 @@ function Header() {
 
 function EarlyEntryCard() {
   return (
-    <div className="flex items-start gap-3 rounded-3xl bg-purple-50 px-6 py-5">
-      <Info className="mt-0.5 h-5 w-5 text-purple-500" />
+    <div className="flex items-start gap-3 rounded-xl border border-purple-200 bg-[#F3F0FF] p-6">
+      <Info className="mt-0.5 h-5 w-5 text-purple-500 stroke-[1.5]" />
       <div>
-        <p className="font-semibold text-purple-500">Early entry</p>
-        <p className="text-purple-500/80">Selected for initial payouts</p>
+        <p className="font-semibold text-purple-600">Early entry</p>
+        <p className="text-purple-500">Selected for initial payouts</p>
       </div>
     </div>
   )
 }
 
-function TimelineCard() {
+function TimelineDatesCard() {
+  return (
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
+      <div className="space-y-4">
+        <div>
+          <p className="text-sm text-[#666666]">Started on</p>
+          <p className="text-base font-semibold text-[#1A1A1A]">{circleData.startDate}</p>
+        </div>
+
+        <div>
+          <p className="text-sm text-[#666666]">Ends on</p>
+          <p className="text-base font-semibold text-[#1A1A1A]">{circleData.endDate}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function PayoutProgressCard() {
   const progressPercentage = (circleData.payoutProgress / circleData.totalMonths) * 100
 
   return (
-    <div className="rounded-[40px] bg-card p-8">
-      <div className="space-y-6">
-        <div>
-          <p className="text-sm font-semibold text-muted-foreground">Started on</p>
-          <p className="font-semibold text-foreground">{circleData.startDate}</p>
-        </div>
-
-        <div>
-          <p className="text-sm font-semibold text-muted-foreground">Ends on</p>
-          <p className="font-semibold text-foreground">{circleData.endDate}</p>
-        </div>
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-[#666666]">Payout</span>
+        <span className="text-sm text-[#666666]">
+          {String(circleData.payoutProgress).padStart(2, "0")}/{circleData.totalMonths}
+        </span>
       </div>
-
-      <div className="mt-8 border-t border-border pt-6">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold text-muted-foreground">Payout</span>
-          <span className="text-sm font-semibold text-muted-foreground">
-            {String(circleData.payoutProgress).padStart(2, "0")}/{circleData.totalMonths}
-          </span>
-        </div>
-        <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
-          <div
-            className="h-full rounded-full bg-foreground transition-all"
-            style={{ width: `${progressPercentage}%` }}
-          />
-        </div>
-        <div className="mt-4">
-          <p className="text-sm font-semibold text-foreground">Due on</p>
-          <p className="text-2xl font-bold text-foreground">{circleData.payoutDueDate}</p>
-        </div>
+      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[#E5E5E5]">
+        <div
+          className="h-full rounded-full bg-[#1A1A1A] transition-all"
+          style={{ width: `${progressPercentage}%` }}
+        />
+      </div>
+      <div className="mt-4">
+        <p className="text-sm text-[#666666]">Due on</p>
+        <p className="text-2xl font-semibold text-[#1A1A1A]">{circleData.payoutDueDate}</p>
       </div>
     </div>
   )
@@ -117,62 +121,61 @@ function PaymentPlanCard() {
   const progressPercentage = (circleData.installmentProgress / circleData.totalMonths) * 100
 
   return (
-    <div className="rounded-[40px] bg-card p-8">
-      <h2 className="text-xl font-semibold text-foreground">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
+      <h2 className="text-lg font-semibold text-[#1A1A1A]">
         Pay ${circleData.monthlyAmount.toLocaleString()} /mo for {circleData.totalMonths} months
       </h2>
 
-      {/* Payment circles grid */}
+      {/* Payment circles grid - 2 rows of 12 */}
       <div className="mt-6 grid grid-cols-12 gap-2">
         {Array.from({ length: circleData.totalMonths }, (_, i) => {
           const monthNumber = i + 1
           const isCurrent = monthNumber === circleData.currentMonth
           const isEarlyEntry = circleData.earlyEntryMonths.includes(monthNumber)
-          const isPast = monthNumber < circleData.currentMonth
 
-          let bgColor = "bg-muted"
+          let bgColor = "bg-[#E5E5E5]"
           if (isCurrent) {
-            bgColor = "bg-foreground"
-          } else if (isPast || isEarlyEntry) {
-            bgColor = "bg-purple-200"
+            bgColor = "bg-[#1A1A1A]"
+          } else if (isEarlyEntry) {
+            bgColor = "bg-[#C4B5FD]"
           }
 
           return (
             <div
               key={monthNumber}
-              className={`aspect-square rounded-full ${bgColor} transition-colors`}
+              className={`aspect-square rounded-full ${bgColor}`}
               title={`Month ${monthNumber}`}
             />
           )
         })}
       </div>
 
-      <p className="mt-6 text-sm text-muted-foreground">
+      <p className="mt-6 text-sm text-[#666666]">
         Join the first payout on an{" "}
-        <span className="font-semibold text-purple-500">Early entry</span> window to most likely be
-        selected to <span className="font-semibold text-foreground">get $20,000 within the first 8 months</span>.
+        <span className="font-semibold text-purple-600">Early entry</span> window to most likely be
+        selected to <span className="font-semibold text-[#1A1A1A]">get $20,000 within the first 8 months</span>.
       </p>
 
-      <div className="mt-8 border-t border-border pt-6">
+      <div className="mt-6 border-t border-[#E5E5E5] pt-6">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold text-muted-foreground">Installment</span>
-          <span className="text-sm font-semibold text-muted-foreground">
+          <span className="text-sm text-[#666666]">Installment</span>
+          <span className="text-sm text-[#666666]">
             {String(circleData.installmentProgress).padStart(2, "0")}/{circleData.totalMonths}
           </span>
         </div>
-        <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
+        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[#E5E5E5]">
           <div
-            className="h-full rounded-full bg-foreground transition-all"
+            className="h-full rounded-full bg-[#1A1A1A] transition-all"
             style={{ width: `${progressPercentage}%` }}
           />
         </div>
 
         <div className="mt-6 flex items-end justify-between">
           <div>
-            <p className="text-sm font-semibold text-foreground">Due today</p>
-            <p className="text-3xl font-bold text-foreground">${circleData.dueAmount.toLocaleString()}</p>
+            <p className="text-sm text-[#666666]">Due today</p>
+            <p className="text-3xl font-semibold text-[#1A1A1A]">${circleData.dueAmount.toLocaleString()}</p>
           </div>
-          <Button className="rounded-full bg-foreground px-8 py-6 text-lg font-semibold text-background hover:bg-foreground/90">
+          <Button className="rounded-full bg-[#1A1A1A] px-8 py-6 text-base font-semibold text-white hover:bg-[#333333]">
             Join now
           </Button>
         </div>
@@ -183,17 +186,19 @@ function PaymentPlanCard() {
 
 function EnsCard() {
   return (
-    <div className="rounded-[40px] bg-card p-6">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1">
-          <span className="text-xl font-bold text-sky-500">◇</span>
-          <span className="text-xl font-bold text-foreground">ens</span>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 2L2 10L10 18L18 10L10 2Z" stroke="#3B82F6" strokeWidth="2" fill="none"/>
+          </svg>
+          <span className="text-lg font-bold text-[#1A1A1A]">ens</span>
         </div>
         <a
           href={circleData.ensUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 text-sm font-medium text-sky-600 transition-colors hover:text-sky-700"
+          className="flex items-center gap-1 text-sm font-medium text-[#3B82F6] transition-colors hover:text-[#2563EB]"
         >
           View on ENS
           <ExternalLink className="h-3 w-3" />
@@ -201,8 +206,8 @@ function EnsCard() {
       </div>
 
       <div className="mt-4">
-        <div className="inline-block rounded-full bg-sky-100 px-6 py-2">
-          <span className="font-semibold text-sky-500">{circleData.ensDomain}</span>
+        <div className="inline-block rounded-full bg-[#DBEAFE] px-5 py-2">
+          <span className="font-medium text-[#3B82F6]">{circleData.ensDomain}</span>
         </div>
       </div>
     </div>
@@ -216,14 +221,14 @@ function MembersCard() {
   }
 
   return (
-    <div className="rounded-[40px] bg-card p-6">
-      <h3 className="font-semibold text-muted-foreground">Active members</h3>
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
+      <h3 className="text-sm font-medium text-[#666666]">Active members</h3>
 
       <div className="mt-4 space-y-3">
         {circleData.members.map((member) => (
           <div key={member.name} className="flex items-center justify-between">
-            <span className="text-muted-foreground/70">{member.name}</span>
-            <span className="text-xs text-muted-foreground/60">{formatJoinDate(member.joinedDaysAgo)}</span>
+            <span className="text-[#1A1A1A]">{member.name}</span>
+            <span className="text-xs text-[#999999]">{formatJoinDate(member.joinedDaysAgo)}</span>
           </div>
         ))}
       </div>
@@ -233,17 +238,19 @@ function MembersCard() {
 
 function ArcCard() {
   return (
-    <div className="rounded-[40px] bg-card p-6">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1">
-          <span className="text-xl font-bold text-foreground">◭</span>
-          <span className="text-xl font-bold text-foreground">Arc</span>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 2L18 18H2L10 2Z" stroke="#1A1A1A" strokeWidth="2" fill="none"/>
+          </svg>
+          <span className="text-lg font-bold text-[#1A1A1A]">Arc</span>
         </div>
         <a
           href={circleData.arcscanUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 text-sm font-medium text-foreground transition-colors hover:opacity-70"
+          className="flex items-center gap-1 text-sm font-medium text-[#1A1A1A] transition-colors hover:opacity-70"
         >
           View on Arcscan
           <ExternalLink className="h-3 w-3" />
@@ -255,12 +262,12 @@ function ArcCard() {
 
 function TermsCard() {
   return (
-    <div className="rounded-3xl bg-card px-6 py-5">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
       <div className="flex items-start gap-3">
-        <Info className="mt-0.5 h-5 w-5 text-muted-foreground" />
-        <p className="text-sm text-muted-foreground">
+        <Info className="mt-0.5 h-5 w-5 text-[#666666] stroke-[1.5]" />
+        <p className="text-sm text-[#666666]">
           Read the{" "}
-          <Link href="#" className="font-medium text-foreground underline underline-offset-2 hover:opacity-70">
+          <Link href="#" className="font-medium text-[#1A1A1A] underline underline-offset-2 hover:opacity-70">
             Terms and Conditions
           </Link>{" "}
           before joining a circle
@@ -272,15 +279,16 @@ function TermsCard() {
 
 export default function FundingCirclePage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <Header />
 
-      <main className="mx-auto max-w-7xl px-6 pb-12 pt-8 md:px-10">
-        <div className="grid gap-6 lg:grid-cols-[1fr_1.8fr_1fr]">
+      <main className="mx-auto max-w-6xl px-6 pb-12 pt-4 md:px-10">
+        <div className="grid gap-6 lg:grid-cols-[280px_1fr_280px]">
           {/* Left Column */}
           <div className="space-y-6">
             <EarlyEntryCard />
-            <TimelineCard />
+            <TimelineDatesCard />
+            <PayoutProgressCard />
           </div>
 
           {/* Center Column */}
@@ -289,7 +297,7 @@ export default function FundingCirclePage() {
           </div>
 
           {/* Right Column */}
-          <div className="space-y-4">
+          <div className="space-y-6">
             <EnsCard />
             <MembersCard />
             <ArcCard />
