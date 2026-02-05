@@ -3,6 +3,8 @@
 import { ArrowLeft, ExternalLink, Info } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import MembersCard from "@/components/MembersCard"
+import ArcCard from "@/components/ArcCard"
 
 // Mock data for the funding circle
 const circleData = {
@@ -214,7 +216,7 @@ function EnsCard() {
   )
 }
 
-function MembersCard() {
+function MembersAndArcCard() {
   const formatJoinDate = (daysAgo: number) => {
     if (daysAgo === 1) return "Joined 1 day ago"
     return `Joined ${daysAgo} days ago`
@@ -223,26 +225,23 @@ function MembersCard() {
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
       {/* Active Members Section */}
-      <h3 className="text-base font-semibold text-[#1A1A1A]">Active members</h3>
+      <h3 className="text-lg font-semibold text-[#1A1A1A]">Active members</h3>
 
-      <div className="mt-4 space-y-0">
+      <div className="mt-4">
         {circleData.members.map((member) => (
           <div key={member.name} className="flex items-center justify-between py-3">
-            <span className="text-[#1A1A1A]">{member.name}</span>
-            <span className="text-xs text-[#999999]">{formatJoinDate(member.joinedDaysAgo)}</span>
+            <span className="text-[#999999]">{member.name}</span>
+            <span className="text-sm text-[#999999]">{formatJoinDate(member.joinedDaysAgo)}</span>
           </div>
         ))}
       </div>
-    </div>
-  )
-}
 
-function ArcCard() {
-  return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
+      {/* Divider */}
+      <div className="my-4 h-px bg-[#E5E5E5]" />
+
       {/* Arc Section */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M10 2L18 18H2L10 2Z" stroke="#1A1A1A" strokeWidth="2" fill="none"/>
           </svg>
@@ -298,11 +297,10 @@ export default function FundingCirclePage() {
             <PaymentPlanCard />
           </div>
 
-          {/* Right Column - 4 separate cards */}
+          {/* Right Column - 3 cards */}
           <div className="space-y-4">
             <EnsCard />
-            <MembersCard />
-            <ArcCard />
+            <MembersAndArcCard />
             <TermsCard />
           </div>
         </div>
