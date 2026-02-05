@@ -37,7 +37,10 @@ const circleData = {
   ],
 }
 
-function Header() {
+// Mock connected wallet ENS name
+const MOCK_WALLET_ENS = "user.eth"
+
+function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boolean; onConnectWallet: () => void }) {
   return (
     <header 
       className="mx-auto max-w-[1280px] w-full px-6 md:px-10"
@@ -48,7 +51,7 @@ function Header() {
     >
       {/* Mobile + Tablet Header (<1024px): 2-row layout */}
       <div className="flex lg:hidden flex-col gap-4">
-        {/* Row 1: Back (left) + Connect wallet (right) */}
+        {/* Row 1: Back (left) + Connect wallet / ENS (right) */}
         <div className="flex items-center justify-between">
           <Link
             href="#"
@@ -57,9 +60,19 @@ function Header() {
             <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
             <span className="text-sm md:text-base whitespace-nowrap">Back</span>
           </Link>
-          <Button variant="outline" className="rounded-full border-[#E5E5E5] px-4 py-1.5 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent">
-            Connect wallet
-          </Button>
+          {isWalletConnected ? (
+            <div className="rounded-full border border-[#E5E5E5] px-4 py-1.5 text-sm font-medium text-[#1A1A1A]">
+              {MOCK_WALLET_ENS}
+            </div>
+          ) : (
+            <Button 
+              variant="outline" 
+              className="rounded-full border-[#E5E5E5] px-4 py-1.5 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent"
+              onClick={onConnectWallet}
+            >
+              Connect wallet
+            </Button>
+          )}
         </div>
         
         {/* Row 2: Title only - centered */}
@@ -71,7 +84,7 @@ function Header() {
         </div>
       </div>
 
-      {/* Desktop Header (1024px+) - 5-column grid: [Back] [flex] [Title] [flex] [Connect] */}
+      {/* Desktop Header (1024px+) - 5-column grid: [Back] [flex] [Title] [flex] [Connect/ENS] */}
       {/* This guarantees true centering: Title is in column 3, flanked by equal 1fr spacers */}
       <div 
         className="hidden lg:grid items-center min-h-[72px]"
@@ -100,13 +113,20 @@ function Header() {
         {/* Column 4: Flexible spacer (1fr) - balances column 2 */}
         <div />
 
-        {/* Column 5: Connect wallet button - end aligned */}
-        <Button 
-          variant="outline" 
-          className="justify-self-end rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent whitespace-nowrap min-w-0"
-        >
-          Connect wallet
-        </Button>
+        {/* Column 5: Connect wallet button or ENS name - end aligned */}
+        {isWalletConnected ? (
+          <div className="justify-self-end rounded-full border border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] whitespace-nowrap min-w-0">
+            {MOCK_WALLET_ENS}
+          </div>
+        ) : (
+          <Button 
+            variant="outline" 
+            className="justify-self-end rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent whitespace-nowrap min-w-0"
+            onClick={onConnectWallet}
+          >
+            Connect wallet
+          </Button>
+        )}
       </div>
     </header>
   )
@@ -305,7 +325,7 @@ function PaymentVisualizationCard() {
 }
 
 // FULL CARD: Installment Progress
-function InstallmentCard() {
+function InstallmentCard({ isWalletConnected }: { isWalletConnected: boolean }) {
   const progressPercentage = (circleData.installmentProgress / circleData.totalMonths) * 100
 
   return (
@@ -328,9 +348,13 @@ function InstallmentCard() {
           <p className="text-sm text-[#666666]">Due today</p>
           <p className="text-3xl font-semibold text-[#1A1A1A]">${formatNumber(circleData.dueAmount)}</p>
         </div>
-        <Button className="w-full sm:w-auto rounded-full bg-[#1A1A1A] px-8 py-6 text-base font-semibold text-white hover:bg-[#333333]">
-          Join now
-        </Button>
+        {isWalletConnected && (
+          <Link href="/join">
+            <Button className="w-full sm:w-auto rounded-full bg-[#1A1A1A] px-8 py-6 text-base font-semibold text-white hover:bg-[#333333]">
+              Join now
+            </Button>
+          </Link>
+        )}
       </div>
     </div>
   )
@@ -470,9 +494,15 @@ function SlotsCard() {
 }
 
 export default function FundingCirclePage() {
+  const [isWalletConnected, setIsWalletConnected] = useState(false)
+
+  const handleConnectWallet = () => {
+    setIsWalletConnected(true)
+  }
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <Header />
+      <Header isWalletConnected={isWalletConnected} onConnectWallet={handleConnectWallet} />
 
       <main className="flex-1 flex flex-col justify-center mx-auto max-w-[1280px] w-full px-6 md:px-10 pb-12 pt-4 box-border">
         {/* MOBILE (<768px): Single column stack */}
@@ -481,7 +511,7 @@ export default function FundingCirclePage() {
           <PaymentVisualizationCard />
           <TimelineCard />
           <PayoutCard />
-          <InstallmentCard />
+          <InstallmentCard isWalletConnected={isWalletConnected} />
           <EnsCard />
           <MembersCard />
           <ArcCard />
@@ -504,7 +534,7 @@ export default function FundingCirclePage() {
           <div style={{ gridArea: 'timeline' }}><TimelineCard /></div>
           <div style={{ gridArea: 'ens' }}><EnsCard /></div>
           <div style={{ gridArea: 'payout' }}><PayoutCard /></div>
-          <div style={{ gridArea: 'installment' }}><InstallmentCard /></div>
+          <div style={{ gridArea: 'installment' }}><InstallmentCard isWalletConnected={isWalletConnected} /></div>
           <div style={{ gridArea: 'members' }}><MembersCard /></div>
           <div style={{ gridArea: 'arc' }}><ArcCard /></div>
         </div>
@@ -521,7 +551,7 @@ export default function FundingCirclePage() {
           {/* Center column */}
           <div className="flex flex-col gap-5">
             <PaymentVisualizationCard />
-            <InstallmentCard />
+            <InstallmentCard isWalletConnected={isWalletConnected} />
           </div>
           
           {/* Right column */}
