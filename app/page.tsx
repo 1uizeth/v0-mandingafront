@@ -10,6 +10,33 @@ function formatNumber(num: number): string {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
+// ===== DESIGN TOKENS: Typography System =====
+// Global typography tokens for consistent sizing/spacing/weight across all components
+const TYPOGRAPHY = {
+  // Display: Large hero numbers like "$20,000"
+  display: "text-5xl font-bold",
+  
+  // Headings: Card titles, section headers
+  h1: "text-2xl font-bold",
+  h2: "text-lg font-semibold", 
+  h3: "text-base font-semibold",
+  
+  // Body text: Default paragraph content
+  body: "text-sm font-normal",
+  
+  // Body muted: Secondary copy, descriptions
+  bodyMuted: "text-xs text-[#999999]",
+  
+  // Labels: Small labels like "Started on", "Payout"
+  label: "text-xs text-[#666666]",
+  
+  // Caption: Tiny metadata like "1d ago", "01/24"
+  caption: "text-xs text-[#999999]",
+  
+  // Button: Button and link text
+  button: "text-sm font-medium",
+}
+
 // ===== DESIGN TOKENS: Spacing & Padding System =====
 // All cards use a unified token system for visual consistency
 const PADDING_XS = "p-2"   // 8px
@@ -25,7 +52,8 @@ const GAP_L = "gap-6"      // 24px
 const GAP_XL = "gap-8"     // 32px
 
 // Grid gap token (unified for all card-to-card spacing)
-const GRID_GAP = GAP_M     // 16px - consistent horizontal and vertical spacing
+const GRID_GAP = "gap-6"     // 24px - consistent horizontal and vertical spacing
+
 
 // Mock data for the funding circle
 const circleData = {
@@ -153,19 +181,19 @@ function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boo
 }
 
 // FULL CARD: Timeline (Started on / Ends on)
-// Two-row layout with unified spacing tokens
+// Compact, content-driven layout - no min-height or forced height
 function TimelineCard() {
   return (
-    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} h-full flex flex-col justify-start ${GAP_M}`}>
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
       {/* Row 1: Started on */}
       <div className="flex items-center justify-between">
-        <p className="text-xs text-[#666666]">Started on</p>
-        <p className="text-xs font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.startDate}</p>
+        <p className={TYPOGRAPHY.label}>Started on</p>
+        <p className="font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.startDate}</p>
       </div>
       {/* Row 2: Ends on */}
       <div className="flex items-center justify-between">
-        <p className="text-xs text-[#666666]">Ends on</p>
-        <p className="text-xs font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.endDate}</p>
+        <p className={TYPOGRAPHY.label}>Ends on</p>
+        <p className="font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.endDate}</p>
       </div>
     </div>
   )
@@ -183,8 +211,8 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
       <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
         {/* Header: Title | Counter (empty pre-join) */}
         <div className="flex items-center justify-between">
-          <span className="text-xs text-[#666666]">Payout</span>
-          <span className="text-xs text-[#666666]"></span>
+          <span className={TYPOGRAPHY.label}>Payout</span>
+          <span></span>
         </div>
 
         {/* Progress bar with 1% initial fill */}
@@ -194,8 +222,8 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
 
         {/* Content row: text left, amount right */}
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
-          <span className="text-xs font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.amount)}</span>
+          <span className="font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
+          <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.amount)}</span>
         </div>
       </div>
     )
@@ -206,8 +234,8 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
       {/* Header: Title | Counter */}
       <div className="flex items-center justify-between">
-        <span className="text-xs text-[#666666]">Payout</span>
-        <span className="text-xs text-[#666666]">
+        <span className={TYPOGRAPHY.label}>Payout</span>
+        <span className={TYPOGRAPHY.caption}>
           {String(circleData.payoutProgress).padStart(2, "0")}/{circleData.totalMonths}
         </span>
       </div>
@@ -222,8 +250,8 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
 
       {/* Content row: text left, amount right */}
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold text-[#1A1A1A]">Always due on the 1st, every month</span>
-        <span className="text-xs font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.amount)}</span>
+        <span className="font-semibold text-[#1A1A1A]">Always due on the 1st, every month</span>
+        <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.amount)}</span>
       </div>
     </div>
   )
@@ -349,15 +377,15 @@ function CircleGrid({
 }
 
 // FULL CARD: Payment Visualization
-// Layout: Title → Description → Dots Grid (fills card height)
+// Content-driven layout: Title → Description → Dots Grid (no forced height)
 function PaymentVisualizationCard() {
   return (
-    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M} w-full h-full justify-between`}>
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M} w-full`}>
       <div>
-        <h2 className="text-sm font-semibold text-[#1A1A1A]">
+        <h2 className={`${TYPOGRAPHY.h3} text-[#1A1A1A]`}>
           Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
         </h2>
-        <p className="text-xs text-[#999999] mt-1">
+        <p className={`${TYPOGRAPHY.bodyMuted} mt-1`}>
           Early entry: priority access to payouts in the first 8 months.
         </p>
       </div>
@@ -388,8 +416,8 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
       <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
         {/* Header: Title | Counter (empty pre-join) */}
         <div className="flex items-center justify-between">
-          <span className="text-xs text-[#666666]">Installments</span>
-          <span className="text-xs text-[#666666]"></span>
+          <span className={TYPOGRAPHY.label}>Installments</span>
+          <span></span>
         </div>
 
         {/* Progress bar with 1% initial fill */}
@@ -399,8 +427,8 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
 
         {/* Content row: text left, amount right */}
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
-          <span className="text-xs font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.monthlyAmount)}</span>
+          <span className="font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
+          <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.monthlyAmount)}</span>
         </div>
       </div>
     )
@@ -411,8 +439,8 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
       {/* Header: Title | Counter */}
       <div className="flex items-center justify-between">
-        <span className="text-xs text-[#666666]">Installments</span>
-        <span className="text-xs text-[#666666]">
+        <span className={TYPOGRAPHY.label}>Installments</span>
+        <span className={TYPOGRAPHY.caption}>
           {String(circleData.installmentProgress).padStart(2, "0")}/{circleData.totalMonths}
         </span>
       </div>
@@ -427,8 +455,8 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
 
       {/* Content row: text left, amount right */}
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
-        <span className="text-xs font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.dueAmount)}</span>
+        <span className="font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
+        <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.dueAmount)}</span>
       </div>
     </div>
   )
@@ -436,7 +464,6 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
 
 // INFRA CARD: ENS Integration
 // Header (two-column: logo+name | link) → Description → ENS pill
-// Uses CardHeaderRow pattern with consistent spacing
 function EnsCard() {
   return (
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
@@ -447,34 +474,33 @@ function EnsCard() {
           <svg width="20" height="20" viewBox="0 0 94 94" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" clipRule="evenodd" d="M42.4734 1.5491C42.1294 1.02598 42.7618 0.413402 43.2749 0.772602L64.7575 15.8095C78.2972 25.2867 84.5315 42.208 80.2388 58.1544C79.8987 59.4177 79.5339 60.5235 79.1912 61.45C78.9787 62.0244 78.134 61.9004 78.0914 61.2895C77.7292 56.0972 73.9905 50.1611 71.2769 45.8527C70.7925 45.0835 70.3408 44.3663 69.9467 43.7144C67.3093 39.3512 48.2169 10.2849 42.4734 1.5491ZM14.0286 43.8411L39.7425 1.53062C40.0411 1.03949 39.5038 0.466613 38.9939 0.732504C34.4986 3.07609 22.3693 9.85687 12.8466 19.3674C2.41081 29.7898 10.8445 41.225 13.1082 43.9128C13.3584 44.2098 13.8269 44.1729 14.0286 43.8411ZM39.1069 92.8848C39.4509 93.4079 38.8185 94.0205 38.3054 93.6614L16.8228 78.6244C3.28314 69.1472 -2.95117 52.2259 1.34153 36.2795C1.68156 35.0162 2.04642 33.9104 2.38911 32.9839C2.6016 32.4095 3.44632 32.5335 3.48892 33.1444C3.85109 38.3366 7.58981 44.2728 10.3034 48.5812C10.7878 49.3503 11.2395 50.0676 11.6336 50.7195C14.271 55.0827 33.3634 84.149 39.1069 92.8848ZM41.8398 92.8988L67.5538 50.5883C67.7555 50.2566 68.224 50.2196 68.4742 50.5166C70.7379 53.2044 79.1716 64.6396 68.7358 75.062C59.2131 84.5725 47.0838 91.3533 42.5886 93.6969C42.0786 93.9628 41.5413 93.3899 41.8398 92.8988Z" fill="#5298FF"/>
           </svg>
-          <span className="text-sm font-bold text-[#5298FF]">ens</span>
+          <span className={`${TYPOGRAPHY.h3} text-[#5298FF]`}>ens</span>
         </div>
         <a
           href={circleData.ensUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs font-medium text-[#5298FF] transition-colors hover:opacity-70 whitespace-nowrap"
+          className={`${TYPOGRAPHY.button} text-[#5298FF] transition-colors hover:opacity-70 whitespace-nowrap`}
         >
           View on ENS →
         </a>
       </div>
 
       {/* Description - muted, below header */}
-      <p className="text-xs text-[#999999]">
+      <p className={TYPOGRAPHY.bodyMuted}>
         Public ENS name for this circle's vault.
       </p>
 
       {/* Primary Object - ENS pill */}
       <div className="rounded-full bg-[#E3F2FD] px-4 py-2 text-center">
-        <span className="text-xs font-medium text-[#1976D2]">{circleData.ensDomain}</span>
+        <span className={`${TYPOGRAPHY.button} text-[#1976D2]`}>{circleData.ensDomain}</span>
       </div>
     </div>
   )
 }
 
 // FULL CARD: Active Members
-// Height-capped list to prevent row stretching in grid
-// Uses unified token spacing
+// Compact member list with consistent typography
 function MembersCard() {
   const formatJoinDate = (daysAgo: number) => `${daysAgo}d ago`
   const maxVisibleMembers = 4
@@ -482,7 +508,7 @@ function MembersCard() {
 
   return (
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
-      <h3 className="text-sm font-semibold text-[#1A1A1A]">Active members</h3>
+      <h3 className={`${TYPOGRAPHY.h3} text-[#1A1A1A]`}>Active members</h3>
 
       {/* Member list */}
       <div>
@@ -491,15 +517,15 @@ function MembersCard() {
             key={member.name} 
             className={`flex items-center justify-between gap-3 py-2 min-w-0 ${index < Math.min(circleData.members.length, maxVisibleMembers) - 1 ? 'border-b border-[#F5F5F5]' : ''}`}
           >
-            <span className="text-xs text-[#1A1A1A] truncate min-w-0">{member.name}</span>
-            <span className="text-xs text-[#999999] whitespace-nowrap flex-shrink-0">{formatJoinDate(member.joinedDaysAgo)}</span>
+            <span className="text-[#1A1A1A] truncate min-w-0">{member.name}</span>
+            <span className={TYPOGRAPHY.caption}>{formatJoinDate(member.joinedDaysAgo)}</span>
           </div>
         ))}
       </div>
 
       {/* Overflow indicator if more members exist */}
       {hasMoreMembers && (
-        <p className="text-xs text-[#999999]">
+        <p className={TYPOGRAPHY.caption}>
           + {circleData.members.length - maxVisibleMembers} more members
         </p>
       )}
@@ -508,7 +534,7 @@ function MembersCard() {
 }
 
 // INFRA CARD: Arc Integration
-// Header (two-column: logo+name | link) with CardHeaderRow pattern
+// Header (two-column: logo+name | link)
 function ArcCard() {
   return (
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
@@ -519,13 +545,13 @@ function ArcCard() {
           <svg width="20" height="20" viewBox="0 0 298 312" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0,311.98c2.53-76.38,15.48-147.66,37.13-203.09C64.54,38.67,104.23,0,148.86,0s84.32,38.67,111.74,108.9c14.26,36.52,24.75,79.92,30.97,127.13.56,4.22,1.03,8.5,1.51,12.78.16.26.25.51.22.71,0,0,3.65,22.82,4.43,62.47h-.41c-5.42-4.45-69.33-54.66-175.27-40.12,1.6-17.93,3.8-35.37,6.64-52.09.15-.85.31-1.68.46-2.53,41.55-1.25,77.92,3.57,105.81,9.9-.1-.66-.19-1.34-.3-2-5.73-35.7-14.19-68.38-25.1-96.31-17.83-45.67-41.1-74.04-60.71-74.04s-42.88,28.37-60.71,74.04c-4.32,11.05-8.25,22.83-11.77,35.25-4.95,17.41-9.11,36.08-12.44,55.69-4.92,28.97-7.99,60.03-9.12,92.22H0Z" fill="#1A1A1A"/>
           </svg>
-          <span className="text-sm font-bold text-[#1A1A1A]">Arc</span>
+          <span className={`${TYPOGRAPHY.h3} text-[#1A1A1A]`}>Arc</span>
         </div>
         <a
           href={circleData.arcscanUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs font-medium text-[#1A1A1A] transition-colors hover:opacity-70 whitespace-nowrap"
+          className={`${TYPOGRAPHY.button} text-[#1A1A1A] transition-colors hover:opacity-70 whitespace-nowrap`}
         >
           View on Arcscan →
         </a>
@@ -535,17 +561,16 @@ function ArcCard() {
 }
 
 // Slots card - Active badge + slots count
-// Uses CardHeaderRow pattern (two-column layout with justified spacing)
 function SlotsCard() {
   return (
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex items-center justify-between`}>
       {/* Active badge */}
       <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
         <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
-        <span className="text-xs font-medium text-[#2E7D32]">Active</span>
+        <span className={`${TYPOGRAPHY.button} text-[#2E7D32]`}>Active</span>
       </div>
       {/* Slots count */}
-      <span className="text-xs font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
+      <span className={`${TYPOGRAPHY.button} text-[#666666]`}>{circleData.slotsLeft} slots left</span>
     </div>
   )
 }
@@ -597,66 +622,48 @@ export default function FundingCirclePage() {
           <div style={{ gridArea: 'arc' }}><ArcCard /></div>
         </div>
 
-        {/* DESKTOP (1024px+): Strict 2-row layout with aligned baselines */}
-        {/* DESKTOP (1024px+): 3×3 Grid Module with unified cohesion */}
+        {/* DESKTOP (1024px+): Restructured 3-column layout */}
+        {/* Column 1: 4 stacked cards | Column 2: Pay + Arc | Column 3: ENS + Members */}
         <div 
           className={`hidden lg:grid ${GRID_GAP} w-full`}
           style={{
             gridTemplateColumns: '1fr 1fr 1fr',
-            gridTemplateRows: 'minmax(0, 1fr) minmax(0, 1fr) auto',
-            alignContent: 'stretch',
-            alignItems: 'stretch'
+            gridTemplateRows: 'auto',
+            alignContent: 'start',
+            alignItems: 'start'
           }}
         >
-          {/* ROW 1 */}
-          
-          {/* Row 1, Col 1: Active (Slots) */}
-          <div style={{ gridColumn: 1, gridRow: 1, height: '100%' }}>
+          {/* COLUMN 1: 4 Stacked Cards (Active, Timeline, Payout, Installments) */}
+          <div className={`flex flex-col ${GRID_GAP}`}>
+            {/* Row 1: Active (Slots) */}
             <SlotsCard />
-          </div>
-          
-          {/* Row 1, Col 2: Pay $892/mo (spans rows 1-2) */}
-          <div 
-            style={{ gridColumn: 2, gridRow: '1 / span 2', height: '100%', width: '100%' }}
-            className="flex flex-col justify-between"
-          >
-            <PaymentVisualizationCard />
-          </div>
-          
-          {/* Row 1, Col 3: ENS */}
-          <div style={{ gridColumn: 3, gridRow: 1, height: '100%' }}>
-            <EnsCard />
-          </div>
-
-          {/* ROW 2 */}
-          
-          {/* Row 2, Col 1: Started/Ends */}
-          <div style={{ gridColumn: 1, gridRow: 2, height: '100%', width: '100%' }}>
+            
+            {/* Row 2: Timeline (Started/Ends) */}
             <TimelineCard />
-          </div>
-          
-          {/* Row 2, Col 2: (empty - Pay card already spans here) */}
-          
-          {/* Row 2, Col 3: Active members */}
-          <div style={{ gridColumn: 3, gridRow: 2, height: '100%' }}>
-            <MembersCard />
-          </div>
-
-          {/* ROW 3: Bottom compact cards (180px fixed height) */}
-          
-          {/* Row 3, Col 1: Payout */}
-          <div style={{ gridColumn: 1, gridRow: 3, height: '100%', width: '100%' }}>
+            
+            {/* Row 3: Payout */}
             <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
-          </div>
-          
-          {/* Row 3, Col 2: Installments */}
-          <div style={{ gridColumn: 2, gridRow: 3, height: '100%', width: '100%' }}>
+            
+            {/* Row 4: Installments */}
             <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
-          
-          {/* Row 3, Col 3: Arc */}
-          <div style={{ gridColumn: 3, gridRow: 3, height: '100%', width: '100%' }}>
+
+          {/* COLUMN 2: Pay Card + Arc Card */}
+          <div className={`flex flex-col ${GRID_GAP}`}>
+            {/* Row 1: Pay */}
+            <PaymentVisualizationCard />
+            
+            {/* Row 2: Arc */}
             <ArcCard />
+          </div>
+
+          {/* COLUMN 3: ENS + Members */}
+          <div className={`flex flex-col ${GRID_GAP}`}>
+            {/* Row 1: ENS */}
+            <EnsCard />
+            
+            {/* Row 2: Members */}
+            <MembersCard />
           </div>
         </div>
       </main>
