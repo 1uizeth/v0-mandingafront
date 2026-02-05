@@ -74,38 +74,39 @@ function Header() {
         </div>
       </div>
 
-      {/* Desktop Header (1024px+) - 3 column grid aligned with dashboard */}
-      <div className="hidden lg:grid grid-cols-3 gap-6 items-center">
-        {/* Column 1: Back button LEFT, Active badge aligned to RIGHT edge of column */}
-        <div className="flex items-center justify-between">
-          <Link
-            href="#"
-            className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            <span>Back</span>
-          </Link>
+      {/* Desktop Header (1024px+) - Absolute centering for title, edge-aligned Back/Connect */}
+      <div className="hidden lg:block relative">
+        {/* Back button - absolute left */}
+        <Link
+          href="#"
+          className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
+        >
+          <ArrowLeft className="h-5 w-5" />
+          <span>Back</span>
+        </Link>
 
-          {/* Active aligned to RIGHT edge of column 1 */}
-          <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
-            <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
-            <span className="text-sm font-medium text-[#2E7D32]">Active</span>
-          </div>
-        </div>
-
-        {/* Column 2: Centered title */}
-        <div className="flex flex-col items-center justify-center text-center">
+        {/* Title - mathematically centered */}
+        <div className="flex flex-col items-center justify-center text-center py-2">
           <h1 className="text-5xl font-bold text-[#1A1A1A]">
             ${formatNumber(circleData.amount)}
           </h1>
           <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
         </div>
 
-        {/* Column 3: Connect wallet button aligned to LEFT edge */}
-        <div className="flex justify-start">
+        {/* Connect wallet - absolute right */}
+        <div className="absolute right-0 top-1/2 -translate-y-1/2">
           <Button variant="outline" className="rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent">
             Connect wallet
           </Button>
+        </div>
+
+        {/* Active pill - positioned to align with right edge of column 1 (calc: 33.33% of container width minus pill width) */}
+        <div 
+          className="absolute top-1/2 -translate-y-1/2 flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5"
+          style={{ left: 'calc(33.33% - 85px)' }}
+        >
+          <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
+          <span className="text-sm font-medium text-[#2E7D32]">Active</span>
         </div>
       </div>
     </header>
@@ -274,26 +275,17 @@ function CircleGrid({
   )
 }
 
-// FULL CARD: Payment Visualization (with embedded Early Entry info tag)
+// FULL CARD: Payment Visualization
+// Layout: Title → Dots Grid → Early Entry info tag (at bottom)
 function PaymentVisualizationCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col gap-4">
       <h2 className="text-lg font-semibold text-[#1A1A1A]">
         Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
       </h2>
 
-      {/* Embedded Early Entry info tag */}
-      <div className="mt-4 rounded-lg border border-purple-100 bg-purple-50 p-3 flex items-start gap-2">
-        <Info className="h-4 w-4 text-purple-600 stroke-[1.5] flex-shrink-0 mt-0.5" />
-        <div>
-          <p className="font-semibold text-purple-600 text-sm">Early entry</p>
-          <p className="text-purple-500 text-xs leading-relaxed line-clamp-2">
-            First slots are reserved for early entry members. Higher chance to be selected within the first 8 months.
-          </p>
-        </div>
-      </div>
-
-      <div className="mt-4 flex-1 flex items-start">
+      {/* Dots grid */}
+      <div className="flex-1 flex items-start">
         <CircleGrid 
           totalDots={circleData.totalMonths}
           filledDot={circleData.currentMonth}
@@ -305,10 +297,16 @@ function PaymentVisualizationCard() {
         />
       </div>
 
-      <p className="mt-4 text-sm text-[#666666] leading-relaxed">
-        <span className="font-semibold text-purple-600">Early entry</span> improves your odds of a{" "}
-        <span className="font-semibold text-[#1A1A1A]">$20,000 payout within 8 months</span>.
-      </p>
+      {/* Early Entry info tag - at bottom */}
+      <div className="rounded-lg border border-purple-100 bg-purple-50 p-3 flex items-start gap-2">
+        <Info className="h-4 w-4 text-purple-600 stroke-[1.5] flex-shrink-0 mt-0.5" />
+        <div>
+          <p className="font-semibold text-purple-600 text-sm">Early entry</p>
+          <p className="text-purple-500 text-xs leading-relaxed line-clamp-2">
+            First slots are reserved for early entry members. Higher chance to be selected within the first 8 months.
+          </p>
+        </div>
+      </div>
     </div>
   )
 }
