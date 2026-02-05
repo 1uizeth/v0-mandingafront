@@ -1,8 +1,11 @@
-"use client"
-
 import { ArrowLeft, ExternalLink, Info } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+
+// Format number consistently (avoids hydration mismatch from toLocaleString)
+function formatNumber(num: number): string {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+}
 
 // Mock data for the funding circle
 const circleData = {
@@ -49,7 +52,7 @@ function Header() {
         </div>
         <div className="text-center">
           <h1 className="text-4xl font-bold text-[#1A1A1A]">
-            ${circleData.amount.toLocaleString()}
+            ${formatNumber(circleData.amount)}
           </h1>
           <p className="text-base text-[#1A1A1A]">{circleData.title}</p>
         </div>
@@ -77,7 +80,7 @@ function Header() {
         </div>
         <div className="text-center">
           <h1 className="text-5xl font-bold text-[#1A1A1A]">
-            ${circleData.amount.toLocaleString()}
+            ${formatNumber(circleData.amount)}
           </h1>
           <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
         </div>
@@ -110,7 +113,7 @@ function Header() {
         {/* Column 2: Centered title */}
         <div className="flex flex-col items-center justify-center text-center">
           <h1 className="text-5xl font-bold text-[#1A1A1A]">
-            ${circleData.amount.toLocaleString()}
+            ${formatNumber(circleData.amount)}
           </h1>
           <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
         </div>
@@ -232,7 +235,7 @@ function PaymentVisualizationCard() {
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
       <h2 className="text-lg font-semibold text-[#1A1A1A]">
-        Pay ${circleData.monthlyAmount.toLocaleString()} /mo for {circleData.totalMonths} months
+        Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
       </h2>
 
       {/* Mobile: 6 cols × 4 rows */}
@@ -305,7 +308,7 @@ function InstallmentCard() {
       <div className="mt-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           <p className="text-sm text-[#666666]">Due today</p>
-          <p className="text-3xl font-semibold text-[#1A1A1A]">${circleData.dueAmount.toLocaleString()}</p>
+          <p className="text-3xl font-semibold text-[#1A1A1A]">${formatNumber(circleData.dueAmount)}</p>
         </div>
         <Button className="w-full sm:w-auto rounded-full bg-[#1A1A1A] px-8 py-6 text-base font-semibold text-white hover:bg-[#333333]">
           Join now
