@@ -104,18 +104,18 @@ function TermsStep({ onSign }: { onSign: () => void }) {
   ]
 
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white flex flex-col max-h-[calc(100vh-180px)]">
-      {/* Header - fixed */}
-      <div className="p-5 lg:p-6 pb-0">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white">
+      {/* Header */}
+      <div className="px-5 lg:px-6 pt-5 lg:pt-6">
         <h2 className="text-lg font-semibold text-[#1A1A1A]">Terms and Participation Agreement</h2>
         <p className="text-sm text-[#666666] mt-1">Please review before joining.</p>
       </div>
 
-      {/* Body - scrollable if needed */}
-      <div className="flex-1 min-h-0 overflow-auto px-5 lg:px-6 py-4">
+      {/* Body */}
+      <div className="px-5 lg:px-6 py-5">
         <div className="p-4 bg-[#FAFAFA] rounded-lg border border-[#E5E5E5]">
-          <p className="font-mono text-sm text-[#1A1A1A] mb-3">If you accept, you agree that:</p>
-          <div className="flex flex-col gap-3">
+          <p className="font-mono text-sm text-[#1A1A1A] mb-4">If you accept, you agree that:</p>
+          <div className="flex flex-col gap-4">
             {terms.map((t) => (
               <div key={t.num} className="font-mono text-sm flex gap-3">
                 <span className="text-[#1A1A1A] font-semibold shrink-0">{t.num}.</span>
@@ -129,9 +129,9 @@ function TermsStep({ onSign }: { onSign: () => void }) {
         </div>
       </div>
 
-      {/* Footer - pinned to bottom */}
-      <div className="p-5 lg:p-6 pt-0 border-t border-[#F0F0F0] mt-auto">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 pt-4">
+      {/* Footer */}
+      <div className="px-5 lg:px-6 pb-5 lg:pb-6 pt-4 border-t border-[#F0F0F0]">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <label className="flex items-center gap-2.5 cursor-pointer">
             <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)}
               className="w-4 h-4 rounded border-[#E5E5E5] text-[#1A1A1A] focus:ring-[#1A1A1A]" />
@@ -149,18 +149,18 @@ function TermsStep({ onSign }: { onSign: () => void }) {
   )
 }
 
-// Step 2: Review - flex column card anatomy
+// Step 2: Review
 function PreviewStep({ onContinue }: { onContinue: () => void }) {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white flex flex-col max-h-[calc(100vh-180px)]">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white">
       {/* Header */}
-      <div className="p-5 lg:p-6 pb-0">
+      <div className="px-5 lg:px-6 pt-5 lg:pt-6">
         <h2 className="text-lg font-semibold text-[#1A1A1A]">Review</h2>
         <p className="text-sm text-[#666666] mt-1">Verify your commitment before proceeding.</p>
       </div>
 
-      {/* Body - scrollable if needed */}
-      <div className="flex-1 min-h-0 overflow-auto px-5 lg:px-6 py-4">
+      {/* Body */}
+      <div className="px-5 lg:px-6 py-5">
         {/* Your Commitment */}
         <div>
           <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Your Commitment</h3>
@@ -189,7 +189,7 @@ function PreviewStep({ onContinue }: { onContinue: () => void }) {
         </div>
 
         {/* Network & Fees */}
-        <div className="mt-4">
+        <div className="mt-5">
           <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Network & Fees</h3>
           <div className="text-sm">
             <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
@@ -208,14 +208,12 @@ function PreviewStep({ onContinue }: { onContinue: () => void }) {
         </div>
       </div>
 
-      {/* Footer - pinned */}
-      <div className="p-5 lg:p-6 pt-0 border-t border-[#F0F0F0] mt-auto">
-        <div className="pt-4">
-          <Button onClick={onContinue}
-            className="w-full rounded-full bg-[#1A1A1A] px-6 py-4 text-sm font-semibold text-white hover:bg-[#333333]">
-            Continue
-          </Button>
-        </div>
+      {/* Footer */}
+      <div className="px-5 lg:px-6 pb-5 lg:pb-6 pt-4 border-t border-[#F0F0F0]">
+        <Button onClick={onContinue}
+          className="w-full rounded-full bg-[#1A1A1A] px-6 py-4 text-sm font-semibold text-white hover:bg-[#333333]">
+          Continue
+        </Button>
       </div>
     </div>
   )
@@ -245,15 +243,15 @@ function ConfirmStep({
   ]
 
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white flex flex-col max-h-[calc(100vh-180px)]">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white">
       {/* Header */}
-      <div className="p-5 lg:p-6 pb-0">
+      <div className="px-5 lg:px-6 pt-5 lg:pt-6">
         <h2 className="text-lg font-semibold text-[#1A1A1A]">Confirm</h2>
         <p className="text-sm text-[#666666] mt-1">Execute your membership transaction.</p>
       </div>
 
-      {/* Body - scrollable if needed */}
-      <div className="flex-1 min-h-0 overflow-auto px-5 lg:px-6 py-4">
+      {/* Body */}
+      <div className="px-5 lg:px-6 py-5">
         {/* Summary Section */}
         <div className="text-sm">
           <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
@@ -275,16 +273,16 @@ function ConfirmStep({
         </div>
 
         {/* Transaction Execution - Agreement as first completed step */}
-        <div className="mt-4">
-          <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Transaction Execution</h3>
-          <div className="space-y-2 text-sm">
+        <div className="mt-5">
+          <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-3">Transaction Execution</h3>
+          <div className="space-y-3 text-sm">
             {txSteps.map((item) => {
               // Step 0 (Agreement) is always complete
               const isComplete = item.step === 0 || executionStep > item.step
               const isActive = item.step !== 0 && executionStep === item.step && isExecuting
 
               return (
-                <div key={item.step} className="flex items-center gap-2.5 py-1">
+                <div key={item.step} className="flex items-center gap-2.5">
                   <div 
                     className={`w-5 h-5 rounded-full flex items-center justify-center text-xs transition-all ${
                       isComplete 
@@ -307,25 +305,23 @@ function ConfirmStep({
               )
             })}
           </div>
-          <p className="text-xs text-[#999999] mt-2">Each step requires wallet approval.</p>
+          <p className="text-xs text-[#999999] mt-3">Each step requires wallet approval.</p>
         </div>
       </div>
 
-      {/* Footer - pinned */}
-      <div className="p-5 lg:p-6 pt-0 border-t border-[#F0F0F0] mt-auto">
-        <div className="pt-4">
-          <Button 
-            onClick={onConfirm}
-            disabled={isExecuting}
-            className={`w-full rounded-full px-6 py-4 text-sm font-semibold ${
-              isExecuting 
-                ? "bg-[#E5E5E5] text-[#999999] cursor-not-allowed" 
-                : "bg-[#1A1A1A] text-white hover:bg-[#333333]"
-            }`}
-          >
-            {isExecuting ? "Processing..." : "Confirm & Join"}
-          </Button>
-        </div>
+      {/* Footer */}
+      <div className="px-5 lg:px-6 pb-5 lg:pb-6 pt-4 border-t border-[#F0F0F0]">
+        <Button 
+          onClick={onConfirm}
+          disabled={isExecuting}
+          className={`w-full rounded-full px-6 py-4 text-sm font-semibold ${
+            isExecuting 
+              ? "bg-[#E5E5E5] text-[#999999] cursor-not-allowed" 
+              : "bg-[#1A1A1A] text-white hover:bg-[#333333]"
+          }`}
+        >
+          {isExecuting ? "Processing..." : "Confirm & Join"}
+        </Button>
       </div>
     </div>
   )
@@ -430,22 +426,20 @@ export default function JoinCirclePage() {
 
       <main className="flex-1 flex flex-col pb-8" style={{ paddingTop: 'clamp(16px, 3vh, 32px)' }}>
         <div className="mx-auto max-w-[760px] w-full px-6">
-          <div>
-            {currentStep === 1 && (
-              <TermsStep onSign={handleSignAgreement} />
-            )}
-            {currentStep === 2 && (
-              <PreviewStep onContinue={handlePreviewContinue} />
-            )}
-            {currentStep === 3 && (
-              <ConfirmStep 
-                onConfirm={handleConfirm}
-                agreementSignedAt={agreementSignedAt}
-                executionStep={executionStep}
-                isExecuting={isExecuting}
-              />
-            )}
-          </div>
+          {currentStep === 1 && (
+            <TermsStep onSign={handleSignAgreement} />
+          )}
+          {currentStep === 2 && (
+            <PreviewStep onContinue={handlePreviewContinue} />
+          )}
+          {currentStep === 3 && (
+            <ConfirmStep 
+              onConfirm={handleConfirm}
+              agreementSignedAt={agreementSignedAt}
+              executionStep={executionStep}
+              isExecuting={isExecuting}
+            />
+          )}
         </div>
       </main>
 
