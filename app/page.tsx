@@ -123,7 +123,7 @@ function EarlyEntryTag() {
           <p className="font-semibold text-purple-600 text-base">Early entry</p>
         </div>
         <p className="text-purple-500 text-sm leading-relaxed line-clamp-2 pl-8">
-          Phase 1 of 3 — where early payouts are most likely.
+          First slots are reserved for early-entry members - highest chance to be selected early.
         </p>
       </div>
     </div>
