@@ -593,18 +593,16 @@ export default function FundingCirclePage() {
           className="hidden lg:grid gap-5 w-full items-stretch"
           style={{
             gridTemplateColumns: '1fr 1fr 1fr',
-            gridTemplateRows: 'auto 1fr',
+            gridTemplateRows: 'auto minmax(180px, 1fr)',
             alignContent: 'start'
           }}
         >
           {/* TOP AREA - Row 1: Variable height across columns, aligned baseline */}
           
-          {/* Left Column Top Area: Slots + Started/Ends stack (Ends extends to match Pay card height) */}
-          <div style={{ gridColumn: 1, gridRow: 1 }} className="flex flex-col gap-5 h-full">
+          {/* Left Column Top Area: Slots + Started/Ends stack (Ends expands to fill available space) */}
+          <div style={{ gridColumn: 1, gridRow: 1 }} className="flex flex-col gap-5">
             <SlotsCard />
-            <div className="flex-1 flex flex-col justify-start">
-              <TimelineCard />
-            </div>
+            <TimelineCard />
           </div>
           
           {/* Center Column Top Area: Pay card (height matches Column 3 top area) */}
@@ -621,20 +619,20 @@ export default function FundingCirclePage() {
             <MembersCard />
           </div>
 
-          {/* BOTTOM AREA - Row 2: Flexible height, distributes equally across columns */}
+          {/* BOTTOM AREA - Row 2: Fixed equal height across all columns */}
           
           {/* Left Column Bottom: Payout card */}
-          <div style={{ gridColumn: 1, gridRow: 2, height: '100%', width: '100%' }}>
+          <div style={{ gridColumn: 1, gridRow: 2, height: '100%', width: '100%' }} className="flex items-center">
             <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
           
           {/* Center Column Bottom: Installments card */}
-          <div style={{ gridColumn: 2, gridRow: 2, height: '100%', width: '100%' }}>
+          <div style={{ gridColumn: 2, gridRow: 2, height: '100%', width: '100%' }} className="flex items-center">
             <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
           
           {/* Right Column Bottom: Arc card */}
-          <div style={{ gridColumn: 3, gridRow: 2, height: '100%', width: '100%' }}>
+          <div style={{ gridColumn: 3, gridRow: 2, height: '100%', width: '100%' }} className="flex items-center">
             <ArcCard />
           </div>
         </div>
