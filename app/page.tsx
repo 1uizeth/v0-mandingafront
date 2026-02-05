@@ -111,22 +111,17 @@ function Header() {
   )
 }
 
-// INFO TAG: Early Entry (compact)
-// Text is split into controlled lines to prevent awkward wrapping
-// Third line adds balance and fills vertical space
+// INFO TAG: Early Entry
+// Title + description block with 2-3 line clamped description
 function EarlyEntryTag() {
   return (
-    <div className="flex items-start gap-3 rounded-xl border border-purple-100 bg-purple-50 p-4 h-full">
+    <div className="flex items-start gap-3 rounded-xl border border-purple-100 bg-purple-50 p-5 h-full">
       <Info className="h-5 w-5 text-purple-600 stroke-[1.5] flex-shrink-0 mt-0.5" />
-      <div className="flex flex-col justify-between h-full">
-        <div>
-          <p className="font-semibold text-purple-600 text-sm">Early entry</p>
-          <p className="text-purple-500 text-sm">
-            <span className="block">Selected for</span>
-            <span className="block">initial payouts</span>
-          </p>
-        </div>
-        <p className="text-purple-400 text-xs mt-2">Higher chance in first window</p>
+      <div>
+        <p className="font-semibold text-purple-600 text-base">Early entry</p>
+        <p className="text-purple-500 text-sm mt-1 leading-relaxed line-clamp-3">
+          This circle is split into 3 phases. Right now it's in Early entry phase, where early payouts are most likely.
+        </p>
       </div>
     </div>
   )
