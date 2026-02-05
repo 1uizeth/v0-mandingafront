@@ -375,9 +375,9 @@ function EnsCard() {
         </a>
       </div>
 
-      {/* Description - muted, single line */}
-      <p className="text-sm text-[#999999] mt-2 line-clamp-1">
-        The public ENS name of this circle's vault and smart contracts.
+      {/* Description - muted, allowed to wrap naturally */}
+      <p className="text-sm text-[#999999] mt-2">
+        Public ENS name for this circle's vault.
       </p>
 
       {/* Body - ENS chip as primary element */}
