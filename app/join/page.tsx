@@ -33,39 +33,64 @@ type Step = 1 | 2 | 3
 // Signing state for step 1 and step 3
 type SigningState = "idle" | "signing" | "success"
 
-// Minimal progress bar - just segments, no labels
+// Progress bar with labels
 function ProgressBar({ currentStep }: { currentStep: Step }) {
-  const steps = [1, 2, 3]
+  const steps = [
+    { num: 1, label: "Agreement" },
+    { num: 2, label: "Review" },
+    { num: 3, label: "Confirm" },
+  ]
 
   return (
-    <div className="flex items-center gap-1">
-      {steps.map((step) => (
-        <div key={step} className="flex-1">
-          <div 
-            className={`h-1 w-full rounded-full transition-colors ${
-              step <= currentStep 
-                ? "bg-[#1A1A1A]" 
-                : "bg-[#E5E5E5]"
+    <div className="w-full">
+      {/* Segments */}
+      <div className="flex items-center gap-1">
+        {steps.map((step) => (
+          <div key={step.num} className="flex-1">
+            <div 
+              className={`h-1 w-full rounded-full transition-colors ${
+                step.num <= currentStep 
+                  ? "bg-[#1A1A1A]" 
+                  : "bg-[#E5E5E5]"
+              }`}
+            />
+          </div>
+        ))}
+      </div>
+      {/* Labels */}
+      <div className="flex items-center justify-between mt-2">
+        {steps.map((step) => (
+          <span 
+            key={step.num}
+            className={`text-xs transition-colors ${
+              step.num <= currentStep 
+                ? "text-[#1A1A1A] font-medium" 
+                : "text-[#999999]"
             }`}
-          />
-        </div>
-      ))}
+          >
+            {step.label}
+          </span>
+        ))}
+      </div>
     </div>
   )
 }
 
-// Minimal header - just Back button, aligned with content
+// Header with Back button and title on same row
 function Header() {
   return (
-    <header className="w-full px-6 md:px-10 pt-8 md:pt-10">
-      <div className="max-w-[640px] mx-auto">
+    <header className="w-full px-6 md:px-10 pt-8 md:pt-10 pb-6">
+      <div className="max-w-[640px] mx-auto flex items-center gap-4">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-[#666666] font-medium transition-colors hover:text-[#1A1A1A]"
+          className="flex items-center gap-1.5 text-[#666666] transition-colors hover:text-[#1A1A1A] shrink-0"
         >
           <ArrowLeft className="h-4 w-4" />
-          <span className="text-sm">Back</span>
+          <span className="text-sm font-medium">Back</span>
         </Link>
+        <h1 className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">
+          {"You're joining a $" + formatNumber(circleData.amount) + " circle " + circleData.title}
+        </h1>
       </div>
     </header>
   )
@@ -477,13 +502,8 @@ export default function JoinCirclePage() {
       <Header />
 
       <main className="flex-1 flex flex-col mx-auto max-w-[640px] w-full px-6 md:px-10 pb-12">
-        {/* Section title - H2, not hero */}
-        <h1 className="text-2xl md:text-[28px] font-semibold text-[#1A1A1A] text-center leading-tight mb-6">
-          {"You're joining a $" + formatNumber(circleData.amount) + " circle " + circleData.title}
-        </h1>
-
         {/* Progress bar - same width as card */}
-        <div className="mb-8">
+        <div className="mb-6">
           <ProgressBar currentStep={currentStep} />
         </div>
 
