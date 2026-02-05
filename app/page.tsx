@@ -4,7 +4,6 @@ import { ArrowLeft, ExternalLink, Info } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useEffect, useRef, useState } from "react"
-import ProgressiveCircleGrid from "@/components/ProgressiveCircleGrid" // Declare the variable here
 
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
@@ -113,29 +112,34 @@ function Header() {
 }
 
 // INFO TAG: Early Entry (compact)
+// Text is split intentionally into two lines to prevent awkward wrapping
 function EarlyEntryTag() {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-purple-100 bg-purple-50 p-4 h-full">
-      <Info className="h-5 w-5 text-purple-600 stroke-[1.5] flex-shrink-0" />
+    <div className="flex items-start gap-3 rounded-xl border border-purple-100 bg-purple-50 p-4 h-full">
+      <Info className="h-5 w-5 text-purple-600 stroke-[1.5] flex-shrink-0 mt-0.5" />
       <div>
         <p className="font-semibold text-purple-600 text-sm">Early entry</p>
-        <p className="text-purple-500 text-sm">Selected for initial payouts</p>
+        <p className="text-purple-500 text-sm">
+          <span className="block">Selected for</span>
+          <span className="block">initial payouts</span>
+        </p>
       </div>
     </div>
   )
 }
 
 // FULL CARD: Timeline
+// Dates use whitespace-nowrap to prevent year from wrapping to new line
 function TimelineCard() {
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col justify-between">
       <div>
         <p className="text-sm text-[#666666]">Started on</p>
-        <p className="text-base font-semibold text-[#1A1A1A]">{circleData.startDate}</p>
+        <p className="text-base font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.startDate}</p>
       </div>
       <div className="mt-4">
         <p className="text-sm text-[#666666]">Ends on</p>
-        <p className="text-base font-semibold text-[#1A1A1A]">{circleData.endDate}</p>
+        <p className="text-base font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.endDate}</p>
       </div>
     </div>
   )
@@ -161,7 +165,7 @@ function PayoutCard() {
       </div>
       <div className="mt-auto pt-4">
         <p className="text-sm text-[#666666]">Due on</p>
-        <p className="text-2xl font-semibold text-[#1A1A1A]">{circleData.payoutDueDate}</p>
+        <p className="text-2xl font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.payoutDueDate}</p>
       </div>
     </div>
   )
@@ -381,10 +385,11 @@ function EnsCard() {
 }
 
 // FULL CARD: Active Members + Arc
+// Member names and join dates use truncation and nowrap to prevent ugly breaks
 function MembersAndArcCard() {
+  // Abbreviated format for join date to prevent wrapping
   const formatJoinDate = (daysAgo: number) => {
-    if (daysAgo === 1) return "Joined 1 day ago"
-    return `Joined ${daysAgo} days ago`
+    return `${daysAgo}d ago`
   }
 
   return (
@@ -395,10 +400,10 @@ function MembersAndArcCard() {
         {circleData.members.map((member, index) => (
           <div 
             key={member.name} 
-            className={`flex items-center justify-between py-3 ${index < circleData.members.length - 1 ? 'border-b border-[#F5F5F5]' : ''}`}
+            className={`flex items-center justify-between gap-3 py-3 min-w-0 ${index < circleData.members.length - 1 ? 'border-b border-[#F5F5F5]' : ''}`}
           >
-            <span className="font-medium text-[#1A1A1A]">{member.name}</span>
-            <span className="text-sm text-[#999999]">{formatJoinDate(member.joinedDaysAgo)}</span>
+            <span className="font-medium text-[#1A1A1A] truncate min-w-0">{member.name}</span>
+            <span className="text-sm text-[#999999] whitespace-nowrap flex-shrink-0">{formatJoinDate(member.joinedDaysAgo)}</span>
           </div>
         ))}
       </div>
