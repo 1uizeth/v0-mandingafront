@@ -120,7 +120,7 @@ function EarlyEntryTag() {
       <div>
         <p className="font-semibold text-purple-600 text-base">Early entry</p>
         <p className="text-purple-500 text-sm mt-1 leading-relaxed line-clamp-3">
-          This circle is split into 3 phases. Right now it's in Early entry phase, where early payouts are most likely.
+          This circle runs in 3 phases. Early entry is phase 1 and prioritizes early payouts.
         </p>
       </div>
     </div>
