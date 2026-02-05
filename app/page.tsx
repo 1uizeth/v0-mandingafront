@@ -301,8 +301,7 @@ function CircleGrid({
 // Layout: Title → Description → Dots Grid
 function PaymentVisualizationCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white py-12 px-5 flex flex-col justify-between h-full gap-4">
-      {/* Top: Title + Description */}
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4 h-full justify-between">
       <div>
         <h2 className="text-lg font-semibold text-[#1A1A1A]">
           Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
@@ -311,9 +310,7 @@ function PaymentVisualizationCard() {
           Early entry: priority access to payouts in the first 8 months.
         </p>
       </div>
-
-      {/* Bottom: Dots grid */}
-      <div className="flex items-end">
+      <div>
         <CircleGrid 
           totalDots={circleData.totalMonths}
           filledDot={circleData.currentMonth}
