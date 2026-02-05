@@ -329,9 +329,31 @@ function PaymentVisualizationCard() {
 }
 
 // FULL CARD: Installment Progress
-function InstallmentCard({ isWalletConnected }: { isWalletConnected: boolean }) {
+// Pre-join state: Simple preview layout showing monthly amount and start date
+// Post-join state: Full progress bar with due date and amount
+function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: boolean; hasJoined: boolean }) {
   const progressPercentage = (circleData.installmentProgress / circleData.totalMonths) * 100
+  const isPreJoin = !isWalletConnected || !hasJoined
 
+  if (isPreJoin) {
+    // Preview layout - simple single line info
+    return (
+      <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col justify-between">
+        <h3 className="text-sm text-[#666666] font-medium">Installments</h3>
+        
+        {/* Main info row - horizontally aligned, vertically centered */}
+        <div className="mt-4 flex items-center justify-between gap-4">
+          <span className="text-sm text-[#1A1A1A]">Always due on the 5th, every month</span>
+          <span className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.monthlyAmount)}</span>
+        </div>
+
+        {/* Subtext */}
+        <p className="text-xs text-[#999999] mt-3">Starts after you join.</p>
+      </div>
+    )
+  }
+
+  // Full installment view after joining
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
       <div className="flex items-center justify-between">
@@ -352,7 +374,7 @@ function InstallmentCard({ isWalletConnected }: { isWalletConnected: boolean }) 
           <p className="text-sm text-[#666666]">Due today</p>
           <p className="text-3xl font-semibold text-[#1A1A1A]">${formatNumber(circleData.dueAmount)}</p>
         </div>
-        {isWalletConnected && (
+        {isWalletConnected && !hasJoined && (
           <Link href="/join">
             <Button className="w-full sm:w-auto rounded-full bg-[#1A1A1A] px-8 py-6 text-base font-semibold text-white hover:bg-[#333333]">
               Join now
@@ -499,6 +521,7 @@ function SlotsCard() {
 
 export default function FundingCirclePage() {
   const [isWalletConnected, setIsWalletConnected] = useState(false)
+  const [hasJoined, setHasJoined] = useState(false)
 
   const handleConnectWallet = () => {
     setIsWalletConnected(true)
@@ -515,7 +538,7 @@ export default function FundingCirclePage() {
           <PaymentVisualizationCard />
           <TimelineCard />
           <PayoutCard />
-          <InstallmentCard isWalletConnected={isWalletConnected} />
+          <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           <EnsCard />
           <MembersCard />
           <ArcCard />
@@ -538,7 +561,7 @@ export default function FundingCirclePage() {
           <div style={{ gridArea: 'timeline' }}><TimelineCard /></div>
           <div style={{ gridArea: 'ens' }}><EnsCard /></div>
           <div style={{ gridArea: 'payout' }}><PayoutCard /></div>
-          <div style={{ gridArea: 'installment' }}><InstallmentCard isWalletConnected={isWalletConnected} /></div>
+          <div style={{ gridArea: 'installment' }}><InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} /></div>
           <div style={{ gridArea: 'members' }}><MembersCard /></div>
           <div style={{ gridArea: 'arc' }}><ArcCard /></div>
         </div>
@@ -555,7 +578,7 @@ export default function FundingCirclePage() {
           {/* Center column */}
           <div className="flex flex-col gap-5">
             <PaymentVisualizationCard />
-            <InstallmentCard isWalletConnected={isWalletConnected} />
+            <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
           
           {/* Right column */}
