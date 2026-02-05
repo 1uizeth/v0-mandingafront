@@ -64,11 +64,11 @@ function Header() {
 
 function EarlyEntryCard() {
   return (
-    <div className="flex items-start gap-3 rounded-xl border border-purple-200 bg-[#F3F0FF] p-6">
-      <Info className="mt-0.5 h-5 w-5 text-purple-500 stroke-[1.5]" />
+    <div className="flex items-start gap-3 rounded-xl border border-green-200 bg-green-50 p-6">
+      <Info className="mt-0.5 h-5 w-5 text-green-600 stroke-[1.5]" />
       <div>
-        <p className="font-semibold text-purple-600">Early entry</p>
-        <p className="text-purple-500">Selected for initial payouts</p>
+        <p className="font-semibold text-green-600">Early entry</p>
+        <p className="text-green-600">Selected for initial payouts</p>
       </div>
     </div>
   )
@@ -190,7 +190,7 @@ function EnsCard() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 2L2 10L10 18L18 10L10 2Z" stroke="#3B82F6" strokeWidth="2" fill="none"/>
+            <path d="M10 2L2 10L10 18L18 10L10 2Z" stroke="#0EA5E9" strokeWidth="2" fill="none"/>
           </svg>
           <span className="text-lg font-bold text-[#1A1A1A]">ens</span>
         </div>
@@ -198,7 +198,7 @@ function EnsCard() {
           href={circleData.ensUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 text-sm font-medium text-[#3B82F6] transition-colors hover:text-[#2563EB]"
+          className="flex items-center gap-1 text-sm font-medium text-sky-500 transition-colors hover:text-sky-600"
         >
           View on ENS
           <ExternalLink className="h-3 w-3" />
@@ -206,8 +206,8 @@ function EnsCard() {
       </div>
 
       <div className="mt-4">
-        <div className="inline-block rounded-full bg-[#DBEAFE] px-5 py-2">
-          <span className="font-medium text-[#3B82F6]">{circleData.ensDomain}</span>
+        <div className="inline-block rounded-full border border-sky-400 bg-sky-50 px-5 py-2">
+          <span className="font-medium text-sky-500">{circleData.ensDomain}</span>
         </div>
       </div>
     </div>
@@ -279,15 +279,6 @@ function TermsCard() {
   )
 }
 
-function MembersAndArcCard() {
-  return (
-    <div className="space-y-6">
-      <MembersCard />
-      <ArcCard />
-    </div>
-  )
-}
-
 export default function FundingCirclePage() {
   return (
     <div className="min-h-screen bg-white">
@@ -296,7 +287,7 @@ export default function FundingCirclePage() {
       <main className="mx-auto max-w-[1200px] px-10 pb-12 pt-4">
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Left Column */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             <EarlyEntryCard />
             <TimelineDatesCard />
             <PayoutProgressCard />
@@ -307,10 +298,11 @@ export default function FundingCirclePage() {
             <PaymentPlanCard />
           </div>
 
-          {/* Right Column */}
+          {/* Right Column - 4 separate cards */}
           <div className="space-y-4">
             <EnsCard />
-            <MembersAndArcCard />
+            <MembersCard />
+            <ArcCard />
             <TermsCard />
           </div>
         </div>
