@@ -31,8 +31,8 @@ const MOCK_WALLET_ENS = "user.eth"
 // Step type
 type Step = 1 | 2 | 3
 
-// Progress bar with labels - each label centered under its segment
-function ProgressBar({ currentStep }: { currentStep: Step }) {
+// Numeric milestone stepper with connecting lines
+function NumericStepper({ currentStep }: { currentStep: Step }) {
   const steps = [
     { num: 1, label: "Agreement" },
     { num: 2, label: "Review" },
@@ -40,30 +40,61 @@ function ProgressBar({ currentStep }: { currentStep: Step }) {
   ]
 
   return (
-    <div className="w-full flex gap-1">
-      {steps.map((step) => (
-        <div key={step.num} className="flex-1 flex flex-col items-center">
-          {/* Segment */}
-          <div 
-            className={`h-1 w-full rounded-full transition-colors ${
-              step.num <= currentStep 
-                ? "bg-[#1A1A1A]" 
-                : "bg-[#E5E5E5]"
-            }`}
-          />
-          {/* Label centered under segment */}
-          <span 
-            className={`text-xs mt-2 transition-colors ${
-              step.num <= currentStep 
-                ? "text-[#1A1A1A] font-medium" 
-                : "text-[#999999]"
-            }`}
-          >
-            {step.label}
-          </span>
+    <div className="flex items-center">
+      {steps.map((step, index) => (
+        <div key={step.num} className="flex items-center">
+          {/* Step circle with number */}
+          <div className="flex flex-col items-center">
+            <div 
+              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-colors ${
+                step.num < currentStep 
+                  ? "bg-[#1A1A1A] text-white" // Completed
+                  : step.num === currentStep 
+                  ? "bg-[#1A1A1A] text-white" // Current
+                  : "border-2 border-[#E5E5E5] text-[#999999]" // Upcoming
+              }`}
+            >
+              {step.num < currentStep ? (
+                <Check className="w-3.5 h-3.5" />
+              ) : (
+                step.num
+              )}
+            </div>
+            {/* Label below */}
+            <span 
+              className={`text-[10px] mt-1.5 transition-colors whitespace-nowrap ${
+                step.num <= currentStep 
+                  ? "text-[#1A1A1A] font-medium" 
+                  : "text-[#999999]"
+              }`}
+            >
+              {step.label}
+            </span>
+          </div>
+          
+          {/* Connecting line (not after last step) */}
+          {index < steps.length - 1 && (
+            <div 
+              className={`w-8 h-0.5 mx-1.5 -mt-5 transition-colors ${
+                step.num < currentStep 
+                  ? "bg-[#1A1A1A]" 
+                  : "bg-[#E5E5E5]"
+              }`}
+            />
+          )}
         </div>
       ))}
     </div>
+  )
+}
+
+// Mobile stepper - collapsed to "Step X of 3"
+function MobileStepper({ currentStep }: { currentStep: Step }) {
+  const labels = ["Agreement", "Review", "Confirm"]
+  return (
+    <span className="text-sm text-[#666666]">
+      Step {currentStep} of 3 — <span className="font-medium text-[#1A1A1A]">{labels[currentStep - 1]}</span>
+    </span>
   )
 }
 
@@ -390,8 +421,6 @@ export default function JoinCirclePage() {
   const [currentStep, setCurrentStep] = useState<Step>(1)
   const [agreementSignedAt, setAgreementSignedAt] = useState<Date | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
-  const [step1SigningState, setStep1SigningState] = useState<SigningState>("idle")
-  const [step3SigningState, setStep3SigningState] = useState<SigningState>("idle")
 
   // Show toast notification
   const showToast = (message: string) => {
@@ -399,14 +428,11 @@ export default function JoinCirclePage() {
     setTimeout(() => setToastMessage(null), 3000)
   }
 
-  // Step 1: Sign agreement - use toast instead of inline loader
+  // Step 1: Sign agreement
   const handleSignAgreement = () => {
-    setStep1SigningState("signing")
     showToast("Signing agreement...")
-    // Simulate wallet signature
     setTimeout(() => {
       setAgreementSignedAt(new Date())
-      setStep1SigningState("success")
       setCurrentStep(2)
     }, 1500)
   }
@@ -416,15 +442,11 @@ export default function JoinCirclePage() {
     setCurrentStep(3)
   }
 
-  // Step 3: Confirm transaction - use toast instead of inline loader
+  // Step 3: Confirm transaction
   const handleConfirm = () => {
-    setStep3SigningState("signing")
     showToast("Processing transaction...")
-    // Simulate transaction
     setTimeout(() => {
-      // Redirect to dashboard - no intermediate success screen
       router.push("/")
-      setStep3SigningState("success")
     }, 2000)
   }
 
@@ -435,66 +457,58 @@ export default function JoinCirclePage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Header area with Back button in left margin, stepper in content column */}
+      {/* Control bar header - single row: [Back] [Title] [Stepper] */}
       <header className="w-full pt-8 md:pt-10 pb-6">
-        <div className="mx-auto max-w-[880px] px-6 md:px-10">
-          {/* Grid: [Back in margin] [Content area] - Back aligns to stepper row */}
-          <div className="grid" style={{ gridTemplateColumns: 'minmax(80px, 120px) minmax(0, 640px)' }}>
-            {/* Back button - vertically centered to stepper */}
-            <div className="flex items-center">
-              <Link
-                href="/"
-                className="inline-flex items-center gap-1.5 text-[#666666] transition-colors hover:text-[#1A1A1A]"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span className="text-sm font-medium">Back</span>
-              </Link>
+        <div className="mx-auto max-w-[640px] px-6 md:px-10">
+          {/* Single row with three zones */}
+          <div className="flex items-center justify-between gap-4">
+            {/* Left: Back button */}
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 text-[#666666] transition-colors hover:text-[#1A1A1A] shrink-0"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span className="text-sm font-medium">Back</span>
+            </Link>
+
+            {/* Middle: Title - left aligned within available space */}
+            <h1 className="text-lg font-semibold text-[#1A1A1A] flex-1 min-w-0">
+              {"Join $" + formatNumber(circleData.amount) + " Circle"}
+            </h1>
+
+            {/* Right: Stepper - desktop shows numeric, mobile shows collapsed */}
+            <div className="hidden md:block shrink-0">
+              <NumericStepper currentStep={currentStep} />
             </div>
-
-            {/* Title + Stepper column */}
-            <div>
-              {/* Title - left aligned, same size as card heading */}
-              <h1 className="text-lg font-semibold text-[#1A1A1A] mb-5">
-                {"Join $" + formatNumber(circleData.amount) + " Devcon 2026 Circle"}
-              </h1>
-
-              {/* Progress bar */}
-              <ProgressBar currentStep={currentStep} />
+            <div className="md:hidden shrink-0">
+              <MobileStepper currentStep={currentStep} />
             </div>
           </div>
         </div>
       </header>
 
       <main className="flex-1 flex flex-col pb-12">
-        {/* Same grid structure for content alignment */}
-        <div className="mx-auto max-w-[880px] w-full px-6 md:px-10">
-          <div className="grid" style={{ gridTemplateColumns: 'minmax(80px, 120px) minmax(0, 640px)' }}>
-            {/* Empty left column (margin) */}
-            <div />
-
-            {/* Content column */}
-            <div>
-              {/* Step content */}
-              {currentStep === 1 && (
-                <TermsStep 
-                  onSign={handleSignAgreement}
-                />
-              )}
-              {currentStep === 2 && (
-                <PreviewStep 
-                  onBack={() => handleBack(1)} 
-                  onContinue={handlePreviewContinue} 
-                />
-              )}
-              {currentStep === 3 && (
-                <ConfirmStep 
-                  onBack={() => handleBack(2)} 
-                  onConfirm={handleConfirm}
-                  agreementSignedAt={agreementSignedAt}
-                />
-              )}
-            </div>
-          </div>
+        {/* Content aligned with header (same max-width) */}
+        <div className="mx-auto max-w-[640px] w-full px-6 md:px-10">
+          {/* Step content */}
+          {currentStep === 1 && (
+            <TermsStep 
+              onSign={handleSignAgreement}
+            />
+          )}
+          {currentStep === 2 && (
+            <PreviewStep 
+              onBack={() => handleBack(1)} 
+              onContinue={handlePreviewContinue} 
+            />
+          )}
+          {currentStep === 3 && (
+            <ConfirmStep 
+              onBack={() => handleBack(2)} 
+              onConfirm={handleConfirm}
+              agreementSignedAt={agreementSignedAt}
+            />
+          )}
         </div>
       </main>
 
