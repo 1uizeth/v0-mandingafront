@@ -77,7 +77,7 @@ function EarlyEntryCard() {
 function TimelineDatesCard() {
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
-      <div className="space-y-4">
+      <div className="space-y-5">
         <div>
           <p className="text-sm text-[#666666]">Started on</p>
           <p className="text-base font-semibold text-[#1A1A1A]">{circleData.startDate}</p>
@@ -222,11 +222,12 @@ function MembersCard() {
 
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
-      <h3 className="text-sm font-medium text-[#666666]">Active members</h3>
+      {/* Active Members Section */}
+      <h3 className="text-base font-semibold text-[#1A1A1A]">Active members</h3>
 
-      <div className="mt-4 space-y-3">
+      <div className="mt-4 space-y-0">
         {circleData.members.map((member) => (
-          <div key={member.name} className="flex items-center justify-between">
+          <div key={member.name} className="flex items-center justify-between py-3">
             <span className="text-[#1A1A1A]">{member.name}</span>
             <span className="text-xs text-[#999999]">{formatJoinDate(member.joinedDaysAgo)}</span>
           </div>
@@ -239,6 +240,7 @@ function MembersCard() {
 function ArcCard() {
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
+      {/* Arc Section */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -277,13 +279,22 @@ function TermsCard() {
   )
 }
 
+function MembersAndArcCard() {
+  return (
+    <div className="space-y-6">
+      <MembersCard />
+      <ArcCard />
+    </div>
+  )
+}
+
 export default function FundingCirclePage() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
 
-      <main className="mx-auto max-w-6xl px-6 pb-12 pt-4 md:px-10">
-        <div className="grid gap-6 lg:grid-cols-[280px_1fr_280px]">
+      <main className="mx-auto max-w-[1200px] px-10 pb-12 pt-4">
+        <div className="grid gap-6 lg:grid-cols-3">
           {/* Left Column */}
           <div className="space-y-6">
             <EarlyEntryCard />
@@ -297,10 +308,9 @@ export default function FundingCirclePage() {
           </div>
 
           {/* Right Column */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             <EnsCard />
-            <MembersCard />
-            <ArcCard />
+            <MembersAndArcCard />
             <TermsCard />
           </div>
         </div>
