@@ -336,19 +336,23 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
   const isPreJoin = !isWalletConnected || !hasJoined
 
   if (isPreJoin) {
-    // Preview layout - simple single line info
+    // Preview layout - matches joined state structure: header + thin bar + content row
     return (
-      <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col justify-between">
-        <h3 className="text-sm text-[#666666] font-medium">Installments</h3>
-        
-        {/* Main info row - horizontally aligned, vertically centered */}
-        <div className="mt-4 flex items-center justify-between gap-4">
-          <span className="text-sm text-[#1A1A1A]">Always due on the 5th, every month</span>
-          <span className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.monthlyAmount)}</span>
+      <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
+        {/* Header row with empty right side */}
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-[#666666]">Installments</span>
+          <span></span>
         </div>
 
-        {/* Subtext */}
-        <p className="text-xs text-[#999999] mt-3">Starts after you join.</p>
+        {/* Neutral thin bar (no progress, no indicator) */}
+        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[#E5E5E5]" />
+
+        {/* Content row: text left, amount right - single line layout */}
+        <div className="mt-4 flex items-center justify-between gap-4">
+          <span className="text-base font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
+          <span className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.monthlyAmount)}</span>
+        </div>
       </div>
     )
   }
