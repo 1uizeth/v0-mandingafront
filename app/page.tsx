@@ -112,17 +112,21 @@ function Header() {
 }
 
 // INFO TAG: Early Entry (compact)
-// Text is split intentionally into two lines to prevent awkward wrapping
+// Text is split into controlled lines to prevent awkward wrapping
+// Third line adds balance and fills vertical space
 function EarlyEntryTag() {
   return (
     <div className="flex items-start gap-3 rounded-xl border border-purple-100 bg-purple-50 p-4 h-full">
       <Info className="h-5 w-5 text-purple-600 stroke-[1.5] flex-shrink-0 mt-0.5" />
-      <div>
-        <p className="font-semibold text-purple-600 text-sm">Early entry</p>
-        <p className="text-purple-500 text-sm">
-          <span className="block">Selected for</span>
-          <span className="block">initial payouts</span>
-        </p>
+      <div className="flex flex-col justify-between h-full">
+        <div>
+          <p className="font-semibold text-purple-600 text-sm">Early entry</p>
+          <p className="text-purple-500 text-sm">
+            <span className="block">Selected for</span>
+            <span className="block">initial payouts</span>
+          </p>
+        </div>
+        <p className="text-purple-400 text-xs mt-2">Higher chance in first window</p>
       </div>
     </div>
   )
@@ -173,28 +177,23 @@ function PayoutCard() {
 
 // CONTAINER-MEASURED CIRCLE GRID
 // Key behavior:
-// - cols changes by exactly ±1 as width changes
-// - dotSize recalculates so: (cols * dotSize) + ((cols - 1) * gap) == containerWidth
-// - Full horizontal fill guaranteed (no leftover space except last row)
+// - Fills container width on every full row (no leftover space except last row)
+// - Column count changes one-by-one as container shrinks
+// - Desktop target: 8-9 columns = 3 rows (with bigger dots)
+// - Dots scale to fill width perfectly
 function CircleGrid({ 
   totalDots = 24, 
   filledDot = 1,
   earlyEntryDots = [2, 3, 4, 5, 6, 7, 8],
-  gapPx = 10, 
-  minDot = 24, 
-  maxDot = 40,
-  preferredDot = 32
+  gapPx = 12
 }: { 
   totalDots?: number
   filledDot?: number
   earlyEntryDots?: number[]
   gapPx?: number
-  minDot?: number
-  maxDot?: number
-  preferredDot?: number
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [gridConfig, setGridConfig] = useState({ cols: 12, dotSize: preferredDot })
+  const [gridConfig, setGridConfig] = useState({ cols: 8, dotSize: 36 })
 
   useEffect(() => {
     const container = containerRef.current
@@ -204,53 +203,51 @@ function CircleGrid({
       const containerWidth = container.offsetWidth
       if (containerWidth <= 0) return
 
+      // Target: bigger dots that produce 3 rows on desktop (8-9 cols)
+      // We want dots between 32-48px, preferring larger dots
+      const minDot = 28
+      const maxDot = 48
+      const preferredDot = 40  // Larger preferred size for 3 rows on desktop
+      
       // Step 1: Calculate candidate columns based on preferred dot size
-      // Formula: cols = floor((containerWidth + gap) / (preferredDot + gap))
       let colsCandidate = Math.floor((containerWidth + gapPx) / (preferredDot + gapPx))
       
       // Step 2: Calculate bounds
-      // maxCols: what fits with minDot (allows most columns)
       const maxCols = Math.min(totalDots, Math.floor((containerWidth + gapPx) / (minDot + gapPx)))
-      // minCols: never go below 3 columns
-      const minCols = Math.min(3, maxCols)
+      const minCols = 3
       
       // Step 3: Clamp candidate
       let cols = Math.max(minCols, Math.min(colsCandidate, maxCols))
       
       // Step 4: Compute dotSize to force full width fill
-      // Formula: dotSize = (containerWidth - gap * (cols - 1)) / cols
       let dotSize = (containerWidth - gapPx * (cols - 1)) / cols
       
       // Step 5: Fit loop - adjust cols if dotSize is out of bounds
-      // If dotSize > maxDot, we have too few columns - try adding one
       while (dotSize > maxDot && cols < totalDots) {
         cols++
         dotSize = (containerWidth - gapPx * (cols - 1)) / cols
       }
       
-      // If dotSize < minDot, we have too many columns - reduce by one
       while (dotSize < minDot && cols > minCols) {
         cols--
         dotSize = (containerWidth - gapPx * (cols - 1)) / cols
       }
       
-      // Final clamp on dotSize
+      // Final clamp
       dotSize = Math.max(minDot, Math.min(maxDot, dotSize))
       
       setGridConfig({ cols, dotSize: Math.round(dotSize * 10) / 10 })
     }
 
-    // Initial calculation
     computeGrid()
 
-    // Observe container resize
     const resizeObserver = new ResizeObserver(() => {
       computeGrid()
     })
     
     resizeObserver.observe(container)
     return () => resizeObserver.disconnect()
-  }, [totalDots, gapPx, minDot, maxDot, preferredDot])
+  }, [totalDots, gapPx])
 
   const dots = Array.from({ length: totalDots }, (_, i) => i)
 
@@ -262,8 +259,7 @@ function CircleGrid({
           gridTemplateColumns: `repeat(${gridConfig.cols}, ${gridConfig.dotSize}px)`,
           gap: `${gapPx}px`,
           width: '100%',
-          justifyContent: 'start',
-          transition: 'gap 200ms ease'
+          justifyContent: 'start'
         }}
       >
         {dots.map((i) => {
@@ -271,9 +267,9 @@ function CircleGrid({
           const isFilled = dotNumber === filledDot
           const isEarlyEntry = earlyEntryDots.includes(dotNumber)
           
-          let bgColor = "#E5E5E5" // default gray
-          if (isFilled) bgColor = "#1A1A1A" // filled black
-          else if (isEarlyEntry) bgColor = "#C4B5FD" // early entry purple
+          let bgColor = "#E5E5E5"
+          if (isFilled) bgColor = "#1A1A1A"
+          else if (isEarlyEntry) bgColor = "#C4B5FD"
           
           return (
             <div
@@ -282,8 +278,7 @@ function CircleGrid({
                 width: `${gridConfig.dotSize}px`,
                 height: `${gridConfig.dotSize}px`,
                 borderRadius: '9999px',
-                backgroundColor: bgColor,
-                transition: 'width 200ms ease, height 200ms ease, background-color 200ms ease'
+                backgroundColor: bgColor
               }}
             />
           )
@@ -301,15 +296,12 @@ function PaymentVisualizationCard() {
         Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
       </h2>
 
-      <div className="mt-5 flex-1">
+      <div className="mt-5 flex-1 flex items-start">
         <CircleGrid 
           totalDots={circleData.totalMonths}
           filledDot={circleData.currentMonth}
           earlyEntryDots={circleData.earlyEntryMonths}
-          gapPx={10}
-          minDot={24}
-          maxDot={40}
-          preferredDot={32}
+          gapPx={12}
         />
       </div>
 
@@ -471,23 +463,26 @@ export default function FundingCirclePage() {
           <div style={{ gridArea: 'members' }}><MembersAndArcCard /></div>
         </div>
 
-        {/* DESKTOP (1024px+): 3-column grid with row-based areas for perfect bottom alignment */}
-        <div className="hidden lg:grid gap-5" style={{
-          gridTemplateColumns: '1fr 1fr 1fr',
-          gridTemplateRows: 'auto auto auto',
-          gridTemplateAreas: `
-            "early payment ens"
-            "timeline payment members"
-            "payout installment members"
-          `
-        }}>
-          <div style={{ gridArea: 'early' }}><EarlyEntryTag /></div>
-          <div style={{ gridArea: 'timeline' }}><TimelineCard /></div>
-          <div style={{ gridArea: 'payout' }}><PayoutCard /></div>
-          <div style={{ gridArea: 'payment' }}><PaymentVisualizationCard /></div>
-          <div style={{ gridArea: 'installment' }}><InstallmentCard /></div>
-          <div style={{ gridArea: 'ens' }}><EnsCard /></div>
-          <div style={{ gridArea: 'members' }}><MembersAndArcCard /></div>
+        {/* DESKTOP (1024px+): 3-column layout with stretching cards */}
+        <div className="hidden lg:grid grid-cols-3 gap-5">
+          {/* Left column */}
+          <div className="flex flex-col gap-5">
+            <EarlyEntryTag />
+            <TimelineCard />
+            <PayoutCard />
+          </div>
+          
+          {/* Center column */}
+          <div className="flex flex-col gap-5">
+            <PaymentVisualizationCard />
+            <InstallmentCard />
+          </div>
+          
+          {/* Right column */}
+          <div className="flex flex-col gap-5">
+            <EnsCard />
+            <MembersAndArcCard />
+          </div>
         </div>
       </main>
     </div>
