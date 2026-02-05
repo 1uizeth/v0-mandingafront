@@ -27,7 +27,7 @@ const circleData = {
   ensUrl: "https://app.ens.domains/housing.mandinga.eth",
   arcscanUrl: "https://arcscan.io",
   members: [
-    { name: "sassal.eth", joinedDaysAgo: 1 },
+    { name: "sassai.eth", joinedDaysAgo: 1 },
     { name: "vitalik.eth", joinedDaysAgo: 2 },
     { name: "1uiz.eth", joinedDaysAgo: 3 },
   ],
@@ -46,8 +46,8 @@ function Header() {
             <ArrowLeft className="h-4 w-4" />
             <span className="text-sm">Back</span>
           </Link>
-          <div className="rounded-lg border border-[#E5E5E5] px-3 py-1.5">
-            <span className="text-xs font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
+          <div className="rounded-lg bg-[#F5F5F5] px-4 py-2">
+            <span className="text-sm font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
           </div>
         </div>
         <div className="text-center">
@@ -57,9 +57,9 @@ function Header() {
           <p className="text-base text-[#1A1A1A]">{circleData.title}</p>
         </div>
         <div className="flex justify-center">
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-400" />
-            <span className="font-medium text-emerald-500 text-sm">Active</span>
+          <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
+            <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
+            <span className="text-sm font-medium text-[#2E7D32]">Active</span>
           </div>
         </div>
       </div>
@@ -74,7 +74,7 @@ function Header() {
             <ArrowLeft className="h-5 w-5" />
             <span>Back</span>
           </Link>
-          <div className="rounded-lg border border-[#E5E5E5] px-4 py-2">
+          <div className="rounded-lg bg-[#F5F5F5] px-4 py-2">
             <span className="text-sm font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
           </div>
         </div>
@@ -85,9 +85,9 @@ function Header() {
           <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
         </div>
         <div className="flex justify-center">
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-400" />
-            <span className="font-medium text-emerald-500">Active</span>
+          <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
+            <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
+            <span className="text-sm font-medium text-[#2E7D32]">Active</span>
           </div>
         </div>
       </div>
@@ -104,9 +104,9 @@ function Header() {
             <span>Back</span>
           </Link>
 
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-400" />
-            <span className="font-medium text-emerald-500">Active</span>
+          <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
+            <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
+            <span className="text-sm font-medium text-[#2E7D32]">Active</span>
           </div>
         </div>
 
@@ -120,8 +120,8 @@ function Header() {
 
         {/* Column 3: Slots badge far right */}
         <div className="flex justify-end">
-          <div className="rounded-lg border border-[#E5E5E5] px-4 py-2">
-            <span className="font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
+          <div className="rounded-lg bg-[#F5F5F5] px-4 py-2">
+            <span className="text-sm font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
           </div>
         </div>
       </div>
@@ -232,8 +232,11 @@ function PaymentVisualizationCard() {
         - Desktop (1024px+): 12×2, 32px circles, 8px gap
       */}
       
-      {/* Mobile (<768px): 6 cols × 4 rows - visible by default, hidden at md+ */}
-      <div className="mt-6 grid grid-cols-6 gap-1.5 md:hidden">
+      {/* Mobile (<768px): 4 cols × 6 rows - fixed 24px circles, 6px gap */}
+      <div 
+        className="mt-6 grid md:hidden"
+        style={{ gridTemplateColumns: 'repeat(4, 24px)', gap: '6px' }}
+      >
         {circles.map((i) => (
           <div key={`mobile-${i}`} className="w-6 h-6">
             <Circle index={i} />
@@ -241,19 +244,37 @@ function PaymentVisualizationCard() {
         ))}
       </div>
 
-      {/* Tablet (768px - 1023px): 6 cols × 4 rows - hidden by default, shown at md, hidden at lg+ */}
-      <div className="mt-6 hidden md:grid lg:hidden grid-cols-6 gap-2">
+      {/* Tablet (768px - 1023px): 6 cols × 4 rows - fixed 28px circles, 8px gap */}
+      <div 
+        className="mt-6 hidden md:grid lg:hidden"
+        style={{ gridTemplateColumns: 'repeat(6, 28px)', gap: '8px' }}
+      >
         {circles.map((i) => (
-          <div key={`tablet-${i}`} className="w-8 h-8">
+          <div key={`tablet-${i}`} className="w-7 h-7">
             <Circle index={i} />
           </div>
         ))}
       </div>
 
-      {/* Desktop (1024px+): 12 cols × 2 rows - hidden by default, shown at lg+ */}
-      <div className="mt-6 hidden lg:grid grid-cols-12 gap-2">
+      {/* Desktop narrow (1024px - 1279px): 8 cols × 3 rows - fixed 32px circles, 8px gap */}
+      <div 
+        className="mt-6 hidden lg:grid xl:hidden"
+        style={{ gridTemplateColumns: 'repeat(8, 32px)', gap: '8px' }}
+      >
         {circles.map((i) => (
-          <div key={`desktop-${i}`} className="w-8 h-8">
+          <div key={`desktop-narrow-${i}`} className="w-8 h-8">
+            <Circle index={i} />
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop wide (1280px+): 12 cols × 2 rows - fixed 32px circles, 8px gap */}
+      <div 
+        className="mt-6 hidden xl:grid"
+        style={{ gridTemplateColumns: 'repeat(12, 32px)', gap: '8px' }}
+      >
+        {circles.map((i) => (
+          <div key={`desktop-wide-${i}`} className="w-8 h-8">
             <Circle index={i} />
           </div>
         ))}
@@ -307,24 +328,23 @@ function EnsCard() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 2L2 10L10 18L18 10L10 2Z" stroke="#0EA5E9" strokeWidth="2" fill="none"/>
+            <path d="M10 2L2 10L10 18L18 10L10 2Z" stroke="#5298FF" strokeWidth="2" fill="none"/>
           </svg>
-          <span className="text-lg font-bold text-[#1A1A1A]">ens</span>
+          <span className="text-lg font-bold text-[#5298FF]">ens</span>
         </div>
         <a
           href={circleData.ensUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 text-sm font-medium text-sky-500 transition-colors hover:text-sky-600"
+          className="text-sm font-medium text-[#5298FF] transition-colors hover:opacity-70"
         >
-          View on ENS
-          <ExternalLink className="h-3 w-3" />
+          View on ENS →
         </a>
       </div>
 
       <div className="mt-4">
-        <div className="inline-block rounded-full border border-sky-400 bg-sky-50 px-5 py-2">
-          <span className="font-medium text-sky-500">{circleData.ensDomain}</span>
+        <div className="inline-block rounded-lg bg-[#E3F2FD] px-4 py-2">
+          <span className="text-sm font-medium text-[#1976D2]">{circleData.ensDomain}</span>
         </div>
       </div>
     </div>
