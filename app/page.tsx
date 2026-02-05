@@ -176,24 +176,31 @@ function PayoutCard() {
 }
 
 // CONTAINER-MEASURED CIRCLE GRID
-// Key behavior:
-// - Fills container width on every full row (no leftover space except last row)
-// - Column count changes one-by-one as container shrinks
-// - Desktop target: 8-9 columns = 3 rows (with bigger dots)
-// - Dots scale to fill width perfectly
+// Key behavior (per master prompt):
+// - FIXED dot size (constant across all breakpoints)
+// - VARIABLE gap to fill container width on full rows
+// - Columns change one-by-one as width changes (no 2-step jumps)
+// - Only the last row may have empty space
+// - Desktop behaves exactly like tablet/mobile (same algorithm)
 function CircleGrid({ 
   totalDots = 24, 
   filledDot = 1,
   earlyEntryDots = [2, 3, 4, 5, 6, 7, 8],
-  gapPx = 12
+  dotSize = 32,  // FIXED dot size token
+  baseGap = 10,  // Base gap for calculations
+  minGap = 6,    // Minimum gap
+  maxGap = 20    // Maximum gap
 }: { 
   totalDots?: number
   filledDot?: number
   earlyEntryDots?: number[]
-  gapPx?: number
+  dotSize?: number
+  baseGap?: number
+  minGap?: number
+  maxGap?: number
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [gridConfig, setGridConfig] = useState({ cols: 8, dotSize: 36 })
+  const [gridConfig, setGridConfig] = useState({ cols: 8, gap: baseGap })
 
   useEffect(() => {
     const container = containerRef.current
@@ -203,40 +210,37 @@ function CircleGrid({
       const containerWidth = container.offsetWidth
       if (containerWidth <= 0) return
 
-      // Target: bigger dots that produce 3 rows on desktop (8-9 cols)
-      // We want dots between 32-48px, preferring larger dots
-      const minDot = 28
-      const maxDot = 48
-      const preferredDot = 40  // Larger preferred size for 3 rows on desktop
-      
-      // Step 1: Calculate candidate columns based on preferred dot size
-      let colsCandidate = Math.floor((containerWidth + gapPx) / (preferredDot + gapPx))
-      
-      // Step 2: Calculate bounds
-      const maxCols = Math.min(totalDots, Math.floor((containerWidth + gapPx) / (minDot + gapPx)))
+      // Step 1: Calculate columns based on container width
+      // cols = clamp(minCols, floor((containerWidth + baseGap) / (dotSize + baseGap)), maxCols)
       const minCols = 3
+      const maxCols = totalDots
       
-      // Step 3: Clamp candidate
-      let cols = Math.max(minCols, Math.min(colsCandidate, maxCols))
+      let cols = Math.floor((containerWidth + baseGap) / (dotSize + baseGap))
+      cols = Math.max(minCols, Math.min(cols, maxCols))
       
-      // Step 4: Compute dotSize to force full width fill
-      let dotSize = (containerWidth - gapPx * (cols - 1)) / cols
+      // Step 2: Compute gap to fill container width for full rows
+      // gap = (containerWidth - cols * dotSize) / (cols - 1)
+      let gap = cols > 1 
+        ? (containerWidth - cols * dotSize) / (cols - 1)
+        : 0
       
-      // Step 5: Fit loop - adjust cols if dotSize is out of bounds
-      while (dotSize > maxDot && cols < totalDots) {
-        cols++
-        dotSize = (containerWidth - gapPx * (cols - 1)) / cols
-      }
-      
-      while (dotSize < minDot && cols > minCols) {
+      // Step 3: If gap is out of bounds, adjust cols
+      // If gap > maxGap, we have too many columns - reduce by one
+      while (gap > maxGap && cols > minCols) {
         cols--
-        dotSize = (containerWidth - gapPx * (cols - 1)) / cols
+        gap = cols > 1 ? (containerWidth - cols * dotSize) / (cols - 1) : 0
       }
       
-      // Final clamp
-      dotSize = Math.max(minDot, Math.min(maxDot, dotSize))
+      // If gap < minGap, we have too few columns - add one
+      while (gap < minGap && cols < maxCols) {
+        cols++
+        gap = cols > 1 ? (containerWidth - cols * dotSize) / (cols - 1) : 0
+      }
       
-      setGridConfig({ cols, dotSize: Math.round(dotSize * 10) / 10 })
+      // Final clamp on gap
+      gap = Math.max(minGap, Math.min(maxGap, gap))
+      
+      setGridConfig({ cols, gap: Math.round(gap * 10) / 10 })
     }
 
     computeGrid()
@@ -247,7 +251,7 @@ function CircleGrid({
     
     resizeObserver.observe(container)
     return () => resizeObserver.disconnect()
-  }, [totalDots, gapPx])
+  }, [totalDots, dotSize, baseGap, minGap, maxGap])
 
   const dots = Array.from({ length: totalDots }, (_, i) => i)
 
@@ -256,10 +260,12 @@ function CircleGrid({
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: `repeat(${gridConfig.cols}, ${gridConfig.dotSize}px)`,
-          gap: `${gapPx}px`,
+          gridTemplateColumns: `repeat(${gridConfig.cols}, ${dotSize}px)`,
+          columnGap: `${gridConfig.gap}px`,
+          rowGap: `${gridConfig.gap}px`,
           width: '100%',
-          justifyContent: 'start'
+          justifyContent: 'start',
+          transition: 'gap 150ms ease-out'
         }}
       >
         {dots.map((i) => {
@@ -275,8 +281,8 @@ function CircleGrid({
             <div
               key={i}
               style={{
-                width: `${gridConfig.dotSize}px`,
-                height: `${gridConfig.dotSize}px`,
+                width: `${dotSize}px`,
+                height: `${dotSize}px`,
                 borderRadius: '9999px',
                 backgroundColor: bgColor
               }}
@@ -301,7 +307,10 @@ function PaymentVisualizationCard() {
           totalDots={circleData.totalMonths}
           filledDot={circleData.currentMonth}
           earlyEntryDots={circleData.earlyEntryMonths}
-          gapPx={12}
+          dotSize={32}
+          baseGap={10}
+          minGap={6}
+          maxGap={18}
         />
       </div>
 
