@@ -143,88 +143,89 @@ function TermsStep({
         By joining this circle, you are entering a legally binding, on-chain financial agreement.
       </p>
 
-      {/* Compact contract-style terms document */}
-      <div className="mt-6 p-5 bg-[#FAFAFA] rounded-lg border border-[#E5E5E5]">
-        <p className="font-mono text-sm text-[#1A1A1A] leading-relaxed mb-5">
+      {/* Contract-style terms document with two-digit numbering */}
+      <div className="mt-6 p-5 bg-[#FAFAFA] rounded-lg border border-[#E5E5E5] font-mono text-sm">
+        <p className="text-[#1A1A1A] leading-relaxed mb-5">
           If you accept these terms, you agree that:
         </p>
 
-        <ol className="space-y-4 font-mono text-sm">
-          <li className="flex gap-3">
-            <span className="text-[#1A1A1A] font-semibold shrink-0">1.</span>
+        <ol className="space-y-3">
+          <li className="flex">
+            <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">01.</span>
             <div className="text-[#666666]">
               <span className="text-[#1A1A1A] font-medium">You will pay ${formatNumber(circleData.monthlyAmount)} USDC every month for {circleData.totalMonths} months.</span>
               <br />Missing payments may reduce your benefits or remove you from the circle.
             </div>
           </li>
 
-          <li className="flex gap-3">
-            <span className="text-[#1A1A1A] font-semibold shrink-0">2.</span>
+          <li className="flex">
+            <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">02.</span>
             <div className="text-[#666666]">
               <span className="text-[#1A1A1A] font-medium">You will receive 1 NFT that represents your position.</span>
               <br />If you lose it, you lose your position.
             </div>
           </li>
 
-          <li className="flex gap-3">
-            <span className="text-[#1A1A1A] font-semibold shrink-0">3.</span>
+          <li className="flex">
+            <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">03.</span>
             <div className="text-[#666666]">
               <span className="text-[#1A1A1A] font-medium">You will receive DINGA tokens that track your contributions and payout rights.</span>
               <br />These are used for settlement and rewards.
             </div>
           </li>
 
-          <li className="flex gap-3">
-            <span className="text-[#1A1A1A] font-semibold shrink-0">4.</span>
+          <li className="flex">
+            <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">04.</span>
             <div className="text-[#666666]">
               <span className="text-[#1A1A1A] font-medium">Each month, one member receives ${formatNumber(circleData.amount)} USDC.</span>
               <br />Payout order is determined by rules and randomness. Early payout is not guaranteed.
             </div>
           </li>
 
-          <li className="flex gap-3">
-            <span className="text-[#1A1A1A] font-semibold shrink-0">5.</span>
+          <li className="flex">
+            <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">05.</span>
             <div className="text-[#666666]">
               <span className="text-[#1A1A1A] font-medium">If you miss payments:</span>
               <br />Your priority may drop, penalties may apply, and buyback value may be reduced.
             </div>
           </li>
 
-          <li className="flex gap-3">
-            <span className="text-[#1A1A1A] font-semibold shrink-0">6.</span>
+          <li className="flex">
+            <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">06.</span>
             <div className="text-[#666666]">
-              <span className="text-[#1A1A1A] font-medium">All rules and payments are enforced by smart contracts.</span>
-              <br />No admin can change outcomes.
+              <span className="text-[#1A1A1A] font-medium">All rules are enforced automatically by smart contracts.</span>
+              <br />No human can override execution.
             </div>
           </li>
 
-          <li className="flex gap-3">
-            <span className="text-[#1A1A1A] font-semibold shrink-0">7.</span>
+          <li className="flex">
+            <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">07.</span>
             <div className="text-[#666666]">
               <span className="text-[#1A1A1A] font-medium">All blockchain transactions are final.</span>
               <br />Payments, NFTs, and tokens cannot be reversed.
             </div>
           </li>
 
-          <li className="flex gap-3">
-            <span className="text-[#1A1A1A] font-semibold shrink-0">8.</span>
+          <li className="flex">
+            <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">08.</span>
             <div className="text-[#666666]">
               <span className="text-[#1A1A1A] font-medium">This is a shared financial system.</span>
               <br />{"Other members' behavior affects outcomes. Delays or defaults may occur."}
             </div>
           </li>
 
-          <li className="flex gap-3">
-            <span className="text-[#1A1A1A] font-semibold shrink-0">9.</span>
+          <li className="flex">
+            <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">09.</span>
             <div className="text-[#666666]">
               <span className="text-[#1A1A1A] font-medium">You are responsible for any legal or tax obligations in your country.</span>
             </div>
           </li>
 
-          <li className="flex gap-3">
-            <span className="text-[#1A1A1A] font-semibold shrink-0">10.</span>
+          <li className="flex">
+            <span className="w-9 shrink-0 text-[#1A1A1A] font-semibold">10.</span>
             <div className="text-[#666666]">
-              <span className="text-[#1A1A1A] font-medium">By continuing, you confirm that you understand the risks and authorize the protocol to act on your behalf.</span>
+              <span className="text-[#1A1A1A] font-medium">By continuing, you confirm that you understand the risks.</span>
+              <br />All rules are enforced automatically by smart contracts. No human can override execution.
             </div>
           </li>
         </ol>
