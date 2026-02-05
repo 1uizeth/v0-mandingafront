@@ -565,10 +565,10 @@ export default function FundingCirclePage() {
           <div style={{ gridArea: 'arc' }}><ArcCard /></div>
         </div>
 
-        {/* DESKTOP (1024px+): 3-column layout with controlled stretching */}
-        <div className="hidden lg:grid gap-5 w-full h-screen" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
-          {/* Left column: Slots (fixed) → Started/Ends (flex-1 stretch) → Payout (fixed compact height) */}
-          <div className="flex flex-col gap-5 h-full">
+        {/* DESKTOP (1024px+): 3-column layout with content-driven height */}
+        <div className="hidden lg:grid gap-5 w-full" style={{ gridTemplateColumns: '1fr 1fr 1fr', height: 'auto', alignContent: 'start' }}>
+          {/* Left column: Slots (fixed) → Started/Ends (flex-1 stretch within column) → Payout (fixed compact height) */}
+          <div className="flex flex-col gap-5">
             <SlotsCard />
             <div className="flex-1 flex flex-col justify-start">
               <TimelineCard />
@@ -576,8 +576,8 @@ export default function FundingCirclePage() {
             <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
           
-          {/* Center column: Pay card (flex-1 stretch) → Installments (fixed compact height) */}
-          <div className="flex flex-col gap-5 h-full">
+          {/* Center column: Pay card (flex-1 stretch within column) → Installments (fixed compact height) */}
+          <div className="flex flex-col gap-5">
             <div className="flex-1 flex flex-col justify-start">
               <PaymentVisualizationCard />
             </div>
@@ -585,7 +585,7 @@ export default function FundingCirclePage() {
           </div>
           
           {/* Right column: ENS (fixed) → Members (fixed) → Arc (fixed, same height as compact cards) */}
-          <div className="flex flex-col gap-5 h-full">
+          <div className="flex flex-col gap-5">
             <EnsCard />
             <MembersCard />
             <div style={{ height: 'var(--compact-card-height, 200px)' }}>
