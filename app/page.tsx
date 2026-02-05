@@ -139,7 +139,7 @@ function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boo
 // Dates use whitespace-nowrap to prevent year from wrapping to new line
 function TimelineCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col justify-start">
       <div>
         <p className="text-sm text-[#666666]">Started on</p>
         <p className="text-base font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.startDate}</p>
@@ -485,11 +485,11 @@ function MembersCard() {
 }
 
 // INFRA CARD: Arc Integration
-// Pattern: Header → Description → Primary Object (link button)
+// Simplified: Header only (description and button removed for aligned height)
 function ArcCard() {
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4">
-      {/* Header row */}
+      {/* Header row with Arc logo and link */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {/* Official Arc logo */}
@@ -507,21 +507,6 @@ function ArcCard() {
           View on Arcscan →
         </a>
       </div>
-
-      {/* Description - muted, below header */}
-      <p className="text-sm text-[#999999]">
-        Public on-chain record of this circle's vault.
-      </p>
-
-      {/* Primary Object - Arcscan link button */}
-      <a
-        href={circleData.arcscanUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="rounded-full bg-[#F5F5F5] px-5 py-3 text-center text-sm font-medium text-[#1A1A1A] transition-colors hover:bg-[#EBEBEB]"
-      >
-        View contract on Arcscan
-      </a>
     </div>
   )
 }
