@@ -79,41 +79,34 @@ function Header() {
         </div>
       </div>
 
-      {/* Desktop Header (1024px+) - 4-part layout with separate lanes */}
-      {/* Grid: [Back] [Active pill area] [Title] [Spacer] [Connect wallet] */}
-      <div className="hidden lg:grid items-center gap-5 grid-cols-[auto_1fr_auto_1fr_auto]">
-        {/* Left edge: Back button */}
-        <Link
-          href="#"
-          className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
-        >
-          <ArrowLeft className="h-5 w-5" />
-          <span className="whitespace-nowrap">Back</span>
-        </Link>
-
-        {/* Left-center: Active pill (right-aligned in this flexible zone) */}
-        <div className="flex justify-end">
-          <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
-            <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
-            <span className="text-sm font-medium text-[#2E7D32]">Active</span>
-          </div>
+      {/* Desktop Header (1024px+) - Simple 3-part layout: Back | Title | Connect */}
+      {/* Grid: [Back + 1fr spacer] [Title] [1fr spacer + Connect] ensures perfect centering */}
+      <div className="hidden lg:grid items-center grid-cols-[1fr_auto_1fr]">
+        {/* Left: Back button (left-aligned in 1fr zone) */}
+        <div className="flex justify-start">
+          <Link
+            href="#"
+            className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
+          >
+            <ArrowLeft className="h-5 w-5" />
+            <span className="whitespace-nowrap">Back</span>
+          </Link>
         </div>
 
-        {/* Center: Title block - mathematically centered */}
-        <div className="text-center">
+        {/* Center: Title block - perfectly centered (auto-width in middle of two 1fr zones) */}
+        <div className="text-center px-4">
           <h1 className="text-5xl font-bold text-[#1A1A1A]">
             ${formatNumber(circleData.amount)}
           </h1>
           <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
         </div>
 
-        {/* Right-center: Spacer (1fr to balance left-center) */}
-        <div />
-
-        {/* Right edge: Connect wallet button */}
-        <Button variant="outline" className="rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent whitespace-nowrap">
-          Connect wallet
-        </Button>
+        {/* Right: Connect wallet button (right-aligned in 1fr zone) */}
+        <div className="flex justify-end">
+          <Button variant="outline" className="rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent whitespace-nowrap">
+            Connect wallet
+          </Button>
+        </div>
       </div>
     </header>
   )
