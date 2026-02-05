@@ -112,14 +112,17 @@ function Header() {
 }
 
 // INFO TAG: Early Entry
-// Title + description block with 2-3 line clamped description
+// Vertically centered content group to avoid top-heavy appearance
 function EarlyEntryTag() {
   return (
-    <div className="flex items-start gap-3 rounded-xl border border-purple-100 bg-purple-50 p-5 h-full">
-      <Info className="h-5 w-5 text-purple-600 stroke-[1.5] flex-shrink-0 mt-0.5" />
-      <div>
-        <p className="font-semibold text-purple-600 text-base">Early entry</p>
-        <p className="text-purple-500 text-sm mt-1 leading-relaxed line-clamp-3">
+    <div className="rounded-xl border border-purple-100 bg-purple-50 p-5 h-full flex flex-col min-h-0">
+      {/* Content group - centered vertically within card */}
+      <div className="flex-1 flex flex-col justify-center gap-2">
+        <div className="flex items-start gap-3">
+          <Info className="h-5 w-5 text-purple-600 stroke-[1.5] flex-shrink-0 mt-0.5" />
+          <p className="font-semibold text-purple-600 text-base">Early entry</p>
+        </div>
+        <p className="text-purple-500 text-sm leading-relaxed line-clamp-2 pl-8">
           This circle runs in 3 phases. Early entry is phase 1 and prioritizes early payouts.
         </p>
       </div>
@@ -351,10 +354,12 @@ function InstallmentCard() {
 }
 
 // FULL CARD: ENS Integration
+// Header row at top, ENS chip fills remaining space centered vertically
 function EnsCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
-      <div className="flex items-center justify-between">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col min-h-0">
+      {/* Header row - pinned to top */}
+      <div className="flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-1">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M10 2L2 10L10 18L18 10L10 2Z" stroke="#5298FF" strokeWidth="2" fill="none"/>
@@ -371,8 +376,9 @@ function EnsCard() {
         </a>
       </div>
 
-      <div className="mt-auto pt-4">
-        <div className="inline-block rounded-lg bg-[#E3F2FD] px-4 py-2">
+      {/* Body - ENS chip centered in remaining space */}
+      <div className="flex-1 flex items-center justify-start mt-4">
+        <div className="w-full rounded-lg bg-[#E3F2FD] px-4 py-3">
           <span className="text-sm font-medium text-[#1976D2]">{circleData.ensDomain}</span>
         </div>
       </div>
