@@ -39,7 +39,7 @@ const circleData = {
 
 function Header() {
   return (
-    <header className="mx-auto max-w-[1280px] px-6 md:px-10 py-6">
+    <header className="mx-auto max-w-[1280px] px-6 md:px-10 py-6 lg:py-10">
       {/* Mobile + Tablet Header (<1024px): 2-row layout */}
       <div className="flex lg:hidden flex-col gap-4">
         {/* Row 1: Back (left) + Connect wallet (right) */}
@@ -79,20 +79,33 @@ function Header() {
         </div>
       </div>
 
-      {/* Desktop Header (1024px+) - 3 equal columns for true mathematical centering */}
-      <div className="hidden lg:grid grid-cols-3 items-center gap-5">
-        {/* Column 1: Back button - far left */}
-        <div className="flex justify-start">
-          <Link
-            href="#"
-            className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            <span className="whitespace-nowrap">Back</span>
-          </Link>
+      {/* Desktop Header (1024px+) - 4-part layout with separate lanes */}
+      {/* Grid: [Back] [Active pill area] [Title] [Connect wallet] */}
+      <div 
+        className="hidden lg:grid items-center"
+        style={{
+          gridTemplateColumns: 'auto 1fr auto 1fr auto',
+          gap: '20px'
+        }}
+      >
+        {/* Left edge: Back button */}
+        <Link
+          href="#"
+          className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
+        >
+          <ArrowLeft className="h-5 w-5" />
+          <span className="whitespace-nowrap">Back</span>
+        </Link>
+
+        {/* Left-center: Active pill (right-aligned in this flexible zone) */}
+        <div className="flex justify-end">
+          <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
+            <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
+            <span className="text-sm font-medium text-[#2E7D32]">Active</span>
+          </div>
         </div>
 
-        {/* Column 2: Title - centered */}
+        {/* Center: Title block - mathematically centered */}
         <div className="text-center">
           <h1 className="text-5xl font-bold text-[#1A1A1A]">
             ${formatNumber(circleData.amount)}
@@ -100,12 +113,13 @@ function Header() {
           <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
         </div>
 
-        {/* Column 3: Connect wallet - far right */}
-        <div className="flex justify-end">
-          <Button variant="outline" className="rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent whitespace-nowrap">
-            Connect wallet
-          </Button>
-        </div>
+        {/* Right-center: Spacer (1fr to balance left-center) */}
+        <div />
+
+        {/* Right edge: Connect wallet button */}
+        <Button variant="outline" className="rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent whitespace-nowrap">
+          Connect wallet
+        </Button>
       </div>
     </header>
   )
@@ -284,7 +298,7 @@ function PaymentVisualizationCard() {
 
       {/* Description - same style as ENS/Arc descriptions */}
       <p className="text-sm text-[#999999] mt-2">
-        Early entry: first slots are reserved for members most likely to be selected in the first 8 months.
+        Early entry: priority access to payouts in the first 8 months.
       </p>
 
       {/* Dots grid */}
