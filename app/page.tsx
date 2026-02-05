@@ -39,7 +39,7 @@ const circleData = {
 function Header() {
   return (
     <header className="mx-auto max-w-[1280px] px-6 md:px-10 py-6">
-      {/* Mobile + Tablet Header (<1024px): Active LEFT, Title CENTER, Slots RIGHT - all same row */}
+      {/* Mobile + Tablet Header (<1024px): Single row with Active LEFT | Title CENTER | Slots RIGHT */}
       <div className="flex lg:hidden flex-col gap-4">
         {/* Back button row */}
         <Link
@@ -50,33 +50,33 @@ function Header() {
           <span className="text-sm md:text-base">Back</span>
         </Link>
         
-        {/* Main header row: Active | Title | Slots */}
-        <div className="flex items-center justify-between gap-4">
-          {/* Active badge - LEFT */}
-          <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5 flex-shrink-0">
+        {/* Main header row: Active | Title | Slots - using CSS Grid for precise control */}
+        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
+          {/* Active badge - LEFT aligned */}
+          <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
             <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
             <span className="text-sm font-medium text-[#2E7D32]">Active</span>
           </div>
           
           {/* Title - CENTER */}
-          <div className="text-center flex-1 min-w-0">
+          <div className="text-center">
             <h1 className="text-3xl md:text-4xl font-bold text-[#1A1A1A]">
               ${formatNumber(circleData.amount)}
             </h1>
             <p className="text-sm md:text-base text-[#1A1A1A]">{circleData.title}</p>
           </div>
           
-          {/* Slots badge - RIGHT */}
-          <div className="rounded-lg bg-[#F5F5F5] px-3 md:px-4 py-2 flex-shrink-0">
+          {/* Slots badge - RIGHT aligned */}
+          <div className="rounded-lg bg-[#F5F5F5] px-3 md:px-4 py-2">
             <span className="text-xs md:text-sm font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
           </div>
         </div>
       </div>
 
-      {/* Desktop Header (1024px+) - 3 column grid aligned with content */}
+      {/* Desktop Header (1024px+) - 3 column grid aligned with dashboard */}
       <div className="hidden lg:grid grid-cols-3 gap-6 items-center">
-        {/* Column 1: Back button left */}
-        <div className="flex items-center gap-6">
+        {/* Column 1: Back button LEFT, Active badge aligned to RIGHT edge of column */}
+        <div className="flex items-center justify-between">
           <Link
             href="#"
             className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
@@ -85,6 +85,7 @@ function Header() {
             <span>Back</span>
           </Link>
 
+          {/* Active aligned to RIGHT edge of column 1 */}
           <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
             <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
             <span className="text-sm font-medium text-[#2E7D32]">Active</span>
@@ -110,13 +111,13 @@ function Header() {
   )
 }
 
-// INFO TAG: Early Entry (compact, fixed height)
+// INFO TAG: Early Entry (compact)
 function EarlyEntryTag() {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-purple-100 bg-purple-50 p-5 min-h-[80px]">
+    <div className="flex items-center gap-3 rounded-xl border border-purple-100 bg-purple-50 p-4 h-full">
       <Info className="h-5 w-5 text-purple-600 stroke-[1.5] flex-shrink-0" />
       <div>
-        <p className="font-semibold text-purple-600 text-base">Early entry</p>
+        <p className="font-semibold text-purple-600 text-sm">Early entry</p>
         <p className="text-purple-500 text-sm">Selected for initial payouts</p>
       </div>
     </div>
@@ -126,16 +127,14 @@ function EarlyEntryTag() {
 // FULL CARD: Timeline
 function TimelineCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
-      <div className="space-y-5">
-        <div>
-          <p className="text-sm text-[#666666]">Started on</p>
-          <p className="text-base font-semibold text-[#1A1A1A]">{circleData.startDate}</p>
-        </div>
-        <div>
-          <p className="text-sm text-[#666666]">Ends on</p>
-          <p className="text-base font-semibold text-[#1A1A1A]">{circleData.endDate}</p>
-        </div>
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col justify-between">
+      <div>
+        <p className="text-sm text-[#666666]">Started on</p>
+        <p className="text-base font-semibold text-[#1A1A1A]">{circleData.startDate}</p>
+      </div>
+      <div className="mt-4">
+        <p className="text-sm text-[#666666]">Ends on</p>
+        <p className="text-base font-semibold text-[#1A1A1A]">{circleData.endDate}</p>
       </div>
     </div>
   )
@@ -146,7 +145,7 @@ function PayoutCard() {
   const progressPercentage = (circleData.payoutProgress / circleData.totalMonths) * 100
 
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
       <div className="flex items-center justify-between">
         <span className="text-sm text-[#666666]">Payout</span>
         <span className="text-sm text-[#666666]">
@@ -159,7 +158,7 @@ function PayoutCard() {
           style={{ width: `${progressPercentage}%` }}
         />
       </div>
-      <div className="mt-4">
+      <div className="mt-auto pt-4">
         <p className="text-sm text-[#666666]">Due on</p>
         <p className="text-2xl font-semibold text-[#1A1A1A]">{circleData.payoutDueDate}</p>
       </div>
@@ -167,59 +166,50 @@ function PayoutCard() {
   )
 }
 
-// WIDTH-DRIVEN CIRCLE GRID COMPONENT
-// Uses ResizeObserver to measure available width and calculates optimal columns
-function ResponsiveCircleGrid() {
+// PROGRESSIVE CIRCLE GRID - columns reduce smoothly as width shrinks
+function ProgressiveCircleGrid() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [gridConfig, setGridConfig] = useState({ cols: 12, size: 32, gap: 8 })
+  const [config, setConfig] = useState({ cols: 12, dotSize: 28, gap: 8 })
 
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
 
-    const calculateGrid = () => {
-      const availableWidth = container.offsetWidth
-      const gap = availableWidth < 420 ? 6 : 8
+    const calculateConfig = () => {
+      const width = container.offsetWidth
       
-      // Try column candidates from highest to lowest
-      const candidates = [12, 10, 8, 6, 5, 4]
-      
-      for (const cols of candidates) {
-        const sizeCandidate = Math.floor((availableWidth - gap * (cols - 1)) / cols)
-        
-        // Accept first candidate where size is between 22 and 32
-        if (sizeCandidate >= 22 && sizeCandidate <= 32) {
-          setGridConfig({
-            cols,
-            size: Math.min(32, Math.max(22, sizeCandidate)),
-            gap
+      // Progressive column schedule with dot size and gap
+      // Each step tries to fit the grid nicely
+      const schedules = [
+        { minWidth: 460, cols: 12, dotSize: 28, gap: 10 },
+        { minWidth: 400, cols: 10, dotSize: 28, gap: 10 },
+        { minWidth: 320, cols: 8,  dotSize: 28, gap: 8 },
+        { minWidth: 260, cols: 6,  dotSize: 28, gap: 8 },
+        { minWidth: 200, cols: 5,  dotSize: 26, gap: 6 },
+        { minWidth: 160, cols: 4,  dotSize: 26, gap: 6 },
+        { minWidth: 0,   cols: 4,  dotSize: 22, gap: 4 },
+      ]
+
+      for (const schedule of schedules) {
+        if (width >= schedule.minWidth) {
+          setConfig({
+            cols: schedule.cols,
+            dotSize: schedule.dotSize,
+            gap: schedule.gap
           })
           return
         }
       }
-      
-      // Fallback: use 4 columns with calculated size
-      const fallbackSize = Math.floor((availableWidth - gap * 3) / 4)
-      setGridConfig({
-        cols: 4,
-        size: Math.min(32, Math.max(18, fallbackSize)),
-        gap
-      })
     }
 
-    // Initial calculation
-    calculateGrid()
+    calculateConfig()
 
-    // Setup ResizeObserver
     const resizeObserver = new ResizeObserver(() => {
-      calculateGrid()
+      calculateConfig()
     })
     
     resizeObserver.observe(container)
-    
-    return () => {
-      resizeObserver.disconnect()
-    }
+    return () => resizeObserver.disconnect()
   }, [])
 
   const circles = Array.from({ length: circleData.totalMonths }, (_, i) => i)
@@ -227,11 +217,11 @@ function ResponsiveCircleGrid() {
   return (
     <div ref={containerRef} className="w-full overflow-hidden">
       <div
+        className="transition-[gap] duration-200 ease-out"
         style={{
           display: 'grid',
-          gridTemplateColumns: `repeat(${gridConfig.cols}, ${gridConfig.size}px)`,
-          gap: `${gridConfig.gap}px`,
-          justifyContent: 'start',
+          gridTemplateColumns: `repeat(${config.cols}, ${config.dotSize}px)`,
+          gap: `${config.gap}px`,
           width: 'max-content'
         }}
       >
@@ -240,17 +230,17 @@ function ResponsiveCircleGrid() {
           const isCurrent = monthNumber === circleData.currentMonth
           const isEarlyEntry = circleData.earlyEntryMonths.includes(monthNumber)
           
-          let bgColor = "#E5E5E5" // Default gray
-          if (isCurrent) bgColor = "#1A1A1A" // Circle 1: black
-          else if (isEarlyEntry) bgColor = "#C4B5FD" // Circles 2-8: purple
+          let bgColor = "#E5E5E5"
+          if (isCurrent) bgColor = "#1A1A1A"
+          else if (isEarlyEntry) bgColor = "#C4B5FD"
           
           return (
             <div
               key={i}
+              className="rounded-full transition-all duration-200 ease-out"
               style={{
-                width: `${gridConfig.size}px`,
-                height: `${gridConfig.size}px`,
-                borderRadius: '50%',
+                width: `${config.dotSize}px`,
+                height: `${config.dotSize}px`,
                 backgroundColor: bgColor
               }}
             />
@@ -264,16 +254,16 @@ function ResponsiveCircleGrid() {
 // FULL CARD: Payment Visualization (circles + description)
 function PaymentVisualizationCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
       <h2 className="text-lg font-semibold text-[#1A1A1A]">
         Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
       </h2>
 
-      <div className="mt-6">
-        <ResponsiveCircleGrid />
+      <div className="mt-5 flex-1">
+        <ProgressiveCircleGrid />
       </div>
 
-      <p className="mt-6 text-sm text-[#666666] leading-relaxed">
+      <p className="mt-5 text-sm text-[#666666] leading-relaxed">
         Join the first payout on an{" "}
         <span className="font-semibold text-purple-600">Early entry</span> window to most likely be
         selected to <span className="font-semibold text-[#1A1A1A]">get $20,000 within the first 8 months</span>.
@@ -287,7 +277,7 @@ function InstallmentCard() {
   const progressPercentage = (circleData.installmentProgress / circleData.totalMonths) * 100
 
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
       <div className="flex items-center justify-between">
         <span className="text-sm text-[#666666]">Installment</span>
         <span className="text-sm text-[#666666]">
@@ -301,7 +291,7 @@ function InstallmentCard() {
         />
       </div>
 
-      <div className="mt-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div className="mt-auto pt-5 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           <p className="text-sm text-[#666666]">Due today</p>
           <p className="text-3xl font-semibold text-[#1A1A1A]">${formatNumber(circleData.dueAmount)}</p>
@@ -317,7 +307,7 @@ function InstallmentCard() {
 // FULL CARD: ENS Integration
 function EnsCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 min-h-[120px]">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -335,7 +325,7 @@ function EnsCard() {
         </a>
       </div>
 
-      <div className="mt-4">
+      <div className="mt-auto pt-4">
         <div className="inline-block rounded-lg bg-[#E3F2FD] px-4 py-2">
           <span className="text-sm font-medium text-[#1976D2]">{circleData.ensDomain}</span>
         </div>
@@ -352,14 +342,14 @@ function MembersAndArcCard() {
   }
 
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
-      <h3 className="text-lg font-semibold text-[#1A1A1A]">Active members</h3>
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
+      <h3 className="text-base font-semibold text-[#1A1A1A]">Active members</h3>
 
-      <div className="mt-4">
+      <div className="mt-3 flex-1">
         {circleData.members.map((member, index) => (
           <div 
             key={member.name} 
-            className={`flex items-center justify-between py-4 ${index < circleData.members.length - 1 ? 'border-b border-[#F5F5F5]' : ''}`}
+            className={`flex items-center justify-between py-3 ${index < circleData.members.length - 1 ? 'border-b border-[#F5F5F5]' : ''}`}
           >
             <span className="font-medium text-[#1A1A1A]">{member.name}</span>
             <span className="text-sm text-[#999999]">{formatJoinDate(member.joinedDaysAgo)}</span>
@@ -368,7 +358,7 @@ function MembersAndArcCard() {
       </div>
 
       {/* Divider */}
-      <div className="my-5 h-px bg-[#E5E5E5]" />
+      <div className="my-4 h-px bg-[#E5E5E5]" />
 
       {/* Arc Section */}
       <div className="flex items-center justify-between">
@@ -397,8 +387,8 @@ export default function FundingCirclePage() {
     <div className="min-h-screen bg-white">
       <Header />
 
-      <main className="mx-auto max-w-[1280px] px-6 md:px-10 pb-12 pt-6">
-        {/* MOBILE (<768px): Single column */}
+      <main className="mx-auto max-w-[1280px] px-6 md:px-10 pb-12 pt-4">
+        {/* MOBILE (<768px): Single column stack */}
         <div className="flex flex-col gap-4 md:hidden">
           <EarlyEntryTag />
           <PaymentVisualizationCard />
@@ -409,56 +399,44 @@ export default function FundingCirclePage() {
           <MembersAndArcCard />
         </div>
 
-        {/* TABLET (768px - 1023px): 2 columns with spanning */}
-        <div className="hidden md:grid lg:hidden grid-cols-2 gap-5">
-          {/* Early Entry spans full width */}
-          <div className="col-span-2">
-            <EarlyEntryTag />
-          </div>
-          
-          {/* Payment Visualization spans full width */}
-          <div className="col-span-2">
-            <PaymentVisualizationCard />
-          </div>
-          
-          {/* Timeline - Left */}
-          <TimelineCard />
-          
-          {/* ENS - Right */}
-          <EnsCard />
-          
-          {/* Payout - Left */}
-          <PayoutCard />
-          
-          {/* Installment - Right */}
-          <InstallmentCard />
-          
-          {/* Members + Arc spans full width */}
-          <div className="col-span-2">
-            <MembersAndArcCard />
-          </div>
+        {/* TABLET (768px - 1023px): 2-column grid with row-based areas */}
+        <div className="hidden md:grid lg:hidden gap-4" style={{
+          gridTemplateColumns: '1fr 1fr',
+          gridTemplateRows: 'auto auto auto auto auto',
+          gridTemplateAreas: `
+            "early early"
+            "payment payment"
+            "timeline ens"
+            "payout installment"
+            "members members"
+          `
+        }}>
+          <div style={{ gridArea: 'early' }}><EarlyEntryTag /></div>
+          <div style={{ gridArea: 'payment' }}><PaymentVisualizationCard /></div>
+          <div style={{ gridArea: 'timeline' }}><TimelineCard /></div>
+          <div style={{ gridArea: 'ens' }}><EnsCard /></div>
+          <div style={{ gridArea: 'payout' }}><PayoutCard /></div>
+          <div style={{ gridArea: 'installment' }}><InstallmentCard /></div>
+          <div style={{ gridArea: 'members' }}><MembersAndArcCard /></div>
         </div>
 
-        {/* DESKTOP (1024px+): 3 columns - balanced rectangular block */}
-        <div className="hidden lg:grid grid-cols-3 gap-6">
-          {/* Left Column */}
-          <div className="space-y-6">
-            <EarlyEntryTag />
-            <TimelineCard />
-            <PayoutCard />
-          </div>
-
-          {/* Center Column */}
-          <div className="space-y-6">
-            <PaymentVisualizationCard />
-            <InstallmentCard />
-          </div>
-
-          {/* Right Column - ends with Members+Arc */}
-          <div className="space-y-6">
-            <EnsCard />
-            <MembersAndArcCard />
-          </div>
+        {/* DESKTOP (1024px+): 3-column grid with row-based areas for perfect bottom alignment */}
+        <div className="hidden lg:grid gap-5" style={{
+          gridTemplateColumns: '1fr 1fr 1fr',
+          gridTemplateRows: 'auto auto auto',
+          gridTemplateAreas: `
+            "early payment ens"
+            "timeline payment members"
+            "payout installment members"
+          `
+        }}>
+          <div style={{ gridArea: 'early' }}><EarlyEntryTag /></div>
+          <div style={{ gridArea: 'timeline' }}><TimelineCard /></div>
+          <div style={{ gridArea: 'payout' }}><PayoutCard /></div>
+          <div style={{ gridArea: 'payment' }}><PaymentVisualizationCard /></div>
+          <div style={{ gridArea: 'installment' }}><InstallmentCard /></div>
+          <div style={{ gridArea: 'ens' }}><EnsCard /></div>
+          <div style={{ gridArea: 'members' }}><MembersAndArcCard /></div>
         </div>
       </main>
     </div>
