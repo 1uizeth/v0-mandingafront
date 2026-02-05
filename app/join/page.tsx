@@ -1,9 +1,10 @@
 "use client"
 
-import { ArrowLeft, Loader2, Wallet } from "lucide-react"
+import { ArrowLeft, Check, Loader2 } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
@@ -12,48 +13,89 @@ function formatNumber(num: number): string {
 
 // Mock data for the funding circle
 const circleData = {
-  status: "active" as const,
   amount: 20000,
   title: "for Devcon 2026",
-  slotsLeft: 21,
-  startDate: "February 1, 2026",
-  endDate: "March 1, 2028",
   monthlyAmount: 892,
   totalMonths: 24,
-  currentMonth: 1,
-  earlyEntryMonths: [2, 3, 4, 5, 6, 7, 8],
-  payoutProgress: 1,
-  installmentProgress: 1,
-  dueAmount: 892,
-  payoutDueDate: "March 1",
+  totalCommitment: 21408,
   ensDomain: "housing.mandinga.eth",
-  ensUrl: "https://app.ens.domains/housing.mandinga.eth",
-  arcscanUrl: "https://arcscan.io",
-  members: [
-    { name: "sassai.eth", joinedDaysAgo: 1 },
-    { name: "vitalik.eth", joinedDaysAgo: 2 },
-    { name: "1uiz.eth", joinedDaysAgo: 3 },
-  ],
+  dingaTokens: 21408,
+  estimatedGas: 0.12,
 }
 
 // Mock connected wallet ENS name
 const MOCK_WALLET_ENS = "user.eth"
 
-// Join flow states
-type JoinState = "review" | "signing"
+// Step type
+type Step = 1 | 2 | 3
 
+// Signing state for step 1 and step 3
+type SigningState = "idle" | "signing" | "success"
+
+// Stepper component
+function Stepper({ currentStep }: { currentStep: Step }) {
+  const steps = [
+    { num: 1, label: "Terms" },
+    { num: 2, label: "Preview" },
+    { num: 3, label: "Confirm" },
+  ]
+
+  return (
+    <div className="flex items-center justify-center gap-2 md:gap-4">
+      {steps.map((step, index) => (
+        <div key={step.num} className="flex items-center gap-2 md:gap-4">
+          {/* Step indicator */}
+          <div className="flex items-center gap-2">
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors ${
+                step.num < currentStep
+                  ? "bg-[#1A1A1A] text-white"
+                  : step.num === currentStep
+                  ? "bg-[#1A1A1A] text-white"
+                  : "bg-[#E5E5E5] text-[#999999]"
+              }`}
+            >
+              {step.num < currentStep ? (
+                <Check className="w-4 h-4" />
+              ) : (
+                step.num
+              )}
+            </div>
+            <span
+              className={`text-sm font-medium transition-colors ${
+                step.num <= currentStep ? "text-[#1A1A1A]" : "text-[#999999]"
+              }`}
+            >
+              {step.label}
+            </span>
+          </div>
+          
+          {/* Connector line */}
+          {index < steps.length - 1 && (
+            <div
+              className={`w-8 md:w-16 h-0.5 transition-colors ${
+                step.num < currentStep ? "bg-[#1A1A1A]" : "bg-[#E5E5E5]"
+              }`}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// Header component
 function Header() {
   return (
     <header 
       className="mx-auto max-w-[1280px] w-full px-6 md:px-10"
       style={{ 
-        paddingTop: 'clamp(32px, 6vh, 64px)', 
-        paddingBottom: 'clamp(24px, 4vh, 48px)' 
+        paddingTop: 'clamp(24px, 4vh, 48px)', 
+        paddingBottom: 'clamp(16px, 3vh, 32px)' 
       }}
     >
-      {/* Mobile + Tablet Header (<1024px): 2-row layout */}
+      {/* Mobile + Tablet Header (<1024px) */}
       <div className="flex lg:hidden flex-col gap-4">
-        {/* Row 1: Back (left) + ENS (right) */}
         <div className="flex items-center justify-between">
           <Link
             href="/"
@@ -67,7 +109,6 @@ function Header() {
           </div>
         </div>
         
-        {/* Row 2: Title only - centered */}
         <div className="text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-[#1A1A1A]">
             ${formatNumber(circleData.amount)}
@@ -76,12 +117,11 @@ function Header() {
         </div>
       </div>
 
-      {/* Desktop Header (1024px+) - 5-column grid */}
+      {/* Desktop Header (1024px+) */}
       <div 
         className="hidden lg:grid items-center min-h-[72px]"
         style={{ gridTemplateColumns: 'auto 1fr max-content 1fr auto' }}
       >
-        {/* Column 1: Back button */}
         <Link
           href="/"
           className="justify-self-start flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70 whitespace-nowrap min-w-0"
@@ -90,10 +130,8 @@ function Header() {
           <span>Back</span>
         </Link>
 
-        {/* Column 2: Flexible spacer */}
         <div />
 
-        {/* Column 3: Title block */}
         <div className="justify-self-center text-center flex flex-col items-center gap-1 whitespace-nowrap">
           <h1 className="text-5xl font-bold text-[#1A1A1A]">
             ${formatNumber(circleData.amount)}
@@ -101,10 +139,8 @@ function Header() {
           <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
         </div>
 
-        {/* Column 4: Flexible spacer */}
         <div />
 
-        {/* Column 5: ENS name */}
         <div className="justify-self-end rounded-full border border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] whitespace-nowrap min-w-0">
           {MOCK_WALLET_ENS}
         </div>
@@ -113,305 +149,388 @@ function Header() {
   )
 }
 
-// CONTAINER-MEASURED CIRCLE GRID (same as main page)
-function CircleGrid({ 
-  totalDots = 24, 
-  filledDot = 1,
-  earlyEntryDots = [2, 3, 4, 5, 6, 7, 8],
-  dotSize = 32,
-  baseGap = 10,
-  minGap = 6,
-  maxGap = 20
+// Step 1: Terms & Agreement
+function TermsStep({ 
+  onContinue, 
+  signingState, 
+  onSign 
 }: { 
-  totalDots?: number
-  filledDot?: number
-  earlyEntryDots?: number[]
-  dotSize?: number
-  baseGap?: number
-  minGap?: number
-  maxGap?: number
+  onContinue: () => void
+  signingState: SigningState
+  onSign: () => void
 }) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [gridConfig, setGridConfig] = useState({ cols: 8, gap: baseGap })
-
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    const computeGrid = () => {
-      const containerWidth = container.offsetWidth
-      if (containerWidth <= 0) return
-
-      const minCols = 3
-      const maxCols = totalDots
-      
-      let cols = Math.floor((containerWidth + baseGap) / (dotSize + baseGap))
-      cols = Math.max(minCols, Math.min(cols, maxCols))
-      
-      let gap = cols > 1 
-        ? (containerWidth - cols * dotSize) / (cols - 1)
-        : 0
-      
-      while (gap > maxGap && cols > minCols) {
-        cols--
-        gap = cols > 1 ? (containerWidth - cols * dotSize) / (cols - 1) : 0
-      }
-      
-      while (gap < minGap && cols < maxCols) {
-        cols++
-        gap = cols > 1 ? (containerWidth - cols * dotSize) / (cols - 1) : 0
-      }
-      
-      gap = Math.max(minGap, Math.min(maxGap, gap))
-      
-      setGridConfig({ cols, gap: Math.round(gap * 10) / 10 })
-    }
-
-    computeGrid()
-
-    const resizeObserver = new ResizeObserver(() => {
-      computeGrid()
-    })
-    
-    resizeObserver.observe(container)
-    return () => resizeObserver.disconnect()
-  }, [totalDots, dotSize, baseGap, minGap, maxGap])
-
-  const dots = Array.from({ length: totalDots }, (_, i) => i)
+  const [agreed, setAgreed] = useState(false)
 
   return (
-    <div ref={containerRef} className="w-full">
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(${gridConfig.cols}, ${dotSize}px)`,
-          columnGap: `${gridConfig.gap}px`,
-          rowGap: `${gridConfig.gap}px`,
-          width: '100%',
-          justifyContent: 'start',
-          transition: 'gap 150ms ease-out'
-        }}
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 md:p-8">
+      <h2 className="text-xl font-semibold text-[#1A1A1A]">Terms and Conditions</h2>
+      
+      <p className="text-sm text-[#666666] mt-2">
+        Please review the terms before joining the circle.
+      </p>
+
+      {/* Terms summary */}
+      <div className="mt-6 p-4 bg-[#FAFAFA] rounded-lg border border-[#E5E5E5] max-h-[300px] overflow-y-auto">
+        <ul className="space-y-3 text-sm text-[#666666]">
+          <li className="flex gap-2">
+            <span className="text-[#1A1A1A] font-medium">1.</span>
+            <span><strong>Monthly Obligation:</strong> You commit to paying ${formatNumber(circleData.monthlyAmount)} USDC every month for {circleData.totalMonths} months.</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="text-[#1A1A1A] font-medium">2.</span>
+            <span><strong>Default Penalties:</strong> Missed payments may result in penalties and loss of position in the payout queue.</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="text-[#1A1A1A] font-medium">3.</span>
+            <span><strong>NFT Quota:</strong> Your position in this circle is represented by an NFT. This NFT is your membership credential.</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="text-[#1A1A1A] font-medium">4.</span>
+            <span><strong>DINGA Tokens:</strong> You will receive ERC20 DINGA tokens representing your economic ownership and contribution tracking.</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="text-[#1A1A1A] font-medium">5.</span>
+            <span><strong>Payout Timing:</strong> Payout timing is probabilistic based on the circle mechanism, not guaranteed on a specific date.</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="text-[#1A1A1A] font-medium">6.</span>
+            <span><strong>Smart Contract:</strong> All operations are governed by audited smart contracts on the Arc network.</span>
+          </li>
+        </ul>
+      </div>
+
+      {/* Link to full terms */}
+      <a 
+        href="#" 
+        className="inline-block mt-4 text-sm text-[#7C3AED] hover:underline"
       >
-        {dots.map((i) => {
-          const dotNumber = i + 1
-          const isFilled = dotNumber === filledDot
-          const isEarlyEntry = earlyEntryDots.includes(dotNumber)
-          
-          let bgColor = "#E5E5E5"
-          if (isFilled) bgColor = "#1A1A1A"
-          else if (isEarlyEntry) bgColor = "#C4B5FD"
-          
-          return (
-            <div
-              key={i}
-              style={{
-                width: `${dotSize}px`,
-                height: `${dotSize}px`,
-                borderRadius: '9999px',
-                backgroundColor: bgColor
-              }}
-            />
-          )
-        })}
-      </div>
-    </div>
-  )
-}
+        Read full Terms and Conditions
+      </a>
 
-// Payment Visualization Card (same as main page)
-function PaymentVisualizationCard() {
-  return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
-      <h2 className="text-lg font-semibold text-[#1A1A1A]">
-        Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
-      </h2>
-
-      <p className="text-sm text-[#999999] mt-2">
-        Early entry: priority access to payouts in the first 8 months.
-      </p>
-
-      <div className="flex-1 flex items-start mt-4">
-        <CircleGrid 
-          totalDots={circleData.totalMonths}
-          filledDot={circleData.currentMonth}
-          earlyEntryDots={circleData.earlyEntryMonths}
-          dotSize={32}
-          baseGap={10}
-          minGap={6}
-          maxGap={18}
+      {/* Checkbox */}
+      <label className="flex items-start gap-3 mt-6 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={agreed}
+          onChange={(e) => setAgreed(e.target.checked)}
+          className="mt-0.5 w-5 h-5 rounded border-[#E5E5E5] text-[#1A1A1A] focus:ring-[#1A1A1A]"
         />
+        <span className="text-sm text-[#666666]">
+          I have read and agree to the Terms and Conditions
+        </span>
+      </label>
+
+      {/* CTA */}
+      <div className="mt-6">
+        {signingState === "signing" ? (
+          <div className="flex flex-col items-center gap-4 py-4">
+            <Loader2 className="h-8 w-8 text-[#1A1A1A] animate-spin" />
+            <p className="text-sm text-[#666666]">Waiting for signature...</p>
+            <Button 
+              disabled
+              className="w-full rounded-full bg-[#E5E5E5] px-8 py-6 text-base font-semibold text-[#999999] cursor-not-allowed"
+            >
+              Signing...
+            </Button>
+          </div>
+        ) : (
+          <Button 
+            onClick={onSign}
+            disabled={!agreed}
+            className={`w-full rounded-full px-8 py-6 text-base font-semibold transition-colors ${
+              agreed 
+                ? "bg-[#1A1A1A] text-white hover:bg-[#333333]" 
+                : "bg-[#E5E5E5] text-[#999999] cursor-not-allowed"
+            }`}
+          >
+            Sign Agreement
+          </Button>
+        )}
       </div>
     </div>
   )
 }
 
-// Review Card - shows transaction details before signing
-function ReviewCard({ onJoin }: { onJoin: () => void }) {
+// Step 2: Transaction Preview
+function PreviewStep({ onBack, onContinue }: { onBack: () => void; onContinue: () => void }) {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
-      <h2 className="text-lg font-semibold text-[#1A1A1A]">Review</h2>
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 md:p-8">
+      <h2 className="text-xl font-semibold text-[#1A1A1A]">Transaction Preview</h2>
       
-      <p className="text-sm text-[#999999] mt-2">
-        Confirm your first payment to join the circle.
+      <p className="text-sm text-[#666666] mt-2">
+        Review what will happen when you join.
       </p>
 
-      {/* Transaction details */}
-      <div className="mt-4 space-y-3 flex-1">
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-[#666666]">First payment</span>
-          <span className="text-sm font-medium text-[#1A1A1A]">${formatNumber(circleData.dueAmount)}</span>
+      {/* Section: Your Commitment */}
+      <div className="mt-6">
+        <h3 className="text-sm font-semibold text-[#1A1A1A] uppercase tracking-wide">Your Commitment</h3>
+        <div className="mt-3 space-y-2">
+          <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+            <span className="text-sm text-[#666666]">Monthly payment</span>
+            <span className="text-sm font-medium text-[#1A1A1A]">${formatNumber(circleData.monthlyAmount)} USDC</span>
+          </div>
+          <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+            <span className="text-sm text-[#666666]">Duration</span>
+            <span className="text-sm font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
+          </div>
+          <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+            <span className="text-sm text-[#666666]">Total commitment</span>
+            <span className="text-sm font-medium text-[#1A1A1A]">${formatNumber(circleData.totalCommitment)}</span>
+          </div>
+          <div className="flex items-center justify-between py-2">
+            <span className="text-sm text-[#666666]">Admin fee</span>
+            <span className="text-sm font-medium text-[#1A1A1A]">Included</span>
+          </div>
         </div>
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-[#666666]">Monthly amount</span>
-          <span className="text-sm font-medium text-[#1A1A1A]">${formatNumber(circleData.monthlyAmount)}/mo</span>
+      </div>
+
+      {/* Section: What You Receive */}
+      <div className="mt-6">
+        <h3 className="text-sm font-semibold text-[#1A1A1A] uppercase tracking-wide">What You Receive</h3>
+        <div className="mt-3 space-y-2">
+          <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+            <span className="text-sm text-[#666666]">NFT Quota</span>
+            <span className="text-sm font-medium text-[#1A1A1A]">1 position</span>
+          </div>
+          <div className="flex items-center justify-between py-2">
+            <span className="text-sm text-[#666666]">DINGA tokens</span>
+            <span className="text-sm font-medium text-[#7C3AED]">{formatNumber(circleData.dingaTokens)} DINGA</span>
+          </div>
         </div>
-        <div className="flex items-center justify-between">
+        
+        <div className="mt-3 p-3 bg-[#F5F3FF] rounded-lg border border-[#E9E5FF]">
+          <p className="text-xs text-[#7C3AED]">
+            DINGA tokens represent your economic claim in this circle. They track your contribution and are used for payouts and settlement.
+          </p>
+        </div>
+      </div>
+
+      {/* Section: Smart Contract Actions */}
+      <div className="mt-6">
+        <h3 className="text-sm font-semibold text-[#1A1A1A] uppercase tracking-wide">Smart Contract Actions</h3>
+        <div className="mt-3 space-y-2">
+          {[
+            `Pay first installment ($${formatNumber(circleData.monthlyAmount)} USDC)`,
+            "Mint NFT quota",
+            "Issue DINGA ERC20 tokens",
+            "Register participation",
+            "Activate payout eligibility"
+          ].map((action, i) => (
+            <div key={i} className="flex items-center gap-2 py-1">
+              <div className="w-5 h-5 rounded-full bg-[#E8F5E9] flex items-center justify-center">
+                <Check className="w-3 h-3 text-[#2E7D32]" />
+              </div>
+              <span className="text-sm text-[#666666]">{action}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Section: Network & Fees */}
+      <div className="mt-6">
+        <h3 className="text-sm font-semibold text-[#1A1A1A] uppercase tracking-wide">Network & Fees</h3>
+        <div className="mt-3 space-y-2">
+          <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+            <span className="text-sm text-[#666666]">Network</span>
+            <span className="text-sm font-medium text-[#1A1A1A]">Arc</span>
+          </div>
+          <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+            <span className="text-sm text-[#666666]">Currency</span>
+            <span className="text-sm font-medium text-[#1A1A1A]">USDC (native)</span>
+          </div>
+          <div className="flex items-center justify-between py-2">
+            <span className="text-sm text-[#666666]">Estimated gas</span>
+            <span className="text-sm font-medium text-[#1A1A1A]">~${circleData.estimatedGas} USDC</span>
+          </div>
+        </div>
+      </div>
+
+      {/* CTAs */}
+      <div className="mt-8 flex gap-3">
+        <Button 
+          variant="outline"
+          onClick={onBack}
+          className="flex-1 rounded-full border-[#E5E5E5] px-6 py-6 text-base font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent"
+        >
+          Back
+        </Button>
+        <Button 
+          onClick={onContinue}
+          className="flex-1 rounded-full bg-[#1A1A1A] px-6 py-6 text-base font-semibold text-white hover:bg-[#333333]"
+        >
+          Continue
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+// Step 3: Confirm & Execute
+function ConfirmStep({ 
+  onBack, 
+  signingState, 
+  onConfirm 
+}: { 
+  onBack: () => void
+  signingState: SigningState
+  onConfirm: () => void
+}) {
+  return (
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 md:p-8">
+      <h2 className="text-xl font-semibold text-[#1A1A1A]">Final Review</h2>
+      
+      <p className="text-sm text-[#666666] mt-2">
+        Confirm your transaction to join the circle.
+      </p>
+
+      {/* Summary */}
+      <div className="mt-6 space-y-2">
+        <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+          <span className="text-sm text-[#666666]">Circle</span>
+          <span className="text-sm font-medium text-[#1A1A1A]">${formatNumber(circleData.amount)} {circleData.title}</span>
+        </div>
+        <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+          <span className="text-sm text-[#666666]">Monthly</span>
+          <span className="text-sm font-medium text-[#1A1A1A]">${formatNumber(circleData.monthlyAmount)}</span>
+        </div>
+        <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
           <span className="text-sm text-[#666666]">Duration</span>
           <span className="text-sm font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
         </div>
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-[#666666]">Circle vault</span>
-          <span className="text-sm font-medium text-[#1A1A1A]">{circleData.ensDomain}</span>
+        <div className="flex items-center justify-between py-2 border-b border-[#F0F0F0]">
+          <span className="text-sm text-[#666666]">NFT</span>
+          <span className="text-sm font-medium text-[#1A1A1A]">1 quota</span>
         </div>
+        <div className="flex items-center justify-between py-2">
+          <span className="text-sm text-[#666666]">DINGA</span>
+          <span className="text-sm font-medium text-[#7C3AED]">{formatNumber(circleData.dingaTokens)} tokens</span>
+        </div>
+      </div>
+
+      {/* Important notice */}
+      <div className="mt-6 p-4 bg-[#FAFAFA] rounded-lg border border-[#E5E5E5]">
+        <p className="text-sm text-[#666666]">
+          This transaction will permanently register you in the circle.
+        </p>
+      </div>
+
+      {/* Warning */}
+      <div className="mt-4 p-4 bg-[#FFF7ED] rounded-lg border border-[#FFEDD5]">
+        <p className="text-sm text-[#C2410C]">
+          <strong>Important:</strong> Payments are mandatory. Failure to pay may result in penalties and loss of position.
+        </p>
       </div>
 
       {/* CTA */}
-      <div className="mt-auto pt-5">
-        <Button 
-          onClick={onJoin}
-          className="w-full rounded-full bg-[#1A1A1A] px-8 py-6 text-base font-semibold text-white hover:bg-[#333333]"
-        >
-          Join
-        </Button>
+      <div className="mt-6">
+        {signingState === "signing" ? (
+          <div className="flex flex-col items-center gap-4 py-4">
+            <Loader2 className="h-8 w-8 text-[#1A1A1A] animate-spin" />
+            <p className="text-sm text-[#666666]">Processing transaction...</p>
+            <Button 
+              disabled
+              className="w-full rounded-full bg-[#E5E5E5] px-8 py-6 text-base font-semibold text-[#999999] cursor-not-allowed"
+            >
+              Processing...
+            </Button>
+          </div>
+        ) : (
+          <div className="flex gap-3">
+            <Button 
+              variant="outline"
+              onClick={onBack}
+              className="flex-1 rounded-full border-[#E5E5E5] px-6 py-6 text-base font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent"
+            >
+              Back
+            </Button>
+            <Button 
+              onClick={onConfirm}
+              className="flex-1 rounded-full bg-[#1A1A1A] px-6 py-6 text-base font-semibold text-white hover:bg-[#333333]"
+            >
+              Confirm & Join
+            </Button>
+          </div>
+        )}
       </div>
-    </div>
-  )
-}
-
-// Signing Card - shows wallet confirmation state
-function SigningCard({ onCancel }: { onCancel: () => void }) {
-  return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
-      <h2 className="text-lg font-semibold text-[#1A1A1A]">Confirm in wallet</h2>
-      
-      <p className="text-sm text-[#999999] mt-2">
-        Approve the transaction to reserve your slot.
-      </p>
-
-      {/* Main area - centered spinner and wallet icon */}
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 py-8">
-        <div className="relative">
-          <Loader2 className="h-12 w-12 text-[#1A1A1A] animate-spin" />
-        </div>
-        <Wallet className="h-6 w-6 text-[#999999]" />
-      </div>
-
-      {/* Status line */}
-      <p className="text-sm text-[#666666] text-center mb-4">
-        Waiting for confirmation...
-      </p>
-
-      {/* CTA area */}
-      <div className="flex flex-col gap-3 mt-auto">
-        <Button 
-          disabled
-          className="w-full rounded-full bg-[#E5E5E5] px-8 py-6 text-base font-semibold text-[#999999] cursor-not-allowed"
-        >
-          Waiting...
-        </Button>
-        <Button 
-          variant="outline"
-          onClick={onCancel}
-          className="w-full rounded-full border-[#E5E5E5] px-8 py-6 text-base font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent"
-        >
-          Cancel
-        </Button>
-      </div>
-    </div>
-  )
-}
-
-// Slots card
-function SlotsCard() {
-  return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white px-5 py-4 flex items-center justify-between gap-3">
-      <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
-        <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
-        <span className="text-sm font-medium text-[#2E7D32]">Active</span>
-      </div>
-      <span className="text-sm font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
     </div>
   )
 }
 
 export default function JoinCirclePage() {
-  const [joinState, setJoinState] = useState<JoinState>("review")
+  const router = useRouter()
+  const [currentStep, setCurrentStep] = useState<Step>(1)
+  const [step1SigningState, setStep1SigningState] = useState<SigningState>("idle")
+  const [step3SigningState, setStep3SigningState] = useState<SigningState>("idle")
 
-  const handleJoin = () => {
-    setJoinState("signing")
+  // Step 1: Sign agreement
+  const handleSignAgreement = () => {
+    setStep1SigningState("signing")
+    // Simulate wallet signature
+    setTimeout(() => {
+      setStep1SigningState("success")
+      setCurrentStep(2)
+    }, 2000)
   }
 
-  const handleCancel = () => {
-    setJoinState("review")
+  // Step 2: Continue to confirm
+  const handlePreviewContinue = () => {
+    setCurrentStep(3)
+  }
+
+  // Step 3: Confirm transaction
+  const handleConfirm = () => {
+    setStep3SigningState("signing")
+    // Simulate transaction
+    setTimeout(() => {
+      setStep3SigningState("success")
+      // Redirect to dashboard
+      router.push("/")
+    }, 3000)
+  }
+
+  // Back navigation
+  const handleBack = (toStep: Step) => {
+    setCurrentStep(toStep)
   }
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Header />
 
-      <main className="flex-1 flex flex-col justify-center mx-auto max-w-[1280px] w-full px-6 md:px-10 pb-12 pt-4 box-border">
-        {/* MOBILE (<768px): Single column stack */}
-        <div className="flex flex-col gap-4 md:hidden">
-          <SlotsCard />
-          <PaymentVisualizationCard />
-          {joinState === "review" ? (
-            <ReviewCard onJoin={handleJoin} />
-          ) : (
-            <SigningCard onCancel={handleCancel} />
-          )}
+      <main className="flex-1 flex flex-col mx-auto max-w-[640px] w-full px-6 md:px-10 pb-12">
+        {/* Step indicator */}
+        <div className="mb-6 text-center">
+          <p className="text-sm text-[#666666]">Join Circle — Step {currentStep} of 3</p>
         </div>
 
-        {/* TABLET (768px - 1023px): 2-column grid */}
-        <div className="hidden md:grid lg:hidden gap-4" style={{
-          gridTemplateColumns: '1fr 1fr',
-          gridTemplateRows: 'auto auto',
-          gridTemplateAreas: `
-            "slots slots"
-            "payment review"
-          `
-        }}>
-          <div style={{ gridArea: 'slots' }}><SlotsCard /></div>
-          <div style={{ gridArea: 'payment' }}><PaymentVisualizationCard /></div>
-          <div style={{ gridArea: 'review' }}>
-            {joinState === "review" ? (
-              <ReviewCard onJoin={handleJoin} />
-            ) : (
-              <SigningCard onCancel={handleCancel} />
-            )}
-          </div>
+        {/* Stepper */}
+        <div className="mb-8">
+          <Stepper currentStep={currentStep} />
         </div>
 
-        {/* DESKTOP (1024px+): 3-column layout */}
-        <div className="hidden lg:grid gap-5 w-full" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
-          {/* Left column */}
-          <div className="flex flex-col gap-5">
-            <SlotsCard />
-          </div>
-          
-          {/* Center column */}
-          <div className="flex flex-col gap-5">
-            <PaymentVisualizationCard />
-          </div>
-          
-          {/* Right column - Review/Signing card */}
-          <div className="flex flex-col gap-5">
-            {joinState === "review" ? (
-              <ReviewCard onJoin={handleJoin} />
-            ) : (
-              <SigningCard onCancel={handleCancel} />
-            )}
-          </div>
-        </div>
+        {/* Step content */}
+        {currentStep === 1 && (
+          <TermsStep 
+            onContinue={() => setCurrentStep(2)} 
+            signingState={step1SigningState}
+            onSign={handleSignAgreement}
+          />
+        )}
+        
+        {currentStep === 2 && (
+          <PreviewStep 
+            onBack={() => handleBack(1)} 
+            onContinue={handlePreviewContinue} 
+          />
+        )}
+        
+        {currentStep === 3 && (
+          <ConfirmStep 
+            onBack={() => handleBack(2)} 
+            signingState={step3SigningState}
+            onConfirm={handleConfirm}
+          />
+        )}
       </main>
     </div>
   )
