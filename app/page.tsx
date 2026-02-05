@@ -1,10 +1,9 @@
 "use client"
 
-import { ArrowLeft, ExternalLink, Info } from "lucide-react"
+import { ArrowLeft, Info } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useEffect, useRef, useState } from "react"
-import MembersAndArcCard from "@/components/MembersAndArcCard" // Declare the variable here
 
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
