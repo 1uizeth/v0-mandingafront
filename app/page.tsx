@@ -488,7 +488,7 @@ export default function FundingCirclePage() {
     <div className="min-h-screen bg-white flex flex-col">
       <Header />
 
-      <main className="flex-1 flex flex-col justify-center mx-auto max-w-[1280px] w-full px-6 md:px-10 pb-12 pt-4">
+      <main className="flex-1 flex flex-col justify-center mx-auto max-w-[1280px] w-full px-6 md:px-10 pb-12 pt-4 box-border">
         {/* MOBILE (<768px): Single column stack */}
         <div className="flex flex-col gap-4 md:hidden">
           <SlotsCard />
@@ -523,8 +523,8 @@ export default function FundingCirclePage() {
           <div style={{ gridArea: 'arc' }}><ArcCard /></div>
         </div>
 
-        {/* DESKTOP (1024px+): 3-column layout */}
-        <div className="hidden lg:grid grid-cols-3 gap-5">
+        {/* DESKTOP (1024px+): 3-column layout with equal-width columns */}
+        <div className="hidden lg:grid gap-5 w-full" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
           {/* Left column: Slots card at top, then Timeline, Payout */}
           <div className="flex flex-col gap-5">
             <SlotsCard />
