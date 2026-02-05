@@ -79,34 +79,29 @@ function Header() {
         </div>
       </div>
 
-      {/* Desktop Header (1024px+) - Simple 3-part layout: Back | Title | Connect */}
-      {/* Grid: [Back + 1fr spacer] [Title] [1fr spacer + Connect] ensures perfect centering */}
-      <div className="hidden lg:grid items-center grid-cols-[1fr_auto_1fr]">
-        {/* Left: Back button (left-aligned in 1fr zone) */}
-        <div className="flex justify-start">
-          <Link
-            href="#"
-            className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            <span className="whitespace-nowrap">Back</span>
-          </Link>
-        </div>
+      {/* Desktop Header (1024px+) - Flexbox with absolute-centered title */}
+      <div className="hidden lg:flex items-center justify-between relative">
+        {/* Left edge: Back button */}
+        <Link
+          href="#"
+          className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
+        >
+          <ArrowLeft className="h-5 w-5" />
+          <span className="whitespace-nowrap">Back</span>
+        </Link>
 
-        {/* Center: Title block - perfectly centered (auto-width in middle of two 1fr zones) */}
-        <div className="text-center px-4">
+        {/* Center: Title block - absolutely positioned for true mathematical centering */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
           <h1 className="text-5xl font-bold text-[#1A1A1A]">
             ${formatNumber(circleData.amount)}
           </h1>
           <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
         </div>
 
-        {/* Right: Connect wallet button (right-aligned in 1fr zone) */}
-        <div className="flex justify-end">
-          <Button variant="outline" className="rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent whitespace-nowrap">
-            Connect wallet
-          </Button>
-        </div>
+        {/* Right edge: Connect wallet button */}
+        <Button variant="outline" className="rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent whitespace-nowrap">
+          Connect wallet
+        </Button>
       </div>
     </header>
   )
