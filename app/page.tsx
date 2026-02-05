@@ -32,35 +32,65 @@ const circleData = {
 
 function Header() {
   return (
-    <header className="mx-auto max-w-[1280px] xl:max-w-[1440px] px-4 sm:px-8 md:px-10 lg:px-12 xl:px-16 py-4 md:py-6">
-      {/* Mobile Header */}
-      <div className="flex flex-col gap-4 lg:hidden">
+    <header className="mx-auto max-w-[1280px] px-6 md:px-10 py-6">
+      {/* Mobile Header (<768px) */}
+      <div className="flex flex-col gap-4 md:hidden">
         <div className="flex items-center justify-between">
           <Link
             href="#"
             className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
           >
-            <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
-            <span className="text-sm md:text-base">Back</span>
+            <ArrowLeft className="h-4 w-4" />
+            <span className="text-sm">Back</span>
           </Link>
-          <div className="rounded-lg border border-[#E5E5E5] px-3 py-1.5 md:px-4 md:py-2">
-            <span className="text-xs md:text-sm font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
+          <div className="rounded-lg border border-[#E5E5E5] px-3 py-1.5">
+            <span className="text-xs font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-emerald-400" />
-          <span className="font-medium text-emerald-500 text-sm">Active</span>
-        </div>
         <div className="text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-[#1A1A1A]">
+          <h1 className="text-4xl font-bold text-[#1A1A1A]">
             ${circleData.amount.toLocaleString()}
           </h1>
-          <p className="text-sm md:text-base text-[#1A1A1A]">{circleData.title}</p>
+          <p className="text-base text-[#1A1A1A]">{circleData.title}</p>
+        </div>
+        <div className="flex justify-center">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+            <span className="font-medium text-emerald-500 text-sm">Active</span>
+          </div>
         </div>
       </div>
 
-      {/* Desktop Header */}
-      <div className="hidden lg:grid grid-cols-3 gap-6 lg:gap-8 items-center">
+      {/* Tablet Header (768px - 1023px) */}
+      <div className="hidden md:flex lg:hidden flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <Link
+            href="#"
+            className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
+          >
+            <ArrowLeft className="h-5 w-5" />
+            <span>Back</span>
+          </Link>
+          <div className="rounded-lg border border-[#E5E5E5] px-4 py-2">
+            <span className="text-sm font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
+          </div>
+        </div>
+        <div className="text-center">
+          <h1 className="text-5xl font-bold text-[#1A1A1A]">
+            ${circleData.amount.toLocaleString()}
+          </h1>
+          <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
+        </div>
+        <div className="flex justify-center">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+            <span className="font-medium text-emerald-500">Active</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Header (1024px+) - 3 column grid */}
+      <div className="hidden lg:grid grid-cols-3 gap-6 items-center">
         {/* Column 1: Back button left, Active badge right */}
         <div className="flex items-center justify-between">
           <Link
@@ -71,7 +101,7 @@ function Header() {
             <span>Back</span>
           </Link>
 
-          <div className="flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5">
+          <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-emerald-400" />
             <span className="font-medium text-emerald-500">Active</span>
           </div>
@@ -79,10 +109,10 @@ function Header() {
 
         {/* Column 2: Centered title */}
         <div className="flex flex-col items-center justify-center text-center">
-          <h1 className="text-4xl lg:text-5xl xl:text-[56px] font-bold text-[#1A1A1A]">
+          <h1 className="text-5xl font-bold text-[#1A1A1A]">
             ${circleData.amount.toLocaleString()}
           </h1>
-          <p className="text-lg xl:text-xl text-[#1A1A1A]">{circleData.title}</p>
+          <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
         </div>
 
         {/* Column 3: Slots badge far right */}
@@ -96,27 +126,44 @@ function Header() {
   )
 }
 
-function EarlyEntryCard() {
+// INFO TAG: Early Entry (compact, fixed height)
+function EarlyEntryTag() {
   return (
-    <div className="flex items-start gap-3 rounded-xl border border-[#E9E3FF] bg-[#F3F0FF] p-4 md:p-5 lg:p-6 min-h-[120px] md:min-h-[140px]">
-      <Info className="mt-0.5 h-5 w-5 text-[#7C3AED] stroke-[1.5] flex-shrink-0" />
+    <div className="flex items-center gap-3 rounded-xl border border-purple-100 bg-purple-50 p-5 min-h-[80px] max-h-[100px]">
+      <Info className="h-5 w-5 text-purple-600 stroke-[1.5] flex-shrink-0" />
       <div>
-        <p className="font-semibold text-[#7C3AED]">Early entry</p>
-        <p className="text-[#9333EA]">Selected for initial payouts</p>
+        <p className="font-semibold text-purple-600 text-base">Early entry</p>
+        <p className="text-purple-500 text-sm">Selected for initial payouts</p>
       </div>
     </div>
   )
 }
 
-function TimelineDatesCard() {
+// INFO TAG: Terms Notice (compact, fixed height)
+function TermsTag() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-4 md:p-5 lg:p-6 min-h-[140px] md:min-h-[160px]">
-      <div className="space-y-4 md:space-y-5">
+    <div className="flex items-start gap-3 rounded-xl border border-[#E5E5E5] bg-white p-5 min-h-[80px]">
+      <Info className="h-5 w-5 text-[#999999] stroke-[1.5] flex-shrink-0 mt-0.5" />
+      <p className="text-sm text-[#666666]">
+        Read the{" "}
+        <Link href="#" className="font-medium text-[#1A1A1A] underline underline-offset-2 hover:opacity-70">
+          Terms and Conditions
+        </Link>{" "}
+        before joining a circle
+      </p>
+    </div>
+  )
+}
+
+// FULL CARD: Timeline
+function TimelineCard() {
+  return (
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
+      <div className="space-y-5">
         <div>
           <p className="text-sm text-[#666666]">Started on</p>
           <p className="text-base font-semibold text-[#1A1A1A]">{circleData.startDate}</p>
         </div>
-
         <div>
           <p className="text-sm text-[#666666]">Ends on</p>
           <p className="text-base font-semibold text-[#1A1A1A]">{circleData.endDate}</p>
@@ -126,11 +173,12 @@ function TimelineDatesCard() {
   )
 }
 
-function PayoutProgressCard() {
+// FULL CARD: Payout Progress
+function PayoutCard() {
   const progressPercentage = (circleData.payoutProgress / circleData.totalMonths) * 100
 
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-4 md:p-5 lg:p-6 min-h-[140px] md:min-h-[160px]">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
       <div className="flex items-center justify-between">
         <span className="text-sm text-[#666666]">Payout</span>
         <span className="text-sm text-[#666666]">
@@ -145,81 +193,102 @@ function PayoutProgressCard() {
       </div>
       <div className="mt-4">
         <p className="text-sm text-[#666666]">Due on</p>
-        <p className="text-xl md:text-2xl font-semibold text-[#1A1A1A]">{circleData.payoutDueDate}</p>
+        <p className="text-2xl font-semibold text-[#1A1A1A]">{circleData.payoutDueDate}</p>
       </div>
     </div>
   )
 }
 
+// Circle Grid Component
+function CircleGrid({ columns, size, gap }: { columns: number; size: string; gap: string }) {
+  return (
+    <div className={`grid grid-cols-${columns} ${gap}`}>
+      {Array.from({ length: circleData.totalMonths }, (_, i) => {
+        const monthNumber = i + 1
+        const isCurrent = monthNumber === circleData.currentMonth
+        const isEarlyEntry = circleData.earlyEntryMonths.includes(monthNumber)
+
+        let bgColor = "bg-[#E5E5E5]"
+        if (isCurrent) {
+          bgColor = "bg-[#1A1A1A]"
+        } else if (isEarlyEntry) {
+          bgColor = "bg-[#C4B5FD]"
+        }
+
+        return (
+          <div
+            key={monthNumber}
+            className={`${size} rounded-full ${bgColor}`}
+            title={`Month ${monthNumber}`}
+          />
+        )
+      })}
+    </div>
+  )
+}
+
+// FULL CARD: Payment Visualization (circles + description)
 function PaymentVisualizationCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-4 md:p-5 lg:p-6">
-      <h2 className="text-base md:text-lg font-semibold text-[#1A1A1A]">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
+      <h2 className="text-lg font-semibold text-[#1A1A1A]">
         Pay ${circleData.monthlyAmount.toLocaleString()} /mo for {circleData.totalMonths} months
       </h2>
 
-      {/* Mobile Payment circles grid - 8 columns x 3 rows */}
-      <div className="mt-4 md:mt-6 grid grid-cols-8 gap-1.5 lg:hidden">
+      {/* Mobile: 6 cols × 4 rows */}
+      <div className="mt-6 grid grid-cols-6 gap-1.5 md:hidden">
         {Array.from({ length: circleData.totalMonths }, (_, i) => {
           const monthNumber = i + 1
           const isCurrent = monthNumber === circleData.currentMonth
           const isEarlyEntry = circleData.earlyEntryMonths.includes(monthNumber)
-
           let bgColor = "bg-[#E5E5E5]"
-          if (isCurrent) {
-            bgColor = "bg-[#1A1A1A]"
-          } else if (isEarlyEntry) {
-            bgColor = "bg-[#C4B5FD]"
-          }
-
-          return (
-            <div
-              key={monthNumber}
-              className={`aspect-square rounded-full ${bgColor}`}
-              title={`Month ${monthNumber}`}
-            />
-          )
+          if (isCurrent) bgColor = "bg-[#1A1A1A]"
+          else if (isEarlyEntry) bgColor = "bg-[#C4B5FD]"
+          return <div key={monthNumber} className={`w-7 h-7 rounded-full ${bgColor}`} />
         })}
       </div>
 
-      {/* Desktop Payment circles grid - 12 columns x 2 rows */}
+      {/* Tablet: 8 cols × 3 rows */}
+      <div className="mt-6 hidden md:grid lg:hidden grid-cols-8 gap-2">
+        {Array.from({ length: circleData.totalMonths }, (_, i) => {
+          const monthNumber = i + 1
+          const isCurrent = monthNumber === circleData.currentMonth
+          const isEarlyEntry = circleData.earlyEntryMonths.includes(monthNumber)
+          let bgColor = "bg-[#E5E5E5]"
+          if (isCurrent) bgColor = "bg-[#1A1A1A]"
+          else if (isEarlyEntry) bgColor = "bg-[#C4B5FD]"
+          return <div key={monthNumber} className={`w-8 h-8 rounded-full ${bgColor}`} />
+        })}
+      </div>
+
+      {/* Desktop: 12 cols × 2 rows */}
       <div className="mt-6 hidden lg:grid grid-cols-12 gap-2">
         {Array.from({ length: circleData.totalMonths }, (_, i) => {
           const monthNumber = i + 1
           const isCurrent = monthNumber === circleData.currentMonth
           const isEarlyEntry = circleData.earlyEntryMonths.includes(monthNumber)
-
           let bgColor = "bg-[#E5E5E5]"
-          if (isCurrent) {
-            bgColor = "bg-[#1A1A1A]"
-          } else if (isEarlyEntry) {
-            bgColor = "bg-[#C4B5FD]"
-          }
-
-          return (
-            <div
-              key={monthNumber}
-              className={`aspect-square rounded-full ${bgColor}`}
-              title={`Month ${monthNumber}`}
-            />
-          )
+          if (isCurrent) bgColor = "bg-[#1A1A1A]"
+          else if (isEarlyEntry) bgColor = "bg-[#C4B5FD]"
+          return <div key={monthNumber} className={`w-8 h-8 rounded-full ${bgColor}`} />
         })}
       </div>
 
-      <p className="mt-4 md:mt-6 text-sm text-[#666666]">
+      <p className="mt-6 text-sm text-[#666666]">
         Join the first payout on an{" "}
-        <span className="font-semibold text-[#7C3AED]">Early entry</span> window to most likely be
+        <span className="font-semibold text-purple-600">Early entry</span> window to most likely be
         selected to <span className="font-semibold text-[#1A1A1A]">get $20,000 within the first 8 months</span>.
       </p>
     </div>
   )
 }
 
+// FULL CARD: Installment Progress
 function InstallmentCard() {
   const progressPercentage = (circleData.installmentProgress / circleData.totalMonths) * 100
 
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-4 md:p-5 lg:p-6">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
       <div className="flex items-center justify-between">
         <span className="text-sm text-[#666666]">Installment</span>
         <span className="text-sm text-[#666666]">
@@ -233,12 +302,12 @@ function InstallmentCard() {
         />
       </div>
 
-      <div className="mt-4 md:mt-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div className="mt-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           <p className="text-sm text-[#666666]">Due today</p>
-          <p className="text-2xl md:text-3xl font-semibold text-[#1A1A1A]">${circleData.dueAmount.toLocaleString()}</p>
+          <p className="text-3xl font-semibold text-[#1A1A1A]">${circleData.dueAmount.toLocaleString()}</p>
         </div>
-        <Button className="w-full sm:w-auto rounded-full bg-[#1A1A1A] px-6 md:px-8 py-3 md:py-6 text-base font-semibold text-white hover:bg-[#333333]">
+        <Button className="w-full sm:w-auto rounded-full bg-[#1A1A1A] px-8 py-6 text-base font-semibold text-white hover:bg-[#333333]">
           Join now
         </Button>
       </div>
@@ -246,9 +315,10 @@ function InstallmentCard() {
   )
 }
 
+// FULL CARD: ENS Integration
 function EnsCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-4 md:p-5 lg:p-6 min-h-[120px] md:min-h-[140px]">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -268,14 +338,15 @@ function EnsCard() {
       </div>
 
       <div className="mt-4">
-        <div className="inline-block rounded-full border border-sky-400 bg-sky-50 px-4 md:px-5 py-2">
-          <span className="font-medium text-sky-500 text-sm md:text-base">{circleData.ensDomain}</span>
+        <div className="inline-block rounded-full border border-sky-400 bg-sky-50 px-5 py-2">
+          <span className="font-medium text-sky-500">{circleData.ensDomain}</span>
         </div>
       </div>
     </div>
   )
 }
 
+// FULL CARD: Active Members + Arc
 function MembersAndArcCard() {
   const formatJoinDate = (daysAgo: number) => {
     if (daysAgo === 1) return "Joined 1 day ago"
@@ -283,21 +354,23 @@ function MembersAndArcCard() {
   }
 
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-4 md:p-5 lg:p-6">
-      {/* Active Members Section */}
-      <h3 className="text-base md:text-lg font-semibold text-[#1A1A1A]">Active members</h3>
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
+      <h3 className="text-lg font-semibold text-[#1A1A1A]">Active members</h3>
 
-      <div className="mt-3 md:mt-4">
-        {circleData.members.map((member) => (
-          <div key={member.name} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-0 py-3 md:py-4 border-b border-[#F5F5F5] last:border-0">
-            <span className="font-medium text-[#1A1A1A] text-sm md:text-base">{member.name}</span>
-            <span className="text-xs md:text-sm text-[#999999]">{formatJoinDate(member.joinedDaysAgo)}</span>
+      <div className="mt-4">
+        {circleData.members.map((member, index) => (
+          <div 
+            key={member.name} 
+            className={`flex items-center justify-between py-4 ${index < circleData.members.length - 1 ? 'border-b border-[#F5F5F5]' : ''}`}
+          >
+            <span className="font-medium text-[#1A1A1A]">{member.name}</span>
+            <span className="text-sm text-[#999999]">{formatJoinDate(member.joinedDaysAgo)}</span>
           </div>
         ))}
       </div>
 
       {/* Divider */}
-      <div className="my-4 md:my-5 h-px bg-[#E5E5E5]" />
+      <div className="my-5 h-px bg-[#E5E5E5]" />
 
       {/* Arc Section */}
       <div className="flex items-center justify-between">
@@ -321,63 +394,79 @@ function MembersAndArcCard() {
   )
 }
 
-function TermsCard() {
-  return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-4 md:p-5 lg:p-6">
-      <div className="flex items-start gap-3">
-        <Info className="mt-0.5 h-5 w-5 text-[#666666] stroke-[1.5] flex-shrink-0" />
-        <p className="text-sm text-[#666666]">
-          Read the{" "}
-          <Link href="#" className="font-medium text-[#1A1A1A] underline underline-offset-2 hover:opacity-70">
-            Terms and Conditions
-          </Link>{" "}
-          before joining a circle
-        </p>
-      </div>
-    </div>
-  )
-}
-
 export default function FundingCirclePage() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
 
-      <main className="mx-auto max-w-[1280px] xl:max-w-[1440px] px-4 sm:px-8 md:px-10 lg:px-12 xl:px-16 pb-8 md:pb-12 pt-4 md:pt-8">
-        {/* Mobile/Tablet: Single/Two column layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:hidden gap-4 md:gap-5">
-          <EarlyEntryCard />
+      <main className="mx-auto max-w-[1280px] px-6 md:px-10 pb-12 pt-6">
+        {/* MOBILE (<768px): Single column */}
+        <div className="flex flex-col gap-4 md:hidden">
+          <EarlyEntryTag />
           <PaymentVisualizationCard />
-          <TimelineDatesCard />
-          <EnsCard />
-          <PayoutProgressCard />
+          <TimelineCard />
+          <PayoutCard />
           <InstallmentCard />
-          <div className="md:col-span-2">
-            <MembersAndArcCard />
-          </div>
-          <TermsCard />
+          <EnsCard />
+          <MembersAndArcCard />
+          <TermsTag />
         </div>
 
-        {/* Desktop: Three column layout */}
-        <div className="hidden lg:grid grid-cols-3 gap-6 xl:gap-8">
+        {/* TABLET (768px - 1023px): 2 columns with spanning */}
+        <div className="hidden md:grid lg:hidden grid-cols-2 gap-5">
+          {/* Early Entry spans full width */}
+          <div className="col-span-2">
+            <EarlyEntryTag />
+          </div>
+          
+          {/* Payment Visualization spans full width */}
+          <div className="col-span-2">
+            <PaymentVisualizationCard />
+          </div>
+          
+          {/* Timeline - Left */}
+          <TimelineCard />
+          
+          {/* ENS - Right */}
+          <EnsCard />
+          
+          {/* Payout - Left */}
+          <PayoutCard />
+          
+          {/* Installment - Right */}
+          <InstallmentCard />
+          
+          {/* Members + Arc spans full width */}
+          <div className="col-span-2">
+            <MembersAndArcCard />
+          </div>
+          
+          {/* Terms spans full width */}
+          <div className="col-span-2">
+            <TermsTag />
+          </div>
+        </div>
+
+        {/* DESKTOP (1024px+): 3 columns */}
+        <div className="hidden lg:grid grid-cols-3 gap-6">
           {/* Left Column */}
-          <div className="space-y-6 xl:space-y-8">
-            <EarlyEntryCard />
-            <TimelineDatesCard />
-            <PayoutProgressCard />
+          <div className="space-y-6">
+            <EarlyEntryTag />
+            <TimelineCard />
+            <PayoutCard />
           </div>
 
           {/* Center Column - TWO separate cards */}
-          <div className="space-y-6 xl:space-y-8">
+          <div className="space-y-6">
             <PaymentVisualizationCard />
             <InstallmentCard />
           </div>
 
           {/* Right Column - 3 cards */}
-          <div className="space-y-6 xl:space-y-8">
+          <div className="space-y-6">
             <EnsCard />
             <MembersAndArcCard />
-            <TermsCard />
+            <TermsTag />
           </div>
         </div>
       </main>
