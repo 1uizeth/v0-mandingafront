@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useEffect, useRef, useState } from "react"
 
+
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -108,25 +109,6 @@ function Header() {
         </div>
       </div>
     </header>
-  )
-}
-
-// INFO TAG: Early Entry
-// Vertically centered content group to avoid top-heavy appearance
-function EarlyEntryTag() {
-  return (
-    <div className="rounded-xl border border-purple-100 bg-purple-50 p-5 h-full flex flex-col min-h-0">
-      {/* Content group - centered vertically within card */}
-      <div className="flex-1 flex flex-col justify-center gap-2">
-        <div className="flex items-start gap-3">
-          <Info className="h-5 w-5 text-purple-600 stroke-[1.5] flex-shrink-0 mt-0.5" />
-          <p className="font-semibold text-purple-600 text-base">Early entry</p>
-        </div>
-        <p className="text-purple-500 text-sm leading-relaxed pl-8">
-          First slots are reserved for early entry members. Higher chance to be selected within the first 8 months.
-        </p>
-      </div>
-    </div>
   )
 }
 
@@ -292,7 +274,7 @@ function CircleGrid({
   )
 }
 
-// FULL CARD: Payment Visualization (circles + description)
+// FULL CARD: Payment Visualization (with embedded Early Entry info tag)
 function PaymentVisualizationCard() {
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
@@ -300,7 +282,18 @@ function PaymentVisualizationCard() {
         Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
       </h2>
 
-      <div className="mt-5 flex-1 flex items-start">
+      {/* Embedded Early Entry info tag */}
+      <div className="mt-4 rounded-lg border border-purple-100 bg-purple-50 p-3 flex items-start gap-2">
+        <Info className="h-4 w-4 text-purple-600 stroke-[1.5] flex-shrink-0 mt-0.5" />
+        <div>
+          <p className="font-semibold text-purple-600 text-sm">Early entry</p>
+          <p className="text-purple-500 text-xs leading-relaxed line-clamp-2">
+            First slots are reserved for early entry members. Higher chance to be selected within the first 8 months.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-4 flex-1 flex items-start">
         <CircleGrid 
           totalDots={circleData.totalMonths}
           filledDot={circleData.currentMonth}
@@ -312,7 +305,7 @@ function PaymentVisualizationCard() {
         />
       </div>
 
-      <p className="mt-5 text-sm text-[#666666] leading-relaxed">
+      <p className="mt-4 text-sm text-[#666666] leading-relaxed">
         <span className="font-semibold text-purple-600">Early entry</span> improves your odds of a{" "}
         <span className="font-semibold text-[#1A1A1A]">$20,000 payout within 8 months</span>.
       </p>
@@ -470,10 +463,10 @@ function ArcCard() {
   )
 }
 
-// Slots badge component for reuse
-function SlotsBadge({ className = "" }: { className?: string }) {
+// Slots card - compact card style matching other cards
+function SlotsCard() {
   return (
-    <div className={`rounded-lg bg-[#F5F5F5] px-4 py-2 w-fit ${className}`}>
+    <div className="rounded-xl border border-[#E5E5E5] bg-white px-5 py-4">
       <span className="text-sm font-medium text-[#666666]">{circleData.slotsLeft} out of 24 slots left</span>
     </div>
   )
@@ -487,7 +480,6 @@ export default function FundingCirclePage() {
       <main className="flex-1 flex flex-col justify-center mx-auto max-w-[1280px] w-full px-6 md:px-10 pb-12 pt-4">
         {/* MOBILE (<768px): Single column stack */}
         <div className="flex flex-col gap-4 md:hidden">
-          <EarlyEntryTag />
           <PaymentVisualizationCard />
           <TimelineCard />
           <PayoutCard />
@@ -500,16 +492,14 @@ export default function FundingCirclePage() {
         {/* TABLET (768px - 1023px): 2-column grid with row-based areas */}
         <div className="hidden md:grid lg:hidden gap-4" style={{
           gridTemplateColumns: '1fr 1fr',
-          gridTemplateRows: 'auto auto auto auto auto auto',
+          gridTemplateRows: 'auto auto auto auto',
           gridTemplateAreas: `
-            "early early"
             "payment payment"
             "timeline ens"
             "payout installment"
             "members arc"
           `
         }}>
-          <div style={{ gridArea: 'early' }}><EarlyEntryTag /></div>
           <div style={{ gridArea: 'payment' }}><PaymentVisualizationCard /></div>
           <div style={{ gridArea: 'timeline' }}><TimelineCard /></div>
           <div style={{ gridArea: 'ens' }}><EnsCard /></div>
@@ -520,32 +510,25 @@ export default function FundingCirclePage() {
         </div>
 
         {/* DESKTOP (1024px+): 3-column layout */}
-        <div className="hidden lg:block">
-          {/* Slots badge above grid, aligned to column 1 */}
-          <div className="mb-5">
-            <SlotsBadge />
+        <div className="hidden lg:grid grid-cols-3 gap-5">
+          {/* Left column: Slots card at top, then Timeline, Payout */}
+          <div className="flex flex-col gap-5">
+            <SlotsCard />
+            <TimelineCard />
+            <PayoutCard />
           </div>
           
-          <div className="grid grid-cols-3 gap-5">
-            {/* Left column */}
-            <div className="flex flex-col gap-5">
-              <EarlyEntryTag />
-              <TimelineCard />
-              <PayoutCard />
-            </div>
-            
-            {/* Center column */}
-            <div className="flex flex-col gap-5">
-              <PaymentVisualizationCard />
-              <InstallmentCard />
-            </div>
-            
-            {/* Right column */}
-            <div className="flex flex-col gap-5">
-              <EnsCard />
-              <MembersCard />
-              <ArcCard />
-            </div>
+          {/* Center column */}
+          <div className="flex flex-col gap-5">
+            <PaymentVisualizationCard />
+            <InstallmentCard />
+          </div>
+          
+          {/* Right column */}
+          <div className="flex flex-col gap-5">
+            <EnsCard />
+            <MembersCard />
+            <ArcCard />
           </div>
         </div>
       </main>
