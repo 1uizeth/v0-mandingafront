@@ -97,90 +97,49 @@ function MobileStepper({ currentStep }: { currentStep: Step }) {
   )
 }
 
-// Step 1: Terms - 2x2 grid layout for desktop to avoid scroll
-function TermsStep({ 
-  onSign 
-}: { 
-  onSign: () => void
-}) {
+// Step 1: Terms - compact 2x2 grid, checkbox+button inline on desktop
+function TermsStep({ onSign }: { onSign: () => void }) {
   const [agreed, setAgreed] = useState(false)
 
   const terms = [
-    {
-      num: "01",
-      title: "Shared Financial Risk",
-      desc: "This is a collective financial system. Other members' behavior may affect outcomes."
-    },
-    {
-      num: "02", 
-      title: "Missed Payments",
-      desc: "If you miss payments, penalties may apply and your benefits may be restricted."
-    },
-    {
-      num: "03",
-      title: "Blockchain Finality", 
-      desc: "All transactions are irreversible. Payments and tokens cannot be reversed."
-    },
-    {
-      num: "04",
-      title: "Legal Responsibility",
-      desc: "You are responsible for any legal or tax obligations in your country."
-    }
+    { num: "01", title: "Shared Financial Risk", desc: "Collective system. Other members may affect outcomes." },
+    { num: "02", title: "Missed Payments", desc: "Penalties may apply. Rules enforced automatically." },
+    { num: "03", title: "Blockchain Finality", desc: "Transactions irreversible once confirmed." },
+    { num: "04", title: "Legal Responsibility", desc: "You handle legal/tax obligations in your country." }
   ]
 
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 lg:p-8">
-      {/* Card header */}
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 lg:p-6">
       <h2 className="text-lg font-semibold text-[#1A1A1A]">Terms and Participation Agreement</h2>
-      <p className="text-sm text-[#666666] mt-1">
-        Please review before joining this circle.
-      </p>
+      <p className="text-sm text-[#666666] mt-1">Please review before joining.</p>
 
-      {/* Terms in 2x2 grid on desktop */}
-      <div className="mt-6 p-4 lg:p-5 bg-[#FAFAFA] rounded-lg border border-[#E5E5E5]">
-        <p className="font-mono text-sm text-[#1A1A1A] mb-4">
-          If you accept these terms, you agree that:
-        </p>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {terms.map((term) => (
-            <div key={term.num} className="font-mono text-sm">
-              <div className="flex items-baseline gap-2">
-                <span className="text-[#1A1A1A] font-semibold">{term.num}.</span>
-                <span className="text-[#1A1A1A] font-medium">{term.title}</span>
+      {/* 2x2 grid on lg */}
+      <div className="mt-4 p-4 bg-[#FAFAFA] rounded-lg border border-[#E5E5E5]">
+        <p className="font-mono text-sm text-[#1A1A1A] mb-3">If you accept, you agree that:</p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          {terms.map((t) => (
+            <div key={t.num} className="font-mono text-sm flex gap-2">
+              <span className="text-[#1A1A1A] font-semibold shrink-0">{t.num}.</span>
+              <div>
+                <span className="text-[#1A1A1A] font-medium">{t.title}</span>
+                <p className="text-[#666666] text-xs mt-0.5">{t.desc}</p>
               </div>
-              <p className="text-[#666666] mt-1 ml-7 text-xs leading-relaxed">
-                {term.desc}
-              </p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Checkbox */}
-      <label className="flex items-start gap-3 mt-5 cursor-pointer">
-        <input
-          type="checkbox"
-          checked={agreed}
-          onChange={(e) => setAgreed(e.target.checked)}
-          className="mt-0.5 w-5 h-5 rounded border-[#E5E5E5] text-[#1A1A1A] focus:ring-[#1A1A1A]"
-        />
-        <span className="text-sm text-[#1A1A1A]">
-          I understand and agree to these terms.
-        </span>
-      </label>
-
-      {/* CTA */}
-      <div className="mt-5">
-        <Button 
-          onClick={onSign}
-          disabled={!agreed}
-          className={`w-full rounded-full px-8 py-5 text-base font-semibold transition-colors ${
-            agreed 
-              ? "bg-[#1A1A1A] text-white hover:bg-[#333333]" 
-              : "bg-[#E5E5E5] text-[#999999] cursor-not-allowed"
-          }`}
-        >
+      {/* Footer: checkbox + CTA inline on lg */}
+      <div className="mt-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <label className="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)}
+            className="w-4 h-4 rounded border-[#E5E5E5] text-[#1A1A1A] focus:ring-[#1A1A1A]" />
+          <span className="text-sm text-[#1A1A1A]">I understand and agree to these terms.</span>
+        </label>
+        <Button onClick={onSign} disabled={!agreed}
+          className={`shrink-0 rounded-full px-8 py-5 text-sm font-semibold lg:w-auto w-full ${
+            agreed ? "bg-[#1A1A1A] text-white hover:bg-[#333333]" : "bg-[#E5E5E5] text-[#999999] cursor-not-allowed"
+          }`}>
           Sign and Accept Terms
         </Button>
       </div>
@@ -188,117 +147,70 @@ function TermsStep({
   )
 }
 
-// Step 2: Transaction Preview - 2-column layout for desktop
+// Step 2: Review - Financial summary only (per master prompt)
 function PreviewStep({ onBack, onContinue }: { onBack: () => void; onContinue: () => void }) {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 lg:p-8">
-      <h2 className="text-lg font-semibold text-[#1A1A1A]">Transaction Preview</h2>
-      <p className="text-sm text-[#666666] mt-1">
-        Review what will happen when you join.
-      </p>
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 lg:p-6">
+      <h2 className="text-lg font-semibold text-[#1A1A1A]">Review</h2>
+      <p className="text-sm text-[#666666] mt-1">Verify your commitment before proceeding.</p>
 
-      {/* 2-column grid on desktop */}
-      <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left column */}
-        <div className="space-y-5">
-          {/* Your Commitment */}
-          <div>
-            <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Your Commitment</h3>
-            <div className="space-y-0 text-sm">
-              <div className="flex justify-between py-1.5">
-                <span className="text-[#666666]">Monthly</span>
-                <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.monthlyAmount)}</span>
-              </div>
-              <div className="flex justify-between py-1.5">
-                <span className="text-[#666666]">Duration</span>
-                <span className="font-medium text-[#1A1A1A]">{circleData.totalMonths} mo</span>
-              </div>
-              <div className="flex justify-between py-1.5">
-                <span className="text-[#666666]">Total</span>
-                <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.totalCommitment)}</span>
-              </div>
-              <div className="flex justify-between py-1.5">
-                <span className="text-[#666666]">Fee (7%)</span>
-                <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.protocolFee)}</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-t border-[#F0F0F0] mt-1 pt-2">
-                <span className="font-medium text-[#1A1A1A]">Total</span>
-                <span className="font-semibold text-[#1A1A1A]">${formatNumber(circleData.totalWithFees)}</span>
-              </div>
+      {/* 2-column: Commitment left, Network right */}
+      <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* Left: Your Commitment */}
+        <div>
+          <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Your Commitment</h3>
+          <div className="text-sm space-y-0">
+            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+              <span className="text-[#666666]">Monthly payment</span>
+              <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.monthlyAmount)} USDC</span>
             </div>
-          </div>
-
-          {/* Network */}
-          <div>
-            <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Network</h3>
-            <div className="space-y-0 text-sm">
-              <div className="flex justify-between py-1.5">
-                <span className="text-[#666666]">Chain</span>
-                <span className="font-medium text-[#1A1A1A]">Arc</span>
-              </div>
-              <div className="flex justify-between py-1.5">
-                <span className="text-[#666666]">Currency</span>
-                <span className="font-medium text-[#1A1A1A]">USDC</span>
-              </div>
-              <div className="flex justify-between py-1.5">
-                <span className="text-[#666666]">Gas</span>
-                <span className="font-medium text-[#1A1A1A]">~${circleData.estimatedGas}</span>
-              </div>
+            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+              <span className="text-[#666666]">Duration</span>
+              <span className="font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
+            </div>
+            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+              <span className="text-[#666666]">Subtotal ({circleData.totalMonths} x ${circleData.monthlyAmount})</span>
+              <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.totalCommitment)}</span>
+            </div>
+            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+              <span className="text-[#666666]">Platform fee (7%)</span>
+              <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.protocolFee)}</span>
+            </div>
+            <div className="flex justify-between py-2 mt-1">
+              <span className="font-medium text-[#1A1A1A]">Total</span>
+              <span className="font-semibold text-[#1A1A1A]">${formatNumber(circleData.totalWithFees)}</span>
             </div>
           </div>
         </div>
 
-        {/* Right column */}
-        <div className="space-y-5">
-          {/* What You Receive */}
-          <div>
-            <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">You Receive</h3>
-            <div className="space-y-0 text-sm">
-              <div className="flex justify-between py-1.5">
-                <span className="text-[#666666]">NFT Quota</span>
-                <span className="font-medium text-[#1A1A1A]">1 position</span>
-              </div>
-              <div className="flex justify-between py-1.5">
-                <span className="text-[#666666]">DINGA</span>
-                <span className="font-medium text-[#1A1A1A]">{formatNumber(circleData.dingaTokens)}</span>
-              </div>
+        {/* Right: Network & Fees */}
+        <div>
+          <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Network & Fees</h3>
+          <div className="text-sm space-y-0">
+            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+              <span className="text-[#666666]">Chain</span>
+              <span className="font-medium text-[#1A1A1A]">Arc</span>
             </div>
-          </div>
-
-          {/* Contract Actions */}
-          <div>
-            <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Contract Actions</h3>
-            <div className="space-y-1 text-sm">
-              {[
-                "Pay first installment",
-                "Mint NFT quota",
-                "Issue DINGA tokens",
-                "Register position",
-                "Activate eligibility"
-              ].map((action, i) => (
-                <div key={i} className="flex items-center gap-2 py-0.5">
-                  <Check className="w-3.5 h-3.5 text-[#1A1A1A]" />
-                  <span className="text-[#666666]">{action}</span>
-                </div>
-              ))}
+            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+              <span className="text-[#666666]">Currency</span>
+              <span className="font-medium text-[#1A1A1A]">USDC (native)</span>
+            </div>
+            <div className="flex justify-between py-1.5">
+              <span className="text-[#666666]">Estimated gas</span>
+              <span className="font-medium text-[#1A1A1A]">~${circleData.estimatedGas}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* CTAs */}
-      <div className="mt-6 flex gap-3">
-        <Button 
-          variant="outline"
-          onClick={onBack}
-          className="flex-1 rounded-full border-[#E5E5E5] px-6 py-5 text-base font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent"
-        >
+      <div className="mt-5 flex gap-3">
+        <Button variant="outline" onClick={onBack}
+          className="flex-1 rounded-full border-[#E5E5E5] px-6 py-5 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent">
           Back
         </Button>
-        <Button 
-          onClick={onContinue}
-          className="flex-1 rounded-full bg-[#1A1A1A] px-6 py-5 text-base font-semibold text-white hover:bg-[#333333]"
-        >
+        <Button onClick={onContinue}
+          className="flex-1 rounded-full bg-[#1A1A1A] px-6 py-5 text-sm font-semibold text-white hover:bg-[#333333]">
           Continue
         </Button>
       </div>
@@ -306,7 +218,7 @@ function PreviewStep({ onBack, onContinue }: { onBack: () => void; onContinue: (
   )
 }
 
-// Step 3: Final Review - with agreement signed date
+// Step 3: Final Review - 2-column layout for no-scroll
 function ConfirmStep({ 
   onBack, 
   onConfirm,
@@ -316,102 +228,82 @@ function ConfirmStep({
   onConfirm: () => void
   agreementSignedAt: Date | null
 }) {
-  // Format the signed date
   const formattedDate = agreementSignedAt 
-    ? agreementSignedAt.toLocaleString('en-US', { 
-        month: 'short', 
-        day: 'numeric', 
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit'
-      })
+    ? agreementSignedAt.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })
     : 'Just now'
 
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 md:p-8">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 lg:p-6">
       <h2 className="text-lg font-semibold text-[#1A1A1A]">Final Review</h2>
-      <p className="text-sm text-[#666666] mt-1">
-        Confirm your transaction to join the circle.
-      </p>
+      <p className="text-sm text-[#666666] mt-1">Confirm and execute your membership.</p>
 
-      {/* Summary */}
-      <div className="mt-6 space-y-0">
-        <div className="flex items-center justify-between py-2.5 border-b border-[#F0F0F0]">
-          <span className="text-sm text-[#666666]">Circle</span>
-          <span className="text-sm font-medium text-[#1A1A1A]">${formatNumber(circleData.amount)} {circleData.title}</span>
+      {/* 2-column layout on lg */}
+      <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* Left: Agreement proof + Summary */}
+        <div className="space-y-4">
+          {/* Agreement signed block */}
+          <div className="p-3 bg-[#FAFAFA] rounded-lg border border-[#E5E5E5]">
+            <div className="flex items-center gap-2 text-sm">
+              <Check className="w-4 h-4 text-[#1A1A1A]" />
+              <span className="text-[#1A1A1A] font-medium">Agreement signed</span>
+              <span className="text-[#666666]">{formattedDate}</span>
+            </div>
+            <p className="text-xs text-[#666666] mt-1.5">
+              This transaction will register your membership and activate your obligations.
+            </p>
+          </div>
+
+          {/* Summary */}
+          <div className="text-sm space-y-0">
+            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+              <span className="text-[#666666]">Circle</span>
+              <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.amount)} {circleData.title}</span>
+            </div>
+            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+              <span className="text-[#666666]">First payment</span>
+              <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.monthlyAmount)} USDC</span>
+            </div>
+            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+              <span className="text-[#666666]">Duration</span>
+              <span className="font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
+            </div>
+            <div className="flex justify-between py-1.5">
+              <span className="text-[#666666]">Total commitment</span>
+              <span className="font-semibold text-[#1A1A1A]">${formatNumber(circleData.totalWithFees)}</span>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center justify-between py-2.5 border-b border-[#F0F0F0]">
-          <span className="text-sm text-[#666666]">Monthly</span>
-          <span className="text-sm font-medium text-[#1A1A1A]">${formatNumber(circleData.monthlyAmount)}</span>
-        </div>
-        <div className="flex items-center justify-between py-2.5 border-b border-[#F0F0F0]">
-          <span className="text-sm text-[#666666]">Duration</span>
-          <span className="text-sm font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
-        </div>
-        <div className="flex items-center justify-between py-2.5 border-b border-[#F0F0F0]">
-          <span className="text-sm text-[#666666]">NFT</span>
-          <span className="text-sm font-medium text-[#1A1A1A]">1 quota</span>
-        </div>
-        <div className="flex items-center justify-between py-2.5 border-b border-[#F0F0F0]">
-          <span className="text-sm text-[#666666]">DINGA</span>
-          <span className="text-sm font-medium text-[#1A1A1A]">{formatNumber(circleData.dingaTokens)} tokens</span>
-        </div>
-        <div className="flex items-center justify-between py-2.5">
-          <span className="text-sm text-[#666666]">Agreement signed</span>
-          <span className="text-sm font-medium text-[#1A1A1A]">Yes — {formattedDate}</span>
+
+        {/* Right: Transaction Execution steps */}
+        <div>
+          <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Transaction Execution</h3>
+          <div className="space-y-2 text-sm">
+            {[
+              { step: 1, label: `Pay first installment ($${formatNumber(circleData.monthlyAmount)} USDC)` },
+              { step: 2, label: "Mint NFT position" },
+              { step: 3, label: "Claim tokens" },
+              { step: 4, label: "Activate position" }
+            ].map((item) => (
+              <div key={item.step} className="flex items-center gap-2.5 py-1">
+                <div className="w-5 h-5 rounded-full border border-[#E0E0E0] flex items-center justify-center text-xs text-[#999999]">
+                  {item.step}
+                </div>
+                <span className="text-[#666666]">{item.label}</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-[#999999] mt-3">Each step will require a wallet signature.</p>
         </div>
       </div>
 
-      {/* Reminder box - neutral gray, not orange */}
-      <div className="mt-6 p-4 bg-[#FAFAFA] rounded-lg border border-[#E5E5E5]">
-        <p className="text-sm text-[#666666]">
-          You signed the participation agreement on {formattedDate}. This transaction will register your membership and activate your obligations.
-        </p>
-      </div>
-
-      {/* Transaction explanation */}
-      <div className="mt-6">
-        <p className="text-sm text-[#666666] mb-3">This transaction will:</p>
-        <ul className="space-y-1.5 text-sm text-[#666666]">
-          <li className="flex items-center gap-2">
-            <span className="text-[#1A1A1A]">•</span>
-            Charge your first installment
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="text-[#1A1A1A]">•</span>
-            Mint your NFT quota
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="text-[#1A1A1A]">•</span>
-            Issue DINGA tokens
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="text-[#1A1A1A]">•</span>
-            Register your position
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="text-[#1A1A1A]">•</span>
-            Activate payout eligibility
-          </li>
-        </ul>
-        <p className="text-xs text-[#999999] mt-3">
-          All actions depend on the signed agreement.
-        </p>
-      </div>
-
-      {/* CTAs - no inline loader */}
-      <div className="mt-8 flex gap-3">
-        <Button 
-          variant="outline"
-          onClick={onBack}
-          className="flex-1 rounded-full border-[#E5E5E5] px-6 py-6 text-base font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent"
-        >
+      {/* CTAs */}
+      <div className="mt-5 flex gap-3">
+        <Button variant="outline" onClick={onBack}
+          className="flex-1 rounded-full border-[#E5E5E5] px-6 py-5 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent">
           Back
         </Button>
-        <Button 
-          onClick={onConfirm}
-          className="flex-1 rounded-full bg-[#1A1A1A] px-6 py-6 text-base font-semibold text-white hover:bg-[#333333]"
-        >
+        <Button onClick={onConfirm}
+          className="flex-1 rounded-full bg-[#1A1A1A] px-6 py-5 text-sm font-semibold text-white hover:bg-[#333333]">
           Confirm & Join
         </Button>
       </div>
@@ -461,10 +353,10 @@ export default function JoinCirclePage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Header: Back in left margin, Title + Stepper in content area */}
-      <header className="w-full pt-8 lg:pt-10 pb-6">
-        <div className="mx-auto max-w-[960px] px-6 lg:px-10">
+      <header className="w-full pt-6 lg:pt-8 pb-4">
+        <div className="mx-auto max-w-[1100px] px-6 lg:px-10">
           {/* Grid: [Left margin for Back] [Content: Title + Stepper] */}
-          <div className="grid items-center" style={{ gridTemplateColumns: 'minmax(60px, 140px) 1fr' }}>
+          <div className="grid items-center" style={{ gridTemplateColumns: 'minmax(60px, 120px) 1fr' }}>
             {/* Left margin: Back button centered in margin area */}
             <div className="flex justify-center">
               <Link
@@ -494,10 +386,10 @@ export default function JoinCirclePage() {
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col pb-12">
+      <main className="flex-1 flex flex-col pb-8">
         {/* Same grid for content alignment */}
-        <div className="mx-auto max-w-[960px] w-full px-6 lg:px-10">
-          <div className="grid" style={{ gridTemplateColumns: 'minmax(60px, 140px) 1fr' }}>
+        <div className="mx-auto max-w-[1100px] w-full px-6 lg:px-10">
+          <div className="grid" style={{ gridTemplateColumns: 'minmax(60px, 120px) 1fr' }}>
             {/* Empty left margin */}
             <div />
             
