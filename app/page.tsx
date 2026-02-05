@@ -100,11 +100,11 @@ function Header() {
           <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
         </div>
 
-        {/* Column 3: Slots badge aligned to LEFT edge of column 3 */}
+        {/* Column 3: Connect wallet button aligned to LEFT edge */}
         <div className="flex justify-start">
-          <div className="rounded-lg bg-[#F5F5F5] px-4 py-2">
-            <span className="text-sm font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
-          </div>
+          <Button variant="outline" className="rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent">
+            Connect wallet
+          </Button>
         </div>
       </div>
     </header>
@@ -123,7 +123,7 @@ function EarlyEntryTag() {
           <p className="font-semibold text-purple-600 text-base">Early entry</p>
         </div>
         <p className="text-purple-500 text-sm leading-relaxed pl-8">
-          First slots are reserved for early-entry members — highest chance to be selected early.
+          First slots are reserved for early entry members. Higher chance to be selected within the first 8 months.
         </p>
       </div>
     </div>
@@ -470,12 +470,21 @@ function ArcCard() {
   )
 }
 
+// Slots badge component for reuse
+function SlotsBadge({ className = "" }: { className?: string }) {
+  return (
+    <div className={`rounded-lg bg-[#F5F5F5] px-4 py-2 w-fit ${className}`}>
+      <span className="text-sm font-medium text-[#666666]">{circleData.slotsLeft} out of 24 slots left</span>
+    </div>
+  )
+}
+
 export default function FundingCirclePage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white flex flex-col">
       <Header />
 
-      <main className="mx-auto max-w-[1280px] px-6 md:px-10 pb-12 pt-4">
+      <main className="flex-1 flex flex-col justify-center mx-auto max-w-[1280px] w-full px-6 md:px-10 pb-12 pt-4">
         {/* MOBILE (<768px): Single column stack */}
         <div className="flex flex-col gap-4 md:hidden">
           <EarlyEntryTag />
@@ -510,26 +519,33 @@ export default function FundingCirclePage() {
           <div style={{ gridArea: 'arc' }}><ArcCard /></div>
         </div>
 
-        {/* DESKTOP (1024px+): 3-column layout with stretching cards */}
-        <div className="hidden lg:grid grid-cols-3 gap-5">
-          {/* Left column */}
-          <div className="flex flex-col gap-5">
-            <EarlyEntryTag />
-            <TimelineCard />
-            <PayoutCard />
+        {/* DESKTOP (1024px+): 3-column layout */}
+        <div className="hidden lg:block">
+          {/* Slots badge above grid, aligned to column 1 */}
+          <div className="mb-5">
+            <SlotsBadge />
           </div>
           
-          {/* Center column */}
-          <div className="flex flex-col gap-5">
-            <PaymentVisualizationCard />
-            <InstallmentCard />
-          </div>
-          
-          {/* Right column */}
-          <div className="flex flex-col gap-5">
-            <EnsCard />
-            <MembersCard />
-            <ArcCard />
+          <div className="grid grid-cols-3 gap-5">
+            {/* Left column */}
+            <div className="flex flex-col gap-5">
+              <EarlyEntryTag />
+              <TimelineCard />
+              <PayoutCard />
+            </div>
+            
+            {/* Center column */}
+            <div className="flex flex-col gap-5">
+              <PaymentVisualizationCard />
+              <InstallmentCard />
+            </div>
+            
+            {/* Right column */}
+            <div className="flex flex-col gap-5">
+              <EnsCard />
+              <MembersCard />
+              <ArcCard />
+            </div>
           </div>
         </div>
       </main>
