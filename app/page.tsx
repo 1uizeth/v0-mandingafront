@@ -202,82 +202,116 @@ function PayoutCard() {
   )
 }
 
-// Circle Grid Component
-function CircleGrid({ columns, size, gap }: { columns: number; size: string; gap: string }) {
-  return (
-    <div className={`grid grid-cols-${columns} ${gap}`}>
-      {Array.from({ length: circleData.totalMonths }, (_, i) => {
-        const monthNumber = i + 1
-        const isCurrent = monthNumber === circleData.currentMonth
-        const isEarlyEntry = circleData.earlyEntryMonths.includes(monthNumber)
-
-        let bgColor = "bg-[#E5E5E5]"
-        if (isCurrent) {
-          bgColor = "bg-[#1A1A1A]"
-        } else if (isEarlyEntry) {
-          bgColor = "bg-[#C4B5FD]"
-        }
-
-        return (
-          <div
-            key={monthNumber}
-            className={`${size} rounded-full ${bgColor}`}
-            title={`Month ${monthNumber}`}
-          />
-        )
-      })}
-    </div>
-  )
+// Helper function to render circle with proper color
+function Circle({ index }: { index: number }) {
+  const monthNumber = index + 1
+  const isCurrent = monthNumber === circleData.currentMonth
+  const isEarlyEntry = circleData.earlyEntryMonths.includes(monthNumber)
+  
+  let bgColor = "bg-[#E5E5E5]"
+  if (isCurrent) bgColor = "bg-[#1A1A1A]"
+  else if (isEarlyEntry) bgColor = "bg-[#C4B5FD]"
+  
+  return <div className={`w-full h-full rounded-full ${bgColor}`} />
 }
 
 // FULL CARD: Payment Visualization (circles + description)
 function PaymentVisualizationCard() {
+  const circles = Array.from({ length: circleData.totalMonths }, (_, i) => i)
+  
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-6">
       <h2 className="text-lg font-semibold text-[#1A1A1A]">
         Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
       </h2>
 
-      {/* Mobile: 6 cols × 4 rows */}
-      <div className="mt-6 grid grid-cols-6 gap-1.5 md:hidden">
-        {Array.from({ length: circleData.totalMonths }, (_, i) => {
-          const monthNumber = i + 1
-          const isCurrent = monthNumber === circleData.currentMonth
-          const isEarlyEntry = circleData.earlyEntryMonths.includes(monthNumber)
-          let bgColor = "bg-[#E5E5E5]"
-          if (isCurrent) bgColor = "bg-[#1A1A1A]"
-          else if (isEarlyEntry) bgColor = "bg-[#C4B5FD]"
-          return <div key={monthNumber} className={`w-7 h-7 rounded-full ${bgColor}`} />
-        })}
+      {/* 
+        RESPONSIVE CIRCLE GRID:
+        - Mobile (<375px): 4×6, 20px circles, 6px gap
+        - Mobile (375-479px): 6×4, 22px circles, 6px gap
+        - Mobile (480-599px): 6×4, 24px circles, 6px gap
+        - Tablet (600-767px): 6×4, 28px circles, 6px gap
+        - Tablet (768-899px): 6×4, 32px circles, 8px gap
+        - Tablet (900-1023px): 8×3, 32px circles, 8px gap
+        - Desktop (1024px+): 12×2, 32px circles, 8px gap
+      */}
+      
+      {/* Extra Small Mobile (<375px): 4 cols × 6 rows */}
+      <div 
+        className="mt-6 grid xs:hidden"
+        style={{ 
+          gridTemplateColumns: 'repeat(4, 20px)', 
+          gap: '6px'
+        }}
+      >
+        {circles.map((i) => (
+          <div key={i} className="w-5 h-5">
+            <Circle index={i} />
+          </div>
+        ))}
       </div>
 
-      {/* Tablet: 8 cols × 3 rows */}
-      <div className="mt-6 hidden md:grid lg:hidden grid-cols-8 gap-2">
-        {Array.from({ length: circleData.totalMonths }, (_, i) => {
-          const monthNumber = i + 1
-          const isCurrent = monthNumber === circleData.currentMonth
-          const isEarlyEntry = circleData.earlyEntryMonths.includes(monthNumber)
-          let bgColor = "bg-[#E5E5E5]"
-          if (isCurrent) bgColor = "bg-[#1A1A1A]"
-          else if (isEarlyEntry) bgColor = "bg-[#C4B5FD]"
-          return <div key={monthNumber} className={`w-8 h-8 rounded-full ${bgColor}`} />
-        })}
+      {/* Small Mobile (375px - 599px): 6 cols × 4 rows */}
+      <div 
+        className="mt-6 hidden xs:grid sm:hidden"
+        style={{ 
+          gridTemplateColumns: 'repeat(6, 22px)', 
+          gap: '6px'
+        }}
+      >
+        {circles.map((i) => (
+          <div key={i} style={{ width: '22px', height: '22px' }}>
+            <Circle index={i} />
+          </div>
+        ))}
       </div>
 
-      {/* Desktop: 12 cols × 2 rows */}
-      <div className="mt-6 hidden lg:grid grid-cols-12 gap-2">
-        {Array.from({ length: circleData.totalMonths }, (_, i) => {
-          const monthNumber = i + 1
-          const isCurrent = monthNumber === circleData.currentMonth
-          const isEarlyEntry = circleData.earlyEntryMonths.includes(monthNumber)
-          let bgColor = "bg-[#E5E5E5]"
-          if (isCurrent) bgColor = "bg-[#1A1A1A]"
-          else if (isEarlyEntry) bgColor = "bg-[#C4B5FD]"
-          return <div key={monthNumber} className={`w-8 h-8 rounded-full ${bgColor}`} />
-        })}
+      {/* Mobile/Small Tablet (600px - 767px): 6 cols × 4 rows, larger circles */}
+      <div 
+        className="mt-6 hidden sm:grid md:hidden"
+        style={{ 
+          gridTemplateColumns: 'repeat(6, 28px)', 
+          gap: '6px'
+        }}
+      >
+        {circles.map((i) => (
+          <div key={i} className="w-7 h-7">
+            <Circle index={i} />
+          </div>
+        ))}
       </div>
 
-      <p className="mt-6 text-sm text-[#666666]">
+      {/* Tablet (768px - 899px): 6 cols × 4 rows, 32px circles */}
+      <div 
+        className="mt-6 hidden md:grid lg:hidden"
+        style={{ 
+          gridTemplateColumns: 'repeat(6, 32px)', 
+          gap: '8px'
+        }}
+      >
+        {circles.map((i) => (
+          <div key={i} className="w-8 h-8">
+            <Circle index={i} />
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop (1024px+): 12 cols × 2 rows */}
+      <div 
+        className="mt-6 hidden lg:grid"
+        style={{ 
+          gridTemplateColumns: 'repeat(12, 32px)', 
+          gap: '8px'
+        }}
+      >
+        {circles.map((i) => (
+          <div key={i} className="w-8 h-8">
+            <Circle index={i} />
+          </div>
+        ))}
+      </div>
+
+      <p className="mt-6 text-sm text-[#666666] leading-relaxed">
         Join the first payout on an{" "}
         <span className="font-semibold text-purple-600">Early entry</span> window to most likely be
         selected to <span className="font-semibold text-[#1A1A1A]">get $20,000 within the first 8 months</span>.
