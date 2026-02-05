@@ -153,26 +153,51 @@ function TimelineCard() {
 }
 
 // FULL CARD: Payout Progress
-function PayoutCard() {
-  const progressPercentage = (circleData.payoutProgress / circleData.totalMonths) * 100
+// Pre-join state: Compact layout with neutral bar and single info row
+// Post-join state: Compact layout matching Installments (no progress bar)
+function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boolean; hasJoined: boolean }) {
+  const isPreJoin = !isWalletConnected || !hasJoined
 
+  if (isPreJoin) {
+    // Preview layout - matches joined state structure: header + thin bar + content row
+    return (
+      <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4">
+        {/* Header row with empty right side */}
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-[#666666]">Payout</span>
+          <span></span>
+        </div>
+
+        {/* Neutral thin bar (no progress, no indicator) */}
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#E5E5E5]" />
+
+        {/* Content row: text left, amount right - single line layout */}
+        <div className="flex items-center justify-between gap-4">
+          <span className="text-base font-semibold text-[#1A1A1A]">First payout happens after you join</span>
+          <span className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.payoutAmount)}</span>
+        </div>
+      </div>
+    )
+  }
+
+  // Full payout view after joining - compact layout matching Installments
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4">
+      {/* Header row */}
       <div className="flex items-center justify-between">
         <span className="text-sm text-[#666666]">Payout</span>
         <span className="text-sm text-[#666666]">
           {String(circleData.payoutProgress).padStart(2, "0")}/{circleData.totalMonths}
         </span>
       </div>
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#E5E5E5]">
-        <div
-          className="h-full rounded-full bg-[#1A1A1A] transition-all"
-          style={{ width: `${progressPercentage}%` }}
-        />
-      </div>
-      <div>
-        <p className="text-sm text-[#666666]">Due on</p>
-        <p className="text-2xl font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.payoutDueDate}</p>
+
+      {/* Neutral thin bar (no progress indicator in compact view) */}
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#E5E5E5]" />
+
+      {/* Content row: text left, amount right - single line layout */}
+      <div className="flex items-center justify-between gap-4">
+        <span className="text-base font-semibold text-[#1A1A1A]">Always due on the 1st, every month</span>
+        <span className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.payoutAmount)}</span>
       </div>
     </div>
   )
@@ -568,16 +593,18 @@ export default function FundingCirclePage() {
           className="hidden lg:grid gap-5 w-full items-stretch"
           style={{
             gridTemplateColumns: '1fr 1fr 1fr',
-            gridTemplateRows: 'auto 160px',
+            gridTemplateRows: 'auto 1fr',
             alignContent: 'start'
           }}
         >
           {/* TOP AREA - Row 1: Variable height across columns, aligned baseline */}
           
-          {/* Left Column Top Area: Slots + Started/Ends stack */}
-          <div style={{ gridColumn: 1, gridRow: 1 }} className="flex flex-col gap-5">
+          {/* Left Column Top Area: Slots + Started/Ends stack (Ends extends to match Pay card height) */}
+          <div style={{ gridColumn: 1, gridRow: 1 }} className="flex flex-col gap-5 h-full">
             <SlotsCard />
-            <TimelineCard />
+            <div className="flex-1 flex flex-col justify-start">
+              <TimelineCard />
+            </div>
           </div>
           
           {/* Center Column Top Area: Pay card (height matches Column 3 top area) */}
@@ -594,7 +621,7 @@ export default function FundingCirclePage() {
             <MembersCard />
           </div>
 
-          {/* BOTTOM AREA - Row 2: Fixed uniform height across all columns */}
+          {/* BOTTOM AREA - Row 2: Flexible height, distributes equally across columns */}
           
           {/* Left Column Bottom: Payout card */}
           <div style={{ gridColumn: 1, gridRow: 2, height: '100%', width: '100%' }}>
