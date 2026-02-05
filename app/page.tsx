@@ -62,26 +62,12 @@ function Header() {
           </Button>
         </div>
         
-        {/* Row 2: Active (left) | Title (center) | Slots (right) */}
-        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
-          {/* Active badge */}
-          <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
-            <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
-            <span className="text-sm font-medium text-[#2E7D32]">Active</span>
-          </div>
-          
-          {/* Title - centered */}
-          <div className="text-center min-w-0">
-            <h1 className="text-3xl md:text-4xl font-bold text-[#1A1A1A]">
-              ${formatNumber(circleData.amount)}
-            </h1>
-            <p className="text-sm md:text-base text-[#1A1A1A]">{circleData.title}</p>
-          </div>
-          
-          {/* Slots badge */}
-          <div className="rounded-lg bg-[#F5F5F5] px-3 md:px-4 py-2">
-            <span className="text-xs md:text-sm font-medium text-[#666666] whitespace-nowrap">{circleData.slotsLeft} slots left</span>
-          </div>
+        {/* Row 2: Title only - centered */}
+        <div className="text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-[#1A1A1A]">
+            ${formatNumber(circleData.amount)}
+          </h1>
+          <p className="text-sm md:text-base text-[#1A1A1A]">{circleData.title}</p>
         </div>
       </div>
 
