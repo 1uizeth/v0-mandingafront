@@ -33,51 +33,23 @@ type Step = 1 | 2 | 3
 // Signing state for step 1 and step 3
 type SigningState = "idle" | "signing" | "success"
 
-// Segmented Progress Bar component (Stripe-style) - heavier visual weight
+// Minimal progress bar - just segments, no labels
 function ProgressBar({ currentStep }: { currentStep: Step }) {
-  const milestones = [
-    { num: 1, label: "Agreement" },
-    { num: 2, label: "Review" },
-    { num: 3, label: "Confirmation" },
-  ]
+  const steps = [1, 2, 3]
 
   return (
-    <div className="w-full">
-      {/* Segmented bar - thicker for more visual weight */}
-      <div className="flex items-center gap-1.5">
-        {milestones.map((milestone) => (
-          <div key={milestone.num} className="flex-1">
-            <div 
-              className={`h-1 w-full rounded-full transition-colors ${
-                milestone.num <= currentStep 
-                  ? "bg-[#1A1A1A]" 
-                  : "bg-[#E0E0E0]"
-              }`}
-            />
-          </div>
-        ))}
-      </div>
-      
-      {/* Labels below segments - slightly larger */}
-      <div className="flex items-center justify-between mt-3">
-        {milestones.map((milestone) => (
-          <span 
-            key={milestone.num}
-            className={`text-[13px] font-medium transition-colors ${
-              milestone.num < currentStep 
-                ? "text-[#1A1A1A]" 
-                : milestone.num === currentStep 
-                ? "text-[#1A1A1A]" 
-                : "text-[#999999]"
+    <div className="flex items-center gap-1">
+      {steps.map((step) => (
+        <div key={step} className="flex-1">
+          <div 
+            className={`h-1 w-full rounded-full transition-colors ${
+              step <= currentStep 
+                ? "bg-[#1A1A1A]" 
+                : "bg-[#E5E5E5]"
             }`}
-          >
-            {milestone.num < currentStep && (
-              <Check className="w-3.5 h-3.5 inline-block mr-1 -mt-0.5" />
-            )}
-            {milestone.label}
-          </span>
-        ))}
-      </div>
+          />
+        </div>
+      ))}
     </div>
   )
 }
