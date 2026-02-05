@@ -139,7 +139,7 @@ function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boo
 // Dates use whitespace-nowrap to prevent year from wrapping to new line
 function TimelineCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white py-12 px-5 h-full flex flex-col justify-center">
       <div>
         <p className="text-sm text-[#666666]">Started on</p>
         <p className="text-base font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.startDate}</p>
@@ -301,7 +301,7 @@ function CircleGrid({
 // Layout: Title → Description → Dots Grid
 function PaymentVisualizationCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white py-12 px-5 flex flex-col gap-4 h-full justify-center">
       <h2 className="text-lg font-semibold text-[#1A1A1A]">
         Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
       </h2>
