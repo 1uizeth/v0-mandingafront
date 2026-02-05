@@ -173,7 +173,7 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
 
         {/* Content row: text left, amount right - single line layout */}
         <div className="flex items-center justify-between gap-4">
-          <span className="text-base font-semibold text-[#1A1A1A]">First payout happens after you join</span>
+          <span className="text-base font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
           <span className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.amount)}</span>
         </div>
       </div>
@@ -589,50 +589,53 @@ export default function FundingCirclePage() {
         </div>
 
         {/* DESKTOP (1024px+): Strict 2-row layout with aligned baselines */}
+        {/* DESKTOP (1024px+): Reworked 2-row grid with proper expansion */}
         <div 
-          className="hidden lg:grid gap-5 w-full items-stretch"
+          className="hidden lg:grid gap-5 w-full"
           style={{
             gridTemplateColumns: '1fr 1fr 1fr',
-            gridTemplateRows: 'auto minmax(180px, 1fr)',
+            gridTemplateRows: '1fr 180px',
             alignContent: 'start'
           }}
         >
-          {/* TOP AREA - Row 1: Variable height across columns, aligned baseline */}
+          {/* TOP AREA - Row 1: Flexible height, all cells expand equally */}
           
-          {/* Left Column Top Area: Slots + Started/Ends stack (Ends expands to fill available space) */}
-          <div style={{ gridColumn: 1, gridRow: 1 }} className="flex flex-col gap-5">
+          {/* Left Column Top: Slots + Started/Ends (Started/Ends expands to fill row) */}
+          <div style={{ gridColumn: 1, gridRow: 1 }} className="flex flex-col gap-5 h-full">
             <SlotsCard />
-            <TimelineCard />
+            <div className="flex-1">
+              <TimelineCard />
+            </div>
           </div>
           
-          {/* Center Column Top Area: Pay card (height matches Column 3 top area) */}
+          {/* Center Column Top: Pay card (expands to fill row height) */}
           <div 
-            style={{ gridColumn: 2, gridRow: 1, height: '100%', width: '100%' }}
-            className="flex flex-col justify-between"
+            style={{ gridColumn: 2, gridRow: 1 }}
+            className="h-full flex flex-col justify-between"
           >
             <PaymentVisualizationCard />
           </div>
           
-          {/* Right Column Top Area: ENS + Active members stack */}
+          {/* Right Column Top: ENS + Members (stack grows naturally) */}
           <div style={{ gridColumn: 3, gridRow: 1 }} className="flex flex-col gap-5">
             <EnsCard />
             <MembersCard />
           </div>
 
-          {/* BOTTOM AREA - Row 2: Fixed equal height across all columns */}
+          {/* BOTTOM AREA - Row 2: Fixed 180px height across all columns */}
           
           {/* Left Column Bottom: Payout card */}
-          <div style={{ gridColumn: 1, gridRow: 2, height: '100%', width: '100%' }} className="flex items-center">
+          <div style={{ gridColumn: 1, gridRow: 2, height: '180px' }} className="w-full">
             <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
           
           {/* Center Column Bottom: Installments card */}
-          <div style={{ gridColumn: 2, gridRow: 2, height: '100%', width: '100%' }} className="flex items-center">
+          <div style={{ gridColumn: 2, gridRow: 2, height: '180px' }} className="w-full">
             <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
           
           {/* Right Column Bottom: Arc card */}
-          <div style={{ gridColumn: 3, gridRow: 2, height: '100%', width: '100%' }} className="flex items-center">
+          <div style={{ gridColumn: 3, gridRow: 2, height: '180px' }} className="w-full">
             <ArcCard />
           </div>
         </div>
