@@ -10,6 +10,23 @@ function formatNumber(num: number): string {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
+// ===== DESIGN TOKENS: Spacing & Padding System =====
+// All cards use a unified token system for visual consistency
+const PADDING_XS = "p-2"   // 8px
+const PADDING_S = "p-3"    // 12px
+const PADDING_M = "p-4"    // 16px
+const PADDING_L = "p-5"    // 20px
+const PADDING_XL = "p-6"   // 24px
+
+const GAP_XS = "gap-1"     // 4px
+const GAP_S = "gap-2"      // 8px
+const GAP_M = "gap-4"      // 16px
+const GAP_L = "gap-6"      // 24px
+const GAP_XL = "gap-8"     // 32px
+
+// Grid gap token (unified for all card-to-card spacing)
+const GRID_GAP = GAP_M     // 16px - consistent horizontal and vertical spacing
+
 // Mock data for the funding circle
 const circleData = {
   status: "active" as const,
@@ -135,69 +152,78 @@ function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boo
   )
 }
 
-// FULL CARD: Timeline
-// Dates use whitespace-nowrap to prevent year from wrapping to new line
+// FULL CARD: Timeline (Started on / Ends on)
+// Two-row layout with unified spacing tokens
 function TimelineCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col justify-start">
-      <div>
-        <p className="text-sm text-[#666666]">Started on</p>
-        <p className="text-base font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.startDate}</p>
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} h-full flex flex-col justify-start ${GAP_M}`}>
+      {/* Row 1: Started on */}
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-[#666666]">Started on</p>
+        <p className="text-xs font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.startDate}</p>
       </div>
-      <div className="mt-4">
-        <p className="text-sm text-[#666666]">Ends on</p>
-        <p className="text-base font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.endDate}</p>
+      {/* Row 2: Ends on */}
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-[#666666]">Ends on</p>
+        <p className="text-xs font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.endDate}</p>
       </div>
     </div>
   )
 }
 
 // FULL CARD: Payout Progress
-// Pre-join state: Compact layout with neutral bar and single info row
-// Post-join state: Compact layout matching Installments (no progress bar)
+// Header: Title | Counter ("01/24")
+// Progress bar with minimum 1% visible fill indicator
 function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boolean; hasJoined: boolean }) {
   const isPreJoin = !isWalletConnected || !hasJoined
+  const progressPercentage = Math.max(1, (circleData.payoutProgress / circleData.totalMonths) * 100)
 
   if (isPreJoin) {
-    // Preview layout - matches joined state structure: header + thin bar + content row
     return (
-      <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4">
-        {/* Header row with empty right side */}
+      <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
+        {/* Header: Title | Counter (empty pre-join) */}
         <div className="flex items-center justify-between">
-          <span className="text-sm text-[#666666]">Payout</span>
-          <span></span>
+          <span className="text-xs text-[#666666]">Payout</span>
+          <span className="text-xs text-[#666666]"></span>
         </div>
 
-        {/* Neutral thin bar (no progress, no indicator) */}
-        <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#E5E5E5]" />
+        {/* Progress bar with 1% initial fill */}
+        <div className="h-2 w-full overflow-hidden rounded-full bg-[#E5E5E5]">
+          <div className="h-full w-[1%] bg-[#1A1A1A] rounded-full" />
+        </div>
 
-        {/* Content row: text left, amount right - single line layout */}
-        <div className="flex items-center justify-between gap-4">
-          <span className="text-base font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
-          <span className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.amount)}</span>
+        {/* Content row: text left, amount right */}
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
+          <span className="text-xs font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.amount)}</span>
         </div>
       </div>
     )
   }
 
-  // Full payout view after joining - compact layout matching Installments
+  // Joined state
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4">
-      {/* Header row */}
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
+      {/* Header: Title | Counter */}
       <div className="flex items-center justify-between">
-        <span className="text-sm text-[#666666]">Payout</span>
-        <span className="text-sm text-[#666666]">
+        <span className="text-xs text-[#666666]">Payout</span>
+        <span className="text-xs text-[#666666]">
           {String(circleData.payoutProgress).padStart(2, "0")}/{circleData.totalMonths}
         </span>
       </div>
 
-      {/* Neutral thin bar (no progress indicator in compact view) */}
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#E5E5E5]" />
+      {/* Progress bar with fill indicator */}
+      <div className="h-2 w-full overflow-hidden rounded-full bg-[#E5E5E5]">
+        <div
+          className="h-full bg-[#1A1A1A] rounded-full transition-all"
+          style={{ width: `${progressPercentage}%` }}
+        />
+      </div>
 
-      {/* Content row: text left, amount right - single line layout */}
-      <div className="flex items-center justify-between gap-4">
-        <span className="text-base font-semibold text-[#1A1A1A]">Always due on the 1st, every month</span>
-        <span className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.amount)}</span>
+      {/* Content row: text left, amount right */}
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold text-[#1A1A1A]">Always due on the 1st, every month</span>
+        <span className="text-xs font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.amount)}</span>
       </div>
     </div>
   )
@@ -326,12 +352,12 @@ function CircleGrid({
 // Layout: Title → Description → Dots Grid (fills card height)
 function PaymentVisualizationCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4 w-full h-full justify-between">
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M} w-full h-full justify-between`}>
       <div>
-        <h2 className="text-lg font-semibold text-[#1A1A1A]">
+        <h2 className="text-sm font-semibold text-[#1A1A1A]">
           Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
         </h2>
-        <p className="text-sm text-[#999999] mt-2">
+        <p className="text-xs text-[#999999] mt-1">
           Early entry: priority access to payouts in the first 8 months.
         </p>
       </div>
@@ -351,99 +377,96 @@ function PaymentVisualizationCard() {
 }
 
 // FULL CARD: Installment Progress
-// Pre-join state: Simple preview layout showing monthly amount and start date
-// Post-join state: Full progress bar with due date and amount
+// Header: Title | Counter ("01/24")
+// Progress bar with minimum 1% visible fill indicator
 function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: boolean; hasJoined: boolean }) {
-  const progressPercentage = (circleData.installmentProgress / circleData.totalMonths) * 100
+  const progressPercentage = Math.max(1, (circleData.installmentProgress / circleData.totalMonths) * 100)
   const isPreJoin = !isWalletConnected || !hasJoined
 
   if (isPreJoin) {
-    // Preview layout - matches joined state structure: header + thin bar + content row
     return (
-      <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4">
-        {/* Header row with empty right side */}
+      <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
+        {/* Header: Title | Counter (empty pre-join) */}
         <div className="flex items-center justify-between">
-          <span className="text-sm text-[#666666]">Installments</span>
-          <span></span>
+          <span className="text-xs text-[#666666]">Installments</span>
+          <span className="text-xs text-[#666666]"></span>
         </div>
 
-        {/* Neutral thin bar (no progress, no indicator) */}
-        <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#E5E5E5]" />
+        {/* Progress bar with 1% initial fill */}
+        <div className="h-2 w-full overflow-hidden rounded-full bg-[#E5E5E5]">
+          <div className="h-full w-[1%] bg-[#1A1A1A] rounded-full" />
+        </div>
 
-        {/* Content row: text left, amount right - single line layout */}
-        <div className="flex items-center justify-between gap-4">
-          <span className="text-base font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
-          <span className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.monthlyAmount)}</span>
+        {/* Content row: text left, amount right */}
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
+          <span className="text-xs font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.monthlyAmount)}</span>
         </div>
       </div>
     )
   }
 
-  // Full installment view after joining
+  // Joined state
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4">
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
+      {/* Header: Title | Counter */}
       <div className="flex items-center justify-between">
-        <span className="text-sm text-[#666666]">Installment</span>
-        <span className="text-sm text-[#666666]">
+        <span className="text-xs text-[#666666]">Installments</span>
+        <span className="text-xs text-[#666666]">
           {String(circleData.installmentProgress).padStart(2, "0")}/{circleData.totalMonths}
         </span>
       </div>
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#E5E5E5]">
+
+      {/* Progress bar with fill indicator */}
+      <div className="h-2 w-full overflow-hidden rounded-full bg-[#E5E5E5]">
         <div
-          className="h-full rounded-full bg-[#1A1A1A] transition-all"
+          className="h-full bg-[#1A1A1A] rounded-full transition-all"
           style={{ width: `${progressPercentage}%` }}
         />
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <div>
-          <p className="text-sm text-[#666666]">Due today</p>
-          <p className="text-3xl font-semibold text-[#1A1A1A]">${formatNumber(circleData.dueAmount)}</p>
-        </div>
-        {isWalletConnected && !hasJoined && (
-          <Link href="/join">
-            <Button className="w-full sm:w-auto rounded-full bg-[#1A1A1A] px-8 py-6 text-base font-semibold text-white hover:bg-[#333333]">
-              Join now
-            </Button>
-          </Link>
-        )}
+      {/* Content row: text left, amount right */}
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
+        <span className="text-xs font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.dueAmount)}</span>
       </div>
     </div>
   )
 }
 
 // INFRA CARD: ENS Integration
-// Pattern: Header → Description → Primary Object (pill)
+// Header (two-column: logo+name | link) → Description → ENS pill
+// Uses CardHeaderRow pattern with consistent spacing
 function EnsCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4">
-      {/* Header row */}
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
+      {/* Header row: two-column layout (logo+name | link) */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {/* Official ENS logo */}
           <svg width="20" height="20" viewBox="0 0 94 94" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" clipRule="evenodd" d="M42.4734 1.5491C42.1294 1.02598 42.7618 0.413402 43.2749 0.772602L64.7575 15.8095C78.2972 25.2867 84.5315 42.208 80.2388 58.1544C79.8987 59.4177 79.5339 60.5235 79.1912 61.45C78.9787 62.0244 78.134 61.9004 78.0914 61.2895C77.7292 56.0972 73.9905 50.1611 71.2769 45.8527C70.7925 45.0835 70.3408 44.3663 69.9467 43.7144C67.3093 39.3512 48.2169 10.2849 42.4734 1.5491ZM14.0286 43.8411L39.7425 1.53062C40.0411 1.03949 39.5038 0.466613 38.9939 0.732504C34.4986 3.07609 22.3693 9.85687 12.8466 19.3674C2.41081 29.7898 10.8445 41.225 13.1082 43.9128C13.3584 44.2098 13.8269 44.1729 14.0286 43.8411ZM39.1069 92.8848C39.4509 93.4079 38.8185 94.0205 38.3054 93.6614L16.8228 78.6244C3.28314 69.1472 -2.95117 52.2259 1.34153 36.2795C1.68156 35.0162 2.04642 33.9104 2.38911 32.9839C2.6016 32.4095 3.44632 32.5335 3.48892 33.1444C3.85109 38.3366 7.58981 44.2728 10.3034 48.5812C10.7878 49.3503 11.2395 50.0676 11.6336 50.7195C14.271 55.0827 33.3634 84.149 39.1069 92.8848ZM41.8398 92.8988L67.5538 50.5883C67.7555 50.2566 68.224 50.2196 68.4742 50.5166C70.7379 53.2044 79.1716 64.6396 68.7358 75.062C59.2131 84.5725 47.0838 91.3533 42.5886 93.6969C42.0786 93.9628 41.5413 93.3899 41.8398 92.8988Z" fill="#5298FF"/>
           </svg>
-          <span className="text-lg font-bold text-[#5298FF]">ens</span>
+          <span className="text-sm font-bold text-[#5298FF]">ens</span>
         </div>
         <a
           href={circleData.ensUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm font-medium text-[#5298FF] transition-colors hover:opacity-70"
+          className="text-xs font-medium text-[#5298FF] transition-colors hover:opacity-70 whitespace-nowrap"
         >
           View on ENS →
         </a>
       </div>
 
       {/* Description - muted, below header */}
-      <p className="text-sm text-[#999999]">
+      <p className="text-xs text-[#999999]">
         Public ENS name for this circle's vault.
       </p>
 
       {/* Primary Object - ENS pill */}
-      <div className="rounded-full bg-[#E3F2FD] px-5 py-3 text-center">
-        <span className="text-sm font-medium text-[#1976D2]">{circleData.ensDomain}</span>
+      <div className="rounded-full bg-[#E3F2FD] px-4 py-2 text-center">
+        <span className="text-xs font-medium text-[#1976D2]">{circleData.ensDomain}</span>
       </div>
     </div>
   )
@@ -451,32 +474,32 @@ function EnsCard() {
 
 // FULL CARD: Active Members
 // Height-capped list to prevent row stretching in grid
-// Max 4 visible rows (~176px), scrollable if more members exist
+// Uses unified token spacing
 function MembersCard() {
   const formatJoinDate = (daysAgo: number) => `${daysAgo}d ago`
   const maxVisibleMembers = 4
   const hasMoreMembers = circleData.members.length > maxVisibleMembers
 
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-2">
-      <h3 className="text-base font-semibold text-[#1A1A1A]">Active members</h3>
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
+      <h3 className="text-sm font-semibold text-[#1A1A1A]">Active members</h3>
 
-      {/* Member list - same text-sm sizing as description text in other cards */}
+      {/* Member list */}
       <div>
         {circleData.members.slice(0, maxVisibleMembers).map((member, index) => (
           <div 
             key={member.name} 
             className={`flex items-center justify-between gap-3 py-2 min-w-0 ${index < Math.min(circleData.members.length, maxVisibleMembers) - 1 ? 'border-b border-[#F5F5F5]' : ''}`}
           >
-            <span className="text-sm text-[#1A1A1A] truncate min-w-0">{member.name}</span>
-            <span className="text-sm text-[#999999] whitespace-nowrap flex-shrink-0">{formatJoinDate(member.joinedDaysAgo)}</span>
+            <span className="text-xs text-[#1A1A1A] truncate min-w-0">{member.name}</span>
+            <span className="text-xs text-[#999999] whitespace-nowrap flex-shrink-0">{formatJoinDate(member.joinedDaysAgo)}</span>
           </div>
         ))}
       </div>
 
       {/* Overflow indicator if more members exist */}
       {hasMoreMembers && (
-        <p className="text-sm text-[#999999]">
+        <p className="text-xs text-[#999999]">
           + {circleData.members.length - maxVisibleMembers} more members
         </p>
       )}
@@ -485,24 +508,24 @@ function MembersCard() {
 }
 
 // INFRA CARD: Arc Integration
-// Simplified: Header only (description and button removed for aligned height)
+// Header (two-column: logo+name | link) with CardHeaderRow pattern
 function ArcCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4">
-      {/* Header row with Arc logo and link */}
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
+      {/* Header row: two-column layout (logo+name | link) */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {/* Official Arc logo */}
           <svg width="20" height="20" viewBox="0 0 298 312" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0,311.98c2.53-76.38,15.48-147.66,37.13-203.09C64.54,38.67,104.23,0,148.86,0s84.32,38.67,111.74,108.9c14.26,36.52,24.75,79.92,30.97,127.13.56,4.22,1.03,8.5,1.51,12.78.16.26.25.51.22.71,0,0,3.65,22.82,4.43,62.47h-.41c-5.42-4.45-69.33-54.66-175.27-40.12,1.6-17.93,3.8-35.37,6.64-52.09.15-.85.31-1.68.46-2.53,41.55-1.25,77.92,3.57,105.81,9.9-.1-.66-.19-1.34-.3-2-5.73-35.7-14.19-68.38-25.1-96.31-17.83-45.67-41.1-74.04-60.71-74.04s-42.88,28.37-60.71,74.04c-4.32,11.05-8.25,22.83-11.77,35.25-4.95,17.41-9.11,36.08-12.44,55.69-4.92,28.97-7.99,60.03-9.12,92.22H0Z" fill="#1A1A1A"/>
           </svg>
-          <span className="text-lg font-bold text-[#1A1A1A]">Arc</span>
+          <span className="text-sm font-bold text-[#1A1A1A]">Arc</span>
         </div>
         <a
           href={circleData.arcscanUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm font-medium text-[#1A1A1A] transition-colors hover:opacity-70"
+          className="text-xs font-medium text-[#1A1A1A] transition-colors hover:opacity-70 whitespace-nowrap"
         >
           View on Arcscan →
         </a>
@@ -511,17 +534,18 @@ function ArcCard() {
   )
 }
 
-// Slots card - includes Active badge + slots count
+// Slots card - Active badge + slots count
+// Uses CardHeaderRow pattern (two-column layout with justified spacing)
 function SlotsCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white px-5 py-4 flex items-center justify-between gap-3">
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex items-center justify-between`}>
       {/* Active badge */}
       <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
         <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
-        <span className="text-sm font-medium text-[#2E7D32]">Active</span>
+        <span className="text-xs font-medium text-[#2E7D32]">Active</span>
       </div>
       {/* Slots count */}
-      <span className="text-sm font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
+      <span className="text-xs font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
     </div>
   )
 }
@@ -576,13 +600,12 @@ export default function FundingCirclePage() {
         {/* DESKTOP (1024px+): Strict 2-row layout with aligned baselines */}
         {/* DESKTOP (1024px+): 3×3 Grid Module with unified cohesion */}
         <div 
-          className="hidden lg:grid gap-5 w-full"
+          className={`hidden lg:grid ${GRID_GAP} w-full`}
           style={{
             gridTemplateColumns: '1fr 1fr 1fr',
-            gridTemplateRows: 'minmax(0, 1fr) minmax(0, 1fr) 180px',
+            gridTemplateRows: 'minmax(0, 1fr) minmax(0, 1fr) auto',
             alignContent: 'stretch',
-            alignItems: 'stretch',
-            minHeight: '600px'
+            alignItems: 'stretch'
           }}
         >
           {/* ROW 1 */}
