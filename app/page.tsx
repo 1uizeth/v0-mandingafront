@@ -403,14 +403,14 @@ function MembersCard() {
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col">
       <h3 className="text-base font-semibold text-[#1A1A1A] flex-shrink-0">Active members</h3>
 
-      {/* Bounded list container - max height for 4 rows (~44px each) */}
-      <div className="mt-3 overflow-y-auto" style={{ maxHeight: '176px' }}>
+      {/* Member list - same text-sm sizing as description text in other cards */}
+      <div className="mt-2">
         {circleData.members.slice(0, maxVisibleMembers).map((member, index) => (
           <div 
             key={member.name} 
-            className={`flex items-center justify-between gap-3 py-2.5 min-w-0 ${index < Math.min(circleData.members.length, maxVisibleMembers) - 1 ? 'border-b border-[#F5F5F5]' : ''}`}
+            className={`flex items-center justify-between gap-3 py-2 min-w-0 ${index < Math.min(circleData.members.length, maxVisibleMembers) - 1 ? 'border-b border-[#F5F5F5]' : ''}`}
           >
-            <span className="font-medium text-[#1A1A1A] truncate min-w-0">{member.name}</span>
+            <span className="text-sm text-[#1A1A1A] truncate min-w-0">{member.name}</span>
             <span className="text-sm text-[#999999] whitespace-nowrap flex-shrink-0">{formatJoinDate(member.joinedDaysAgo)}</span>
           </div>
         ))}
