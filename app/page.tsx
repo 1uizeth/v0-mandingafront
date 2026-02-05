@@ -39,7 +39,13 @@ const circleData = {
 
 function Header() {
   return (
-    <header className="mx-auto max-w-[1280px] px-6 md:px-10 py-6 lg:py-10">
+    <header 
+      className="mx-auto max-w-[1280px] w-full px-6 md:px-10"
+      style={{ 
+        paddingTop: 'clamp(32px, 6vh, 64px)', 
+        paddingBottom: 'clamp(24px, 4vh, 48px)' 
+      }}
+    >
       {/* Mobile + Tablet Header (<1024px): 2-row layout */}
       <div className="flex lg:hidden flex-col gap-4">
         {/* Row 1: Back (left) + Connect wallet (right) */}
@@ -56,7 +62,7 @@ function Header() {
           </Button>
         </div>
         
-        {/* Row 2: Active (left of title) | Title (center) | Slots (right of title) */}
+        {/* Row 2: Active (left) | Title (center) | Slots (right) */}
         <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
           {/* Active badge */}
           <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
@@ -79,33 +85,42 @@ function Header() {
         </div>
       </div>
 
-      {/* Desktop Header (1024px+) - 3-column grid: left | center | right */}
-      <div className="hidden lg:grid grid-cols-3 items-center">
-        {/* Left: Back button - aligned to start */}
-        <div className="justify-self-start">
-          <Link
-            href="#"
-            className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            <span className="whitespace-nowrap">Back</span>
-          </Link>
-        </div>
+      {/* Desktop Header (1024px+) - 5-column grid: [Back] [flex] [Title] [flex] [Connect] */}
+      {/* This guarantees true centering: Title is in column 3, flanked by equal 1fr spacers */}
+      <div 
+        className="hidden lg:grid items-center min-h-[72px]"
+        style={{ gridTemplateColumns: 'auto 1fr max-content 1fr auto' }}
+      >
+        {/* Column 1: Back button - start aligned */}
+        <Link
+          href="#"
+          className="justify-self-start flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70 whitespace-nowrap min-w-0"
+        >
+          <ArrowLeft className="h-5 w-5 flex-shrink-0" />
+          <span>Back</span>
+        </Link>
 
-        {/* Center: Title block - centered in middle column */}
-        <div className="justify-self-center text-center">
+        {/* Column 2: Flexible spacer (1fr) */}
+        <div />
+
+        {/* Column 3: Title block - centered (max-content width) */}
+        <div className="justify-self-center text-center flex flex-col items-center gap-1 whitespace-nowrap">
           <h1 className="text-5xl font-bold text-[#1A1A1A]">
             ${formatNumber(circleData.amount)}
           </h1>
           <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
         </div>
 
-        {/* Right: Connect wallet button - aligned to end */}
-        <div className="justify-self-end">
-          <Button variant="outline" className="rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent whitespace-nowrap">
-            Connect wallet
-          </Button>
-        </div>
+        {/* Column 4: Flexible spacer (1fr) - balances column 2 */}
+        <div />
+
+        {/* Column 5: Connect wallet button - end aligned */}
+        <Button 
+          variant="outline" 
+          className="justify-self-end rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent whitespace-nowrap min-w-0"
+        >
+          Connect wallet
+        </Button>
       </div>
     </header>
   )
