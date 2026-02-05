@@ -226,86 +226,34 @@ function PaymentVisualizationCard() {
       </h2>
 
       {/* 
-        RESPONSIVE CIRCLE GRID:
-        - Mobile (<375px): 4×6, 20px circles, 6px gap
-        - Mobile (375-479px): 6×4, 22px circles, 6px gap
-        - Mobile (480-599px): 6×4, 24px circles, 6px gap
-        - Tablet (600-767px): 6×4, 28px circles, 6px gap
-        - Tablet (768-899px): 6×4, 32px circles, 8px gap
-        - Tablet (900-1023px): 8×3, 32px circles, 8px gap
+        RESPONSIVE CIRCLE GRID - Only ONE grid visible at a time:
+        - Mobile (<768px): 6×4, 24px circles, 6px gap
+        - Tablet (768px - 1023px): 6×4, 32px circles, 8px gap
         - Desktop (1024px+): 12×2, 32px circles, 8px gap
       */}
       
-      {/* Extra Small Mobile (<375px): 4 cols × 6 rows */}
-      <div 
-        className="mt-6 grid xs:hidden"
-        style={{ 
-          gridTemplateColumns: 'repeat(4, 20px)', 
-          gap: '6px'
-        }}
-      >
+      {/* Mobile (<768px): 6 cols × 4 rows - visible by default, hidden at md+ */}
+      <div className="mt-6 grid grid-cols-6 gap-1.5 md:hidden">
         {circles.map((i) => (
-          <div key={i} className="w-5 h-5">
+          <div key={`mobile-${i}`} className="w-6 h-6">
             <Circle index={i} />
           </div>
         ))}
       </div>
 
-      {/* Small Mobile (375px - 599px): 6 cols × 4 rows */}
-      <div 
-        className="mt-6 hidden xs:grid sm:hidden"
-        style={{ 
-          gridTemplateColumns: 'repeat(6, 22px)', 
-          gap: '6px'
-        }}
-      >
+      {/* Tablet (768px - 1023px): 6 cols × 4 rows - hidden by default, shown at md, hidden at lg+ */}
+      <div className="mt-6 hidden md:grid lg:hidden grid-cols-6 gap-2">
         {circles.map((i) => (
-          <div key={i} style={{ width: '22px', height: '22px' }}>
+          <div key={`tablet-${i}`} className="w-8 h-8">
             <Circle index={i} />
           </div>
         ))}
       </div>
 
-      {/* Mobile/Small Tablet (600px - 767px): 6 cols × 4 rows, larger circles */}
-      <div 
-        className="mt-6 hidden sm:grid md:hidden"
-        style={{ 
-          gridTemplateColumns: 'repeat(6, 28px)', 
-          gap: '6px'
-        }}
-      >
+      {/* Desktop (1024px+): 12 cols × 2 rows - hidden by default, shown at lg+ */}
+      <div className="mt-6 hidden lg:grid grid-cols-12 gap-2">
         {circles.map((i) => (
-          <div key={i} className="w-7 h-7">
-            <Circle index={i} />
-          </div>
-        ))}
-      </div>
-
-      {/* Tablet (768px - 899px): 6 cols × 4 rows, 32px circles */}
-      <div 
-        className="mt-6 hidden md:grid lg:hidden"
-        style={{ 
-          gridTemplateColumns: 'repeat(6, 32px)', 
-          gap: '8px'
-        }}
-      >
-        {circles.map((i) => (
-          <div key={i} className="w-8 h-8">
-            <Circle index={i} />
-          </div>
-        ))}
-      </div>
-
-      {/* Desktop (1024px+): 12 cols × 2 rows */}
-      <div 
-        className="mt-6 hidden lg:grid"
-        style={{ 
-          gridTemplateColumns: 'repeat(12, 32px)', 
-          gap: '8px'
-        }}
-      >
-        {circles.map((i) => (
-          <div key={i} className="w-8 h-8">
+          <div key={`desktop-${i}`} className="w-8 h-8">
             <Circle index={i} />
           </div>
         ))}
