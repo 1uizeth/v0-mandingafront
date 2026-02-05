@@ -356,7 +356,7 @@ function InstallmentCard() {
 // Pattern: Header → Description → Primary Object (pill)
 function EnsCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col">
       {/* Header row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -392,24 +392,36 @@ function EnsCard() {
 }
 
 // FULL CARD: Active Members
+// Height-capped list to prevent row stretching in grid
+// Max 4 visible rows (~176px), scrollable if more members exist
 function MembersCard() {
   const formatJoinDate = (daysAgo: number) => `${daysAgo}d ago`
+  const maxVisibleMembers = 4
+  const hasMoreMembers = circleData.members.length > maxVisibleMembers
 
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
-      <h3 className="text-base font-semibold text-[#1A1A1A]">Active members</h3>
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col">
+      <h3 className="text-base font-semibold text-[#1A1A1A] flex-shrink-0">Active members</h3>
 
-      <div className="mt-3 flex-1">
-        {circleData.members.map((member, index) => (
+      {/* Bounded list container - max height for 4 rows (~44px each) */}
+      <div className="mt-3 overflow-y-auto" style={{ maxHeight: '176px' }}>
+        {circleData.members.slice(0, maxVisibleMembers).map((member, index) => (
           <div 
             key={member.name} 
-            className={`flex items-center justify-between gap-3 py-3 min-w-0 ${index < circleData.members.length - 1 ? 'border-b border-[#F5F5F5]' : ''}`}
+            className={`flex items-center justify-between gap-3 py-2.5 min-w-0 ${index < Math.min(circleData.members.length, maxVisibleMembers) - 1 ? 'border-b border-[#F5F5F5]' : ''}`}
           >
             <span className="font-medium text-[#1A1A1A] truncate min-w-0">{member.name}</span>
             <span className="text-sm text-[#999999] whitespace-nowrap flex-shrink-0">{formatJoinDate(member.joinedDaysAgo)}</span>
           </div>
         ))}
       </div>
+
+      {/* Overflow indicator if more members exist */}
+      {hasMoreMembers && (
+        <p className="text-sm text-[#999999] mt-2 flex-shrink-0">
+          + {circleData.members.length - maxVisibleMembers} more members
+        </p>
+      )}
     </div>
   )
 }
@@ -418,7 +430,7 @@ function MembersCard() {
 // Pattern: Header → Description → Primary Object (link button)
 function ArcCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col">
       {/* Header row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
