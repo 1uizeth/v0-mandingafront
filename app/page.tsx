@@ -140,7 +140,7 @@ function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boo
 // Dates use whitespace-nowrap to prevent year from wrapping to new line
 function TimelineCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col justify-between">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5">
       <div>
         <p className="text-sm text-[#666666]">Started on</p>
         <p className="text-base font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.startDate}</p>
@@ -158,20 +158,20 @@ function PayoutCard() {
   const progressPercentage = (circleData.payoutProgress / circleData.totalMonths) * 100
 
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <span className="text-sm text-[#666666]">Payout</span>
         <span className="text-sm text-[#666666]">
           {String(circleData.payoutProgress).padStart(2, "0")}/{circleData.totalMonths}
         </span>
       </div>
-      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[#E5E5E5]">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#E5E5E5]">
         <div
           className="h-full rounded-full bg-[#1A1A1A] transition-all"
           style={{ width: `${progressPercentage}%` }}
         />
       </div>
-      <div className="mt-auto pt-4">
+      <div>
         <p className="text-sm text-[#666666]">Due on</p>
         <p className="text-2xl font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.payoutDueDate}</p>
       </div>
@@ -302,18 +302,18 @@ function CircleGrid({
 // Layout: Title → Description → Dots Grid
 function PaymentVisualizationCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4">
       <h2 className="text-lg font-semibold text-[#1A1A1A]">
         Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
       </h2>
 
       {/* Description - same style as ENS/Arc descriptions */}
-      <p className="text-sm text-[#999999] mt-2">
+      <p className="text-sm text-[#999999]">
         Early entry: priority access to payouts in the first 8 months.
       </p>
 
       {/* Dots grid */}
-      <div className="flex-1 flex items-start mt-4">
+      <div>
         <CircleGrid 
           totalDots={circleData.totalMonths}
           filledDot={circleData.currentMonth}
@@ -338,7 +338,7 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
   if (isPreJoin) {
     // Preview layout - matches joined state structure: header + thin bar + content row
     return (
-      <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
+      <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4">
         {/* Header row with empty right side */}
         <div className="flex items-center justify-between">
           <span className="text-sm text-[#666666]">Installments</span>
@@ -346,10 +346,10 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
         </div>
 
         {/* Neutral thin bar (no progress, no indicator) */}
-        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[#E5E5E5]" />
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#E5E5E5]" />
 
         {/* Content row: text left, amount right - single line layout */}
-        <div className="mt-4 flex items-center justify-between gap-4">
+        <div className="flex items-center justify-between gap-4">
           <span className="text-base font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
           <span className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.monthlyAmount)}</span>
         </div>
@@ -359,21 +359,21 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
 
   // Full installment view after joining
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <span className="text-sm text-[#666666]">Installment</span>
         <span className="text-sm text-[#666666]">
           {String(circleData.installmentProgress).padStart(2, "0")}/{circleData.totalMonths}
         </span>
       </div>
-      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[#E5E5E5]">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#E5E5E5]">
         <div
           className="h-full rounded-full bg-[#1A1A1A] transition-all"
           style={{ width: `${progressPercentage}%` }}
         />
       </div>
 
-      <div className="mt-auto pt-5 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           <p className="text-sm text-[#666666]">Due today</p>
           <p className="text-3xl font-semibold text-[#1A1A1A]">${formatNumber(circleData.dueAmount)}</p>
@@ -394,7 +394,7 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
 // Pattern: Header → Description → Primary Object (pill)
 function EnsCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4">
       {/* Header row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -415,15 +415,13 @@ function EnsCard() {
       </div>
 
       {/* Description - muted, below header */}
-      <p className="text-sm text-[#999999] mt-2">
+      <p className="text-sm text-[#999999]">
         Public ENS name for this circle's vault.
       </p>
 
       {/* Primary Object - ENS pill */}
-      <div className="flex-1 flex items-center mt-4">
-        <div className="w-full rounded-full bg-[#E3F2FD] px-5 py-3 text-center">
-          <span className="text-sm font-medium text-[#1976D2]">{circleData.ensDomain}</span>
-        </div>
+      <div className="rounded-full bg-[#E3F2FD] px-5 py-3 text-center">
+        <span className="text-sm font-medium text-[#1976D2]">{circleData.ensDomain}</span>
       </div>
     </div>
   )
@@ -438,11 +436,11 @@ function MembersCard() {
   const hasMoreMembers = circleData.members.length > maxVisibleMembers
 
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col">
-      <h3 className="text-base font-semibold text-[#1A1A1A] flex-shrink-0">Active members</h3>
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-2">
+      <h3 className="text-base font-semibold text-[#1A1A1A]">Active members</h3>
 
       {/* Member list - same text-sm sizing as description text in other cards */}
-      <div className="mt-2">
+      <div>
         {circleData.members.slice(0, maxVisibleMembers).map((member, index) => (
           <div 
             key={member.name} 
@@ -456,7 +454,7 @@ function MembersCard() {
 
       {/* Overflow indicator if more members exist */}
       {hasMoreMembers && (
-        <p className="text-sm text-[#999999] mt-2 flex-shrink-0">
+        <p className="text-sm text-[#999999]">
           + {circleData.members.length - maxVisibleMembers} more members
         </p>
       )}
@@ -468,7 +466,7 @@ function MembersCard() {
 // Pattern: Header → Description → Primary Object (link button)
 function ArcCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4">
       {/* Header row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -489,21 +487,19 @@ function ArcCard() {
       </div>
 
       {/* Description - muted, below header */}
-      <p className="text-sm text-[#999999] mt-2">
+      <p className="text-sm text-[#999999]">
         Public on-chain record of this circle's vault.
       </p>
 
       {/* Primary Object - Arcscan link button */}
-      <div className="flex-1 flex items-center mt-4">
-        <a
-          href={circleData.arcscanUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full rounded-full bg-[#F5F5F5] px-5 py-3 text-center text-sm font-medium text-[#1A1A1A] transition-colors hover:bg-[#EBEBEB]"
-        >
-          View contract on Arcscan
-        </a>
-      </div>
+      <a
+        href={circleData.arcscanUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="rounded-full bg-[#F5F5F5] px-5 py-3 text-center text-sm font-medium text-[#1A1A1A] transition-colors hover:bg-[#EBEBEB]"
+      >
+        View contract on Arcscan
+      </a>
     </div>
   )
 }
