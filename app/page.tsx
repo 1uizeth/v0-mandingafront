@@ -4,6 +4,7 @@ import { ArrowLeft, ExternalLink, Info } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useEffect, useRef, useState } from "react"
+import MembersAndArcCard from "@/components/MembersAndArcCard" // Declare the variable here
 
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
@@ -352,16 +353,17 @@ function InstallmentCard() {
   )
 }
 
-// FULL CARD: ENS Integration
-// Layout: Header → ENS pill (visual) → Description (like Payment card pattern)
+// INFRA CARD: ENS Integration
+// Pattern: Header → Description → Primary Object (pill)
 function EnsCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col min-h-0">
-      {/* Header row - pinned to top */}
-      <div className="flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center gap-1">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 2L2 10L10 18L18 10L10 2Z" stroke="#5298FF" strokeWidth="2" fill="none"/>
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
+      {/* Header row */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          {/* Official ENS logo */}
+          <svg width="20" height="20" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24.928 14.644C27.576 10.124 32.228 4.928 36.748 2.28C38.072 1.484 39.792 1.484 41.116 2.28C45.636 4.928 50.288 10.124 52.936 14.644L68.036 40.78C70.684 45.3 70.684 51.692 68.036 56.212L52.936 82.348C50.288 86.868 45.636 92.064 41.116 94.712C39.792 95.508 38.072 95.508 36.748 94.712C32.228 92.064 27.576 86.868 24.928 82.348L9.828 56.212C7.18 51.692 7.18 45.3 9.828 40.78L24.928 14.644Z" fill="#5298FF" transform="scale(0.21) translate(2, 2)"/>
           </svg>
           <span className="text-lg font-bold text-[#5298FF]">ens</span>
         </div>
@@ -375,28 +377,24 @@ function EnsCard() {
         </a>
       </div>
 
-      {/* ENS pill - visual element (like circle grid in Payment card) */}
-      <div className="flex-1 flex items-center justify-start mt-4">
+      {/* Description - muted, below header */}
+      <p className="text-sm text-[#999999] mt-2">
+        Public ENS name for this circle's vault.
+      </p>
+
+      {/* Primary Object - ENS pill */}
+      <div className="flex-1 flex items-center mt-4">
         <div className="w-full rounded-full bg-[#E3F2FD] px-5 py-3 text-center">
           <span className="text-sm font-medium text-[#1976D2]">{circleData.ensDomain}</span>
         </div>
       </div>
-
-      {/* Description - muted, at bottom (like Payment card pattern) */}
-      <p className="text-sm text-[#999999] mt-4">
-        Public ENS name for this circle's vault.
-      </p>
     </div>
   )
 }
 
-// FULL CARD: Active Members + Arc
-// Member names and join dates use truncation and nowrap to prevent ugly breaks
-function MembersAndArcCard() {
-  // Abbreviated format for join date to prevent wrapping
-  const formatJoinDate = (daysAgo: number) => {
-    return `${daysAgo}d ago`
-  }
+// FULL CARD: Active Members
+function MembersCard() {
+  const formatJoinDate = (daysAgo: number) => `${daysAgo}d ago`
 
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
@@ -413,13 +411,19 @@ function MembersAndArcCard() {
           </div>
         ))}
       </div>
+    </div>
+  )
+}
 
-      {/* Divider */}
-      <div className="my-4 h-px bg-[#E5E5E5]" />
-
-      {/* Arc Section */}
+// INFRA CARD: Arc Integration
+// Pattern: Header → Description → Primary Object (link button)
+function ArcCard() {
+  return (
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
+      {/* Header row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
+          {/* Arc logo */}
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M10 2L18 18H2L10 2Z" stroke="#1A1A1A" strokeWidth="2" fill="none"/>
           </svg>
@@ -429,10 +433,26 @@ function MembersAndArcCard() {
           href={circleData.arcscanUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 text-sm font-medium text-[#1A1A1A] transition-colors hover:opacity-70"
+          className="text-sm font-medium text-[#1A1A1A] transition-colors hover:opacity-70"
         >
-          View on Arcscan
-          <ExternalLink className="h-3 w-3" />
+          View on Arcscan →
+        </a>
+      </div>
+
+      {/* Description - muted, below header */}
+      <p className="text-sm text-[#999999] mt-2">
+        Public on-chain record of this circle's vault.
+      </p>
+
+      {/* Primary Object - Arcscan link button */}
+      <div className="flex-1 flex items-center mt-4">
+        <a
+          href={circleData.arcscanUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full rounded-full bg-[#F5F5F5] px-5 py-3 text-center text-sm font-medium text-[#1A1A1A] transition-colors hover:bg-[#EBEBEB]"
+        >
+          View contract on Arcscan
         </a>
       </div>
     </div>
@@ -453,19 +473,20 @@ export default function FundingCirclePage() {
           <PayoutCard />
           <InstallmentCard />
           <EnsCard />
-          <MembersAndArcCard />
+          <MembersCard />
+          <ArcCard />
         </div>
 
         {/* TABLET (768px - 1023px): 2-column grid with row-based areas */}
         <div className="hidden md:grid lg:hidden gap-4" style={{
           gridTemplateColumns: '1fr 1fr',
-          gridTemplateRows: 'auto auto auto auto auto',
+          gridTemplateRows: 'auto auto auto auto auto auto',
           gridTemplateAreas: `
             "early early"
             "payment payment"
             "timeline ens"
             "payout installment"
-            "members members"
+            "members arc"
           `
         }}>
           <div style={{ gridArea: 'early' }}><EarlyEntryTag /></div>
@@ -474,7 +495,8 @@ export default function FundingCirclePage() {
           <div style={{ gridArea: 'ens' }}><EnsCard /></div>
           <div style={{ gridArea: 'payout' }}><PayoutCard /></div>
           <div style={{ gridArea: 'installment' }}><InstallmentCard /></div>
-          <div style={{ gridArea: 'members' }}><MembersAndArcCard /></div>
+          <div style={{ gridArea: 'members' }}><MembersCard /></div>
+          <div style={{ gridArea: 'arc' }}><ArcCard /></div>
         </div>
 
         {/* DESKTOP (1024px+): 3-column layout with stretching cards */}
@@ -495,7 +517,8 @@ export default function FundingCirclePage() {
           {/* Right column */}
           <div className="flex flex-col gap-5">
             <EnsCard />
-            <MembersAndArcCard />
+            <MembersCard />
+            <ArcCard />
           </div>
         </div>
       </main>
