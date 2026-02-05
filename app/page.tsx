@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeft, Info } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useEffect, useRef, useState } from "react"
@@ -274,16 +274,21 @@ function CircleGrid({
 }
 
 // FULL CARD: Payment Visualization
-// Layout: Title → Dots Grid → Early Entry info tag (at bottom)
+// Layout: Title → Description → Dots Grid
 function PaymentVisualizationCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col gap-4">
+    <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 h-full flex flex-col">
       <h2 className="text-lg font-semibold text-[#1A1A1A]">
         Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
       </h2>
 
+      {/* Description - same style as ENS/Arc descriptions */}
+      <p className="text-sm text-[#999999] mt-2">
+        Early entry: first slots are reserved for members most likely to be selected in the first 8 months.
+      </p>
+
       {/* Dots grid */}
-      <div className="flex-1 flex items-start">
+      <div className="flex-1 flex items-start mt-4">
         <CircleGrid 
           totalDots={circleData.totalMonths}
           filledDot={circleData.currentMonth}
@@ -293,17 +298,6 @@ function PaymentVisualizationCard() {
           minGap={6}
           maxGap={18}
         />
-      </div>
-
-      {/* Early Entry info tag - at bottom */}
-      <div className="rounded-lg border border-purple-100 bg-purple-50 p-3 flex items-start gap-2">
-        <Info className="h-4 w-4 text-purple-600 stroke-[1.5] flex-shrink-0 mt-0.5" />
-        <div>
-          <p className="font-semibold text-purple-600 text-sm">Early entry</p>
-          <p className="text-purple-500 text-xs leading-relaxed line-clamp-2">
-            First slots are reserved for early entry members. Higher chance to be selected within the first 8 months.
-          </p>
-        </div>
       </div>
     </div>
   )
