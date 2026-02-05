@@ -37,16 +37,6 @@ const circleData = {
   ],
 }
 
-// Layout constants shared between header and cards grid
-const LAYOUT = {
-  maxWidth: 1280,
-  gap: 20, // gap-5 = 20px
-  padding: 40, // px-10 = 40px on desktop
-}
-
-// Compute column width: (maxWidth - 2*gap) / 3
-const COL_WIDTH = (LAYOUT.maxWidth - 2 * LAYOUT.gap) / 3
-
 function Header() {
   return (
     <header className="mx-auto max-w-[1280px] px-6 md:px-10 py-6">
@@ -89,32 +79,24 @@ function Header() {
         </div>
       </div>
 
-      {/* Desktop Header (1024px+) - CSS Grid with 5 columns for true centering */}
-      {/* Grid: [Back] [Active wrapper = col1 width, right-aligned] [Title = max-content, centered] [spacer] [Connect] */}
-      <div 
-        className="hidden lg:grid items-center gap-4"
-        style={{
-          gridTemplateColumns: `auto ${COL_WIDTH}px max-content 1fr auto`,
-        }}
-      >
-        {/* Column 1: Back button */}
-        <Link
-          href="#"
-          className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
-        >
-          <ArrowLeft className="h-5 w-5" />
-          <span className="whitespace-nowrap">Back</span>
-        </Link>
-
-        {/* Column 2: Fixed-width wrapper equal to col1 width, Active pill aligned right inside */}
-        <div className="flex justify-end">
+      {/* Desktop Header (1024px+) - 3 equal columns for true mathematical centering */}
+      <div className="hidden lg:grid grid-cols-3 items-center gap-5">
+        {/* Column 1: Back (left) + Active (right) */}
+        <div className="flex items-center justify-between">
+          <Link
+            href="#"
+            className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
+          >
+            <ArrowLeft className="h-5 w-5" />
+            <span className="whitespace-nowrap">Back</span>
+          </Link>
           <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
             <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
             <span className="text-sm font-medium text-[#2E7D32]">Active</span>
           </div>
         </div>
 
-        {/* Column 3: Title block - max-content, naturally centered due to equal flexible space on sides */}
+        {/* Column 2: Title - centered */}
         <div className="text-center">
           <h1 className="text-5xl font-bold text-[#1A1A1A]">
             ${formatNumber(circleData.amount)}
@@ -122,13 +104,12 @@ function Header() {
           <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
         </div>
 
-        {/* Column 4: Flexible spacer (1fr) - balances with column 2's fixed width */}
-        <div />
-
-        {/* Column 5: Connect wallet button */}
-        <Button variant="outline" className="rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent whitespace-nowrap">
-          Connect wallet
-        </Button>
+        {/* Column 3: Connect wallet (left-aligned in column) */}
+        <div className="flex justify-start">
+          <Button variant="outline" className="rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent whitespace-nowrap">
+            Connect wallet
+          </Button>
+        </div>
       </div>
     </header>
   )
