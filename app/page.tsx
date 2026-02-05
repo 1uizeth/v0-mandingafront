@@ -4,6 +4,7 @@ import { ArrowLeft, ExternalLink, Info } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useEffect, useRef, useState } from "react"
+import ProgressiveCircleGrid from "@/components/ProgressiveCircleGrid" // Declare the variable here
 
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
@@ -166,82 +167,119 @@ function PayoutCard() {
   )
 }
 
-// PROGRESSIVE CIRCLE GRID - columns reduce smoothly as width shrinks
-function ProgressiveCircleGrid() {
+// CONTAINER-MEASURED CIRCLE GRID
+// Key behavior:
+// - cols changes by exactly ±1 as width changes
+// - dotSize recalculates so: (cols * dotSize) + ((cols - 1) * gap) == containerWidth
+// - Full horizontal fill guaranteed (no leftover space except last row)
+function CircleGrid({ 
+  totalDots = 24, 
+  filledDot = 1,
+  earlyEntryDots = [2, 3, 4, 5, 6, 7, 8],
+  gapPx = 10, 
+  minDot = 24, 
+  maxDot = 40,
+  preferredDot = 32
+}: { 
+  totalDots?: number
+  filledDot?: number
+  earlyEntryDots?: number[]
+  gapPx?: number
+  minDot?: number
+  maxDot?: number
+  preferredDot?: number
+}) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [config, setConfig] = useState({ cols: 12, dotSize: 28, gap: 8 })
+  const [gridConfig, setGridConfig] = useState({ cols: 12, dotSize: preferredDot })
 
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
 
-    const calculateConfig = () => {
-      const width = container.offsetWidth
-      
-      // Progressive column schedule with dot size and gap
-      // Each step tries to fit the grid nicely
-      const schedules = [
-        { minWidth: 460, cols: 12, dotSize: 28, gap: 10 },
-        { minWidth: 400, cols: 10, dotSize: 28, gap: 10 },
-        { minWidth: 320, cols: 8,  dotSize: 28, gap: 8 },
-        { minWidth: 260, cols: 6,  dotSize: 28, gap: 8 },
-        { minWidth: 200, cols: 5,  dotSize: 26, gap: 6 },
-        { minWidth: 160, cols: 4,  dotSize: 26, gap: 6 },
-        { minWidth: 0,   cols: 4,  dotSize: 22, gap: 4 },
-      ]
+    const computeGrid = () => {
+      const containerWidth = container.offsetWidth
+      if (containerWidth <= 0) return
 
-      for (const schedule of schedules) {
-        if (width >= schedule.minWidth) {
-          setConfig({
-            cols: schedule.cols,
-            dotSize: schedule.dotSize,
-            gap: schedule.gap
-          })
-          return
-        }
+      // Step 1: Calculate candidate columns based on preferred dot size
+      // Formula: cols = floor((containerWidth + gap) / (preferredDot + gap))
+      let colsCandidate = Math.floor((containerWidth + gapPx) / (preferredDot + gapPx))
+      
+      // Step 2: Calculate bounds
+      // maxCols: what fits with minDot (allows most columns)
+      const maxCols = Math.min(totalDots, Math.floor((containerWidth + gapPx) / (minDot + gapPx)))
+      // minCols: never go below 3 columns
+      const minCols = Math.min(3, maxCols)
+      
+      // Step 3: Clamp candidate
+      let cols = Math.max(minCols, Math.min(colsCandidate, maxCols))
+      
+      // Step 4: Compute dotSize to force full width fill
+      // Formula: dotSize = (containerWidth - gap * (cols - 1)) / cols
+      let dotSize = (containerWidth - gapPx * (cols - 1)) / cols
+      
+      // Step 5: Fit loop - adjust cols if dotSize is out of bounds
+      // If dotSize > maxDot, we have too few columns - try adding one
+      while (dotSize > maxDot && cols < totalDots) {
+        cols++
+        dotSize = (containerWidth - gapPx * (cols - 1)) / cols
       }
+      
+      // If dotSize < minDot, we have too many columns - reduce by one
+      while (dotSize < minDot && cols > minCols) {
+        cols--
+        dotSize = (containerWidth - gapPx * (cols - 1)) / cols
+      }
+      
+      // Final clamp on dotSize
+      dotSize = Math.max(minDot, Math.min(maxDot, dotSize))
+      
+      setGridConfig({ cols, dotSize: Math.round(dotSize * 10) / 10 })
     }
 
-    calculateConfig()
+    // Initial calculation
+    computeGrid()
 
+    // Observe container resize
     const resizeObserver = new ResizeObserver(() => {
-      calculateConfig()
+      computeGrid()
     })
     
     resizeObserver.observe(container)
     return () => resizeObserver.disconnect()
-  }, [])
+  }, [totalDots, gapPx, minDot, maxDot, preferredDot])
 
-  const circles = Array.from({ length: circleData.totalMonths }, (_, i) => i)
+  const dots = Array.from({ length: totalDots }, (_, i) => i)
 
   return (
-    <div ref={containerRef} className="w-full overflow-hidden">
+    <div ref={containerRef} className="w-full">
       <div
-        className="transition-[gap] duration-200 ease-out"
         style={{
           display: 'grid',
-          gridTemplateColumns: `repeat(${config.cols}, ${config.dotSize}px)`,
-          gap: `${config.gap}px`,
-          width: 'max-content'
+          gridTemplateColumns: `repeat(${gridConfig.cols}, ${gridConfig.dotSize}px)`,
+          gap: `${gapPx}px`,
+          width: '100%',
+          justifyContent: 'start',
+          transition: 'gap 200ms ease'
         }}
       >
-        {circles.map((i) => {
-          const monthNumber = i + 1
-          const isCurrent = monthNumber === circleData.currentMonth
-          const isEarlyEntry = circleData.earlyEntryMonths.includes(monthNumber)
+        {dots.map((i) => {
+          const dotNumber = i + 1
+          const isFilled = dotNumber === filledDot
+          const isEarlyEntry = earlyEntryDots.includes(dotNumber)
           
-          let bgColor = "#E5E5E5"
-          if (isCurrent) bgColor = "#1A1A1A"
-          else if (isEarlyEntry) bgColor = "#C4B5FD"
+          let bgColor = "#E5E5E5" // default gray
+          if (isFilled) bgColor = "#1A1A1A" // filled black
+          else if (isEarlyEntry) bgColor = "#C4B5FD" // early entry purple
           
           return (
             <div
               key={i}
-              className="rounded-full transition-all duration-200 ease-out"
               style={{
-                width: `${config.dotSize}px`,
-                height: `${config.dotSize}px`,
-                backgroundColor: bgColor
+                width: `${gridConfig.dotSize}px`,
+                height: `${gridConfig.dotSize}px`,
+                borderRadius: '9999px',
+                backgroundColor: bgColor,
+                transition: 'width 200ms ease, height 200ms ease, background-color 200ms ease'
               }}
             />
           )
@@ -260,7 +298,15 @@ function PaymentVisualizationCard() {
       </h2>
 
       <div className="mt-5 flex-1">
-        <ProgressiveCircleGrid />
+        <CircleGrid 
+          totalDots={circleData.totalMonths}
+          filledDot={circleData.currentMonth}
+          earlyEntryDots={circleData.earlyEntryMonths}
+          gapPx={10}
+          minDot={24}
+          maxDot={40}
+          preferredDot={32}
+        />
       </div>
 
       <p className="mt-5 text-sm text-[#666666] leading-relaxed">
