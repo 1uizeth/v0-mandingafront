@@ -565,56 +565,55 @@ export default function FundingCirclePage() {
           <div style={{ gridArea: 'arc' }}><ArcCard /></div>
         </div>
 
-        {/* DESKTOP (1024px+): 3-column CSS grid with explicit row tracks */}
+        {/* DESKTOP (1024px+): Strict 3-column CSS grid with explicit row tracks */}
         <div 
-          className="hidden lg:grid gap-5 w-full"
+          className="hidden lg:grid gap-5 w-full items-stretch"
           style={{
             gridTemplateColumns: '1fr 1fr 1fr',
-            gridTemplateRows: 'auto auto var(--compact-card-height, 200px)',
-            alignContent: 'start',
-            alignItems: 'stretch'
+            gridTemplateRows: 'auto auto 160px',
+            alignContent: 'start'
           }}
         >
           {/* Left Column */}
           {/* Slots card - col 1, row 1 */}
-          <div style={{ gridColumn: 1, gridRow: 1 }}>
+          <div style={{ gridColumn: 1, gridRow: 1, height: '100%', width: '100%' }}>
             <SlotsCard />
           </div>
           
           {/* Started/Ends card - col 1, row 2 (stretches to fill row height) */}
-          <div style={{ gridColumn: 1, gridRow: 2 }}>
+          <div style={{ gridColumn: 1, gridRow: 2, height: '100%', width: '100%' }} className="flex flex-col justify-start">
             <TimelineCard />
           </div>
           
-          {/* Payout card - col 1, row 3 (compact height) */}
-          <div style={{ gridColumn: 1, gridRow: 3 }}>
+          {/* Payout card - col 1, row 3 (height controlled by row 3) */}
+          <div style={{ gridColumn: 1, gridRow: 3, height: '100%', width: '100%' }}>
             <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
 
           {/* Center Column */}
           {/* Pay $892/mo card - col 2, rows 1-2 (spans 2 rows, ends at Active members bottom) */}
-          <div style={{ gridColumn: 2, gridRow: '1 / span 2' }} className="flex flex-col justify-start">
+          <div style={{ gridColumn: 2, gridRow: '1 / span 2', height: '100%', width: '100%' }} className="flex flex-col justify-start">
             <PaymentVisualizationCard />
           </div>
           
-          {/* Installments card - col 2, row 3 (compact height) */}
-          <div style={{ gridColumn: 2, gridRow: 3 }}>
+          {/* Installments card - col 2, row 3 (height controlled by row 3) */}
+          <div style={{ gridColumn: 2, gridRow: 3, height: '100%', width: '100%' }}>
             <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
 
           {/* Right Column */}
           {/* ENS card - col 3, row 1 */}
-          <div style={{ gridColumn: 3, gridRow: 1 }}>
+          <div style={{ gridColumn: 3, gridRow: 1, height: '100%', width: '100%' }}>
             <EnsCard />
           </div>
           
           {/* Active members card - col 3, row 2 */}
-          <div style={{ gridColumn: 3, gridRow: 2 }}>
+          <div style={{ gridColumn: 3, gridRow: 2, height: '100%', width: '100%' }}>
             <MembersCard />
           </div>
           
-          {/* Arc card - col 3, row 3 (compact height, same as Payout/Installments) */}
-          <div style={{ gridColumn: 3, gridRow: 3 }}>
+          {/* Arc card - col 3, row 3 (height controlled by row 3) */}
+          <div style={{ gridColumn: 3, gridRow: 3, height: '100%', width: '100%' }}>
             <ArcCard />
           </div>
         </div>
