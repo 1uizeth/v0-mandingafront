@@ -33,7 +33,7 @@ type Step = 1 | 2 | 3
 // Signing state for step 1 and step 3
 type SigningState = "idle" | "signing" | "success"
 
-// Progress bar with labels
+// Progress bar with labels - each label centered under its segment
 function ProgressBar({ currentStep }: { currentStep: Step }) {
   const steps = [
     { num: 1, label: "Agreement" },
@@ -42,27 +42,20 @@ function ProgressBar({ currentStep }: { currentStep: Step }) {
   ]
 
   return (
-    <div className="w-full">
-      {/* Segments */}
-      <div className="flex items-center gap-1">
-        {steps.map((step) => (
-          <div key={step.num} className="flex-1">
-            <div 
-              className={`h-1 w-full rounded-full transition-colors ${
-                step.num <= currentStep 
-                  ? "bg-[#1A1A1A]" 
-                  : "bg-[#E5E5E5]"
-              }`}
-            />
-          </div>
-        ))}
-      </div>
-      {/* Labels */}
-      <div className="flex items-center justify-between mt-2">
-        {steps.map((step) => (
+    <div className="w-full flex gap-1">
+      {steps.map((step) => (
+        <div key={step.num} className="flex-1 flex flex-col items-center">
+          {/* Segment */}
+          <div 
+            className={`h-1 w-full rounded-full transition-colors ${
+              step.num <= currentStep 
+                ? "bg-[#1A1A1A]" 
+                : "bg-[#E5E5E5]"
+            }`}
+          />
+          {/* Label centered under segment */}
           <span 
-            key={step.num}
-            className={`text-xs transition-colors ${
+            className={`text-xs mt-2 transition-colors ${
               step.num <= currentStep 
                 ? "text-[#1A1A1A] font-medium" 
                 : "text-[#999999]"
@@ -70,8 +63,8 @@ function ProgressBar({ currentStep }: { currentStep: Step }) {
           >
             {step.label}
           </span>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   )
 }
