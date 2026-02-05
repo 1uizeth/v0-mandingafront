@@ -81,8 +81,8 @@ function Header() {
 
       {/* Desktop Header (1024px+) - 3 equal columns for true mathematical centering */}
       <div className="hidden lg:grid grid-cols-3 items-center gap-5">
-        {/* Column 1: Back (left) + Active (right) */}
-        <div className="flex items-center justify-between">
+        {/* Column 1: Back button - far left */}
+        <div className="flex justify-start">
           <Link
             href="#"
             className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
@@ -90,10 +90,6 @@ function Header() {
             <ArrowLeft className="h-5 w-5" />
             <span className="whitespace-nowrap">Back</span>
           </Link>
-          <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
-            <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
-            <span className="text-sm font-medium text-[#2E7D32]">Active</span>
-          </div>
         </div>
 
         {/* Column 2: Title - centered */}
@@ -104,8 +100,8 @@ function Header() {
           <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
         </div>
 
-        {/* Column 3: Connect wallet (left-aligned in column) */}
-        <div className="flex justify-start">
+        {/* Column 3: Connect wallet - far right */}
+        <div className="flex justify-end">
           <Button variant="outline" className="rounded-full border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent whitespace-nowrap">
             Connect wallet
           </Button>
@@ -463,11 +459,17 @@ function ArcCard() {
   )
 }
 
-// Slots card - compact card style matching other cards
+// Slots card - includes Active badge + slots count
 function SlotsCard() {
   return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white px-5 py-4">
-      <span className="text-sm font-medium text-[#666666]">{circleData.slotsLeft} out of 24 slots left</span>
+    <div className="rounded-xl border border-[#E5E5E5] bg-white px-5 py-4 flex items-center justify-between gap-3">
+      {/* Active badge */}
+      <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
+        <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
+        <span className="text-sm font-medium text-[#2E7D32]">Active</span>
+      </div>
+      {/* Slots count */}
+      <span className="text-sm font-medium text-[#666666]">{circleData.slotsLeft} slots left</span>
     </div>
   )
 }
