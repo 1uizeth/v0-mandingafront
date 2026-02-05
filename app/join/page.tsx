@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 
+
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -32,60 +33,58 @@ type Step = 1 | 2 | 3
 // Signing state for step 1 and step 3
 type SigningState = "idle" | "signing" | "success"
 
-// Stepper component
-function Stepper({ currentStep }: { currentStep: Step }) {
-  const steps = [
-    { num: 1, label: "Terms" },
-    { num: 2, label: "Preview" },
-    { num: 3, label: "Confirm" },
+// Segmented Progress Bar component (Stripe-style)
+function ProgressBar({ currentStep }: { currentStep: Step }) {
+  const milestones = [
+    { num: 1, label: "Agreement" },
+    { num: 2, label: "Review" },
+    { num: 3, label: "Confirmation" },
   ]
 
   return (
-    <div className="flex items-center justify-center gap-2 md:gap-4">
-      {steps.map((step, index) => (
-        <div key={step.num} className="flex items-center gap-2 md:gap-4">
-          {/* Step indicator */}
-          <div className="flex items-center gap-2">
-            <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors ${
-                step.num < currentStep
-                  ? "bg-[#1A1A1A] text-white"
-                  : step.num === currentStep
-                  ? "bg-[#1A1A1A] text-white"
-                  : "bg-[#E5E5E5] text-[#999999]"
-              }`}
-            >
-              {step.num < currentStep ? (
-                <Check className="w-4 h-4" />
-              ) : (
-                step.num
-              )}
-            </div>
-            <span
-              className={`text-sm font-medium transition-colors ${
-                step.num <= currentStep ? "text-[#1A1A1A]" : "text-[#999999]"
-              }`}
-            >
-              {step.label}
-            </span>
-          </div>
-          
-          {/* Connector line */}
-          {index < steps.length - 1 && (
-            <div
-              className={`w-8 md:w-16 h-0.5 transition-colors ${
-                step.num < currentStep ? "bg-[#1A1A1A]" : "bg-[#E5E5E5]"
+    <div className="w-full max-w-md mx-auto">
+      {/* Segmented bar */}
+      <div className="flex items-center gap-1">
+        {milestones.map((milestone, index) => (
+          <div key={milestone.num} className="flex-1 flex items-center">
+            {/* Segment */}
+            <div 
+              className={`h-1.5 w-full rounded-full transition-colors ${
+                milestone.num <= currentStep 
+                  ? "bg-[#1A1A1A]" 
+                  : "bg-[#E5E5E5]"
               }`}
             />
-          )}
-        </div>
-      ))}
+          </div>
+        ))}
+      </div>
+      
+      {/* Labels below segments */}
+      <div className="flex items-center justify-between mt-3">
+        {milestones.map((milestone) => (
+          <span 
+            key={milestone.num}
+            className={`text-xs font-medium transition-colors ${
+              milestone.num < currentStep 
+                ? "text-[#1A1A1A]" 
+                : milestone.num === currentStep 
+                ? "text-[#1A1A1A]" 
+                : "text-[#999999]"
+            }`}
+          >
+            {milestone.num < currentStep && (
+              <Check className="w-3 h-3 inline-block mr-1 -mt-0.5" />
+            )}
+            {milestone.label}
+          </span>
+        ))}
+      </div>
     </div>
   )
 }
 
-// Header component
-function Header() {
+// Header component - Personal commitment flow style
+function Header({ currentStep }: { currentStep: Step }) {
   return (
     <header 
       className="mx-auto max-w-[1280px] w-full px-6 md:px-10"
@@ -94,57 +93,32 @@ function Header() {
         paddingBottom: 'clamp(16px, 3vh, 32px)' 
       }}
     >
-      {/* Mobile + Tablet Header (<1024px) */}
-      <div className="flex lg:hidden flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
-          >
-            <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
-            <span className="text-sm md:text-base whitespace-nowrap">Back</span>
-          </Link>
-          <div className="rounded-full border border-[#E5E5E5] px-4 py-1.5 text-sm font-medium text-[#1A1A1A]">
-            {MOCK_WALLET_ENS}
-          </div>
-        </div>
-        
-        <div className="text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-[#1A1A1A]">
-            ${formatNumber(circleData.amount)}
-          </h1>
-          <p className="text-sm md:text-base text-[#1A1A1A]">{circleData.title}</p>
-        </div>
-      </div>
-
-      {/* Desktop Header (1024px+) */}
-      <div 
-        className="hidden lg:grid items-center min-h-[72px]"
-        style={{ gridTemplateColumns: 'auto 1fr max-content 1fr auto' }}
-      >
+      {/* Top bar: Back + Wallet */}
+      <div className="flex items-center justify-between mb-6">
         <Link
           href="/"
-          className="justify-self-start flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70 whitespace-nowrap min-w-0"
+          className="flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
         >
-          <ArrowLeft className="h-5 w-5 flex-shrink-0" />
-          <span>Back</span>
+          <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
+          <span className="text-sm md:text-base whitespace-nowrap">Back</span>
         </Link>
-
-        <div />
-
-        <div className="justify-self-center text-center flex flex-col items-center gap-1 whitespace-nowrap">
-          <h1 className="text-5xl font-bold text-[#1A1A1A]">
-            ${formatNumber(circleData.amount)}
-          </h1>
-          <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
-        </div>
-
-        <div />
-
-        <div className="justify-self-end rounded-full border border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] whitespace-nowrap min-w-0">
+        <div className="rounded-full border border-[#E5E5E5] px-4 py-1.5 text-sm font-medium text-[#1A1A1A]">
           {MOCK_WALLET_ENS}
         </div>
       </div>
+
+      {/* Main title - Personal and commitment-focused */}
+      <div className="text-center mb-8">
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#1A1A1A] text-balance">
+          {MOCK_WALLET_ENS} is joining a ${formatNumber(circleData.amount)} circle {circleData.title}
+        </h1>
+        <p className="text-sm md:text-base text-[#666666] mt-2">
+          Complete the steps below to confirm your participation
+        </p>
+      </div>
+
+      {/* Progress bar */}
+      <ProgressBar currentStep={currentStep} />
     </header>
   )
 }
@@ -622,19 +596,9 @@ export default function JoinCirclePage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <Header />
+      <Header currentStep={currentStep} />
 
-      <main className="flex-1 flex flex-col mx-auto max-w-[640px] w-full px-6 md:px-10 pb-12">
-        {/* Step indicator */}
-        <div className="mb-6 text-center">
-          <p className="text-sm text-[#666666]">Join Circle — Step {currentStep} of 3</p>
-        </div>
-
-        {/* Stepper */}
-        <div className="mb-8">
-          <Stepper currentStep={currentStep} />
-        </div>
-
+      <main className="flex-1 flex flex-col mx-auto max-w-[640px] w-full px-6 md:px-10 pb-12 pt-8">
         {/* Step content */}
         {currentStep === 1 && (
           <TermsStep 
