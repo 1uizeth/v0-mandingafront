@@ -180,7 +180,7 @@ function PreviewStep({ onContinue }: { onContinue: () => void }) {
               <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.totalCommitment)}</span>
             </div>
             <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-              <span className="text-[#666666]">Platform fee (7%)</span>
+              <span className="text-[#666666]">Vault fee (7%)</span>
               <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.protocolFee)}</span>
             </div>
             <div className="flex justify-between py-1.5">
