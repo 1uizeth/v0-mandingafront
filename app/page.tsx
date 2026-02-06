@@ -681,7 +681,7 @@ function EntryStatusCard({ isWalletConnected, selectedEntry, onSelectEntry }: { 
             </div>
             
             {/* Text block - left-aligned in list mode, centered in column mode */}
-            <div className="flex flex-col gap-0.5 items-start min-w-0 xl:items-center xl:text-center xl:gap-1">
+            <div className="flex flex-col gap-0.5 items-start min-w-0 xl:items-center xl:text-center xl:gap-0.5">
               <span className="font-semibold text-base xl:text-lg whitespace-nowrap leading-tight" style={{ color: group.colorDefault }}>{group.label}</span>
               <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-tight line-clamp-3 text-left xl:text-center xl:max-w-[220px]`}>{group.description}</p>
             </div>
