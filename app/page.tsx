@@ -609,8 +609,19 @@ function CircleGrid({
 
 // FULL CARD: Payment Container
 // Container card with title and embedded Installments sub-card
-function PaymentVisualizationCard({ isWalletConnected, selectedEntry }: { isWalletConnected: boolean; selectedEntry: string }) {
+function PaymentVisualizationCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletConnected: boolean; hasJoined: boolean; selectedEntry: string }) {
   const progressPercentage = Math.max(1, (circleData.installmentProgress / circleData.totalMonths) * 100)
+  
+  // Calculate days until next payment
+  const getDaysUntilDue = () => {
+    const now = new Date()
+    const nextDue = new Date(circleData.nextDueDate)
+    const diffTime = nextDue.getTime() - now.getTime()
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    return diffDays
+  }
+  
+  const daysUntilDue = getDaysUntilDue()
   
   // Get button color based on selected entry
   const getButtonColor = () => {
@@ -646,18 +657,23 @@ function PaymentVisualizationCard({ isWalletConnected, selectedEntry }: { isWall
 
         {/* Footer row: label left, amount right */}
         <div className="flex items-center justify-between">
-          <span className="font-semibold text-[#1A1A1A]">Due now</span>
+          <span className="font-semibold text-[#1A1A1A]">
+            {hasJoined 
+              ? (daysUntilDue <= 0 ? "Due now" : `Due in ${daysUntilDue} day${daysUntilDue > 1 ? 's' : ''}`)
+              : "Due now"
+            }
+          </span>
           <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.dueAmount)}</span>
         </div>
 
-        {/* Join button - shows when wallet is connected and entry is selected */}
+        {/* Join/Pay button - shows when wallet is connected and entry is selected */}
         {isWalletConnected && selectedEntry && (
           <Button 
             className="w-full rounded-full text-white mt-2 transition-colors"
             style={{ backgroundColor: getButtonColor() }}
             asChild
           >
-            <Link href="/join">Join</Link>
+            <Link href={hasJoined ? "/pay" : "/join"}>{hasJoined ? "Pay next installment" : "Join"}</Link>
           </Button>
         )}
       </div>
@@ -1041,7 +1057,7 @@ export default function FundingCirclePage() {
         {/* MOBILE (<768px): Single column stack */}
         <div className="flex flex-col gap-4 md:hidden">
           <SlotsCard hasJoined={hasJoined} />
-          <PaymentVisualizationCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} />
+          <PaymentVisualizationCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} />
           <EntryStatusCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onSelectEntry={setSelectedEntry} onHoverEntry={setHoveredEntry} />
           <TimelineCard />
           <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} onSelectEntry={setSelectedEntry} />
@@ -1090,7 +1106,7 @@ export default function FundingCirclePage() {
 
           {/* COLUMN 2: Center stack - WIDER (Pay container with embedded Installments, Entry Status) */}
           <div className={`flex flex-col ${GAP_M}`}>
-            <PaymentVisualizationCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} />
+            <PaymentVisualizationCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} />
             <EntryStatusCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onSelectEntry={setSelectedEntry} onHoverEntry={setHoveredEntry} />
           </div>
 
