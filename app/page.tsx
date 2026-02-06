@@ -347,12 +347,6 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
                 const radius = 20 + (i * 4.2) // Spacing between rings
                 const strokeWidth = 3
                 
-                // Determine which entry group this ring belongs to
-                let entryGroup = ""
-                if (i > 0 && i < 8) entryGroup = "early"
-                else if (i >= 8 && i < 16) entryGroup = "middle"
-                else if (i >= 16) entryGroup = "late"
-                
                 return (
                   <circle
                     key={i}
@@ -363,12 +357,49 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
                     stroke={ring.color}
                     strokeWidth={strokeWidth}
                     opacity={ring.isActive ? 1 : 0.3}
-                    className={entryGroup ? "cursor-pointer transition-opacity" : ""}
-                    onMouseEnter={() => entryGroup && onHoverEntry(entryGroup)}
-                    onMouseLeave={() => onHoverEntry("")}
                   />
                 )
               })}
+              
+              {/* Invisible hover zones for each entry group - no gaps */}
+              {/* Early entry: rings 1-7 (innermost) */}
+              <circle
+                cx="120"
+                cy="120"
+                r={20 + (7 * 4.2) + 2} // Outer radius of ring 7 plus buffer
+                fill="transparent"
+                stroke="transparent"
+                strokeWidth={20 + (7 * 4.2) - 20} // Width from ring 1 to ring 7
+                className="cursor-pointer"
+                onMouseEnter={() => onHoverEntry("early")}
+                onMouseLeave={() => onHoverEntry("")}
+              />
+              
+              {/* Middle entry: rings 8-15 */}
+              <circle
+                cx="120"
+                cy="120"
+                r={20 + (15 * 4.2) + 2} // Outer radius of ring 15 plus buffer
+                fill="transparent"
+                stroke="transparent"
+                strokeWidth={20 + (15 * 4.2) - (20 + (8 * 4.2))} // Width from ring 8 to ring 15
+                className="cursor-pointer"
+                onMouseEnter={() => onHoverEntry("middle")}
+                onMouseLeave={() => onHoverEntry("")}
+              />
+              
+              {/* Late entry: rings 16-23 */}
+              <circle
+                cx="120"
+                cy="120"
+                r={20 + (23 * 4.2) + 2} // Outer radius of ring 23 plus buffer
+                fill="transparent"
+                stroke="transparent"
+                strokeWidth={20 + (23 * 4.2) - (20 + (16 * 4.2))} // Width from ring 16 to ring 23
+                className="cursor-pointer"
+                onMouseEnter={() => onHoverEntry("late")}
+                onMouseLeave={() => onHoverEntry("")}
+              />
             </svg>
           </div>
         )}
