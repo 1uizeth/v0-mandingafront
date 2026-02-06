@@ -208,11 +208,11 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
 
   if (isPreJoin) {
     return (
-      <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
+      <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col gap-3`}>
         {/* Header: Title | Counter (empty pre-join) */}
         <div className="flex items-center justify-between">
-          <span className={TYPOGRAPHY.label}>Payout</span>
-          <span></span>
+          <span className={TYPOGRAPHY.label}>Payouts</span>
+          <span className={TYPOGRAPHY.caption}>00/{circleData.totalMonths}</span>
         </div>
 
         {/* Progress bar with 1% initial fill */}
@@ -220,10 +220,17 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
           <div className="h-full w-[1%] bg-[#1A1A1A] rounded-full" />
         </div>
 
-        {/* Content row: text left, amount right */}
+        {/* Due info row: label left, date right */}
         <div className="flex items-center justify-between">
-          <span className="font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
-          <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.amount)}</span>
+          <span className="font-semibold text-[#1A1A1A]">Next due on</span>
+          <span className="font-semibold text-[#1A1A1A]">March 1</span>
+        </div>
+
+        {/* Large centered amount pill - primary focus */}
+        <div className="flex justify-center mt-2">
+          <div className="rounded-full bg-[#F5F5F5] px-8 py-4">
+            <span className="text-5xl font-semibold text-[#1A1A1A] italic tracking-tight">${formatNumber(circleData.amount)}</span>
+          </div>
         </div>
       </div>
     )
