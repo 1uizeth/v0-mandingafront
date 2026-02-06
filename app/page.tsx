@@ -799,7 +799,7 @@ function MembersCard() {
 
   return (
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
-      <h3 className={`${TYPOGRAPHY.h3} text-[#1A1A1A]`}>Active members</h3>
+      <h3 className={`${TYPOGRAPHY.h3} text-[#1A1A1A]`}>Members</h3>
 
       {/* Member list */}
       <div>
