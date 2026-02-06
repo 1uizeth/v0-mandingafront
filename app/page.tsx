@@ -445,18 +445,18 @@ function EntryStatusCard() {
   return (
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
       {/* Three groups in a row */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-8">
         {entryGroups.map((group, groupIndex) => (
-          <div key={groupIndex} className="flex flex-col items-center gap-2">
+          <div key={groupIndex} className="flex flex-col items-center gap-3">
             {/* Dot grid: 4 dots per row, 2 rows */}
-            <div className="grid grid-cols-4 gap-1">
+            <div className="grid grid-cols-4 gap-2">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div
                   key={i}
                   className="rounded-full"
                   style={{
-                    width: '12px',
-                    height: '12px',
+                    width: '32px',
+                    height: '32px',
                     backgroundColor: group.color
                   }}
                 />
@@ -464,9 +464,9 @@ function EntryStatusCard() {
             </div>
             
             {/* Label and description */}
-            <div className="flex flex-col items-center gap-1 text-center">
-              <span className="font-semibold text-[#1A1A1A] text-xs">{group.label}</span>
-              <p className={`${TYPOGRAPHY.bodyMuted} text-center`}>{group.description}</p>
+            <div className="flex flex-col items-center gap-1.5 text-center">
+              <span className={`font-semibold text-sm`} style={{ color: group.color }}>{group.label}</span>
+              <p className={`${TYPOGRAPHY.bodyMuted} text-center text-sm`}>{group.description}</p>
             </div>
           </div>
         ))}
@@ -697,11 +697,11 @@ export default function FundingCirclePage() {
         </div>
 
         {/* DESKTOP (1024px+): Redesigned 3-column layout */}
-        {/* Column 1: Active, Started/Ends, Payout | Column 2: Pay, Installments, Entry Status | Column 3: Active members, ENS, Arc */}
+        {/* Column 1: Active, Started/Ends, Payout | Column 2 (wider): Pay with embedded Installments, Entry Status | Column 3: Active members, ENS, Arc */}
         <div 
           className={`hidden lg:grid ${GAP_M} w-full`}
           style={{
-            gridTemplateColumns: '1fr 1fr 1fr',
+            gridTemplateColumns: '1fr 1.5fr 1fr',
             alignContent: 'start',
             alignItems: 'start'
           }}
@@ -713,10 +713,9 @@ export default function FundingCirclePage() {
             <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
 
-          {/* COLUMN 2: Center stack (Pay, Installments, Entry Status) */}
+          {/* COLUMN 2: Center stack - WIDER (Pay container with embedded Installments, Entry Status) */}
           <div className={`flex flex-col ${GAP_M}`}>
             <PaymentVisualizationCard />
-            <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
             <EntryStatusCard />
           </div>
 
