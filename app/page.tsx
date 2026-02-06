@@ -410,7 +410,7 @@ function PaymentVisualizationCard() {
 
         {/* Footer row: label left, amount right */}
         <div className="flex items-center justify-between">
-          <span className="font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
+          <span className="font-semibold text-[#1A1A1A]">Due on the 5th, every month</span>
           <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.dueAmount)}</span>
         </div>
       </div>
@@ -551,7 +551,7 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
 
         {/* Content row: text left, amount right */}
         <div className="flex items-center justify-between">
-          <span className="font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
+          <span className="font-semibold text-[#1A1A1A]">Due on the 5th, every month</span>
           <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.monthlyAmount)}</span>
         </div>
       </div>
