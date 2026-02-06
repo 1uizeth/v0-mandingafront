@@ -426,9 +426,8 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
           </p>
         )}
       </div>
-    </div>
-  )
-}
+    )
+  }
 
   // Joined state
   return (
