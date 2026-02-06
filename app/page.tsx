@@ -695,9 +695,10 @@ function EntryStatusCard({ isWalletConnected, selectedEntry, hoveredEntry, onSel
               focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
               cursor-pointer
               ${selectedEntry === group.id && !hoveredEntry ? 'ring-2 ring-inset' : ''}
+              ${hoveredEntry === group.id && selectedEntry === group.id ? 'ring-2 ring-inset' : ''}
             `}
             style={{
-              backgroundColor: hoveredEntry === group.id ? `${group.colorDefault}08` : 'transparent',
+              backgroundColor: hoveredEntry === group.id ? `${group.colorDefault}10` : 'transparent',
               '--tw-ring-color': group.colorDefault,
               '--focus-ring': group.colorDefault,
             } as React.CSSProperties}
@@ -813,7 +814,7 @@ function EnsCard() {
           rel="noopener noreferrer"
           className={`${TYPOGRAPHY.button} text-[#5298FF] transition-colors hover:opacity-70 whitespace-nowrap`}
         >
-          View on ENS →
+          View on ENS ���
         </a>
       </div>
 
