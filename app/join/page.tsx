@@ -457,7 +457,10 @@ export default function JoinCirclePage() {
           style={{ paddingTop: 'clamp(32px, 6vh, 64px)', paddingBottom: 'clamp(16px, 2vh, 24px)' }}
         >
           <div className="mx-auto max-w-[760px] px-6">
-            <div className="h-8 w-16 bg-[#F0F0F0] rounded-full animate-pulse mb-4" />
+            <Link href="/" className="inline-flex items-center gap-1.5 text-[#666666] transition-colors hover:text-[#1A1A1A] mb-4">
+              <ArrowLeft className="h-4 w-4" />
+              <span className="text-sm font-medium">Back</span>
+            </Link>
             <div className="flex items-center justify-between gap-4">
               <div className="h-7 w-48 bg-[#F0F0F0] rounded animate-pulse" />
               <div className="h-10 w-40 bg-[#F0F0F0] rounded-full animate-pulse" />
