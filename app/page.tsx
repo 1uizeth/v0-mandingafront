@@ -381,43 +381,41 @@ function CircleGrid({
   )
 }
 
-// FULL CARD: Payment Visualization
-// Compact layout: Title → Description → Single-row progress dots (no forced height)
+// FULL CARD: Payment Container
+// Container card with title and embedded Installments sub-card
 function PaymentVisualizationCard() {
+  const progressPercentage = Math.max(1, (circleData.installmentProgress / circleData.totalMonths) * 100)
+  
   return (
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
-      <div>
-        <h2 className={`${TYPOGRAPHY.h3} text-[#1A1A1A]`}>
-          Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
-        </h2>
-        <p className={`${TYPOGRAPHY.bodyMuted} mt-1`}>
-          Early entry: priority access to payouts in the first 8 months.
-        </p>
-      </div>
+      {/* Centered title */}
+      <h2 className={`${TYPOGRAPHY.h3} text-[#1A1A1A] text-center`}>
+        Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
+      </h2>
       
-      {/* Single-row progress dots */}
-      <div className="flex items-center gap-1">
-        {Array.from({ length: circleData.totalMonths }).map((_, i) => {
-          const dotNumber = i + 1
-          const isFilled = dotNumber === circleData.currentMonth
-          const isEarlyEntry = circleData.earlyEntryMonths.includes(dotNumber)
-          
-          let bgColor = "#E5E5E5"
-          if (isFilled) bgColor = "#1A1A1A"
-          else if (isEarlyEntry) bgColor = "#C4B5FD"
-          
-          return (
-            <div
-              key={i}
-              className="rounded-full"
-              style={{
-                width: '12px',
-                height: '12px',
-                backgroundColor: bgColor
-              }}
-            />
-          )
-        })}
+      {/* Embedded Installments sub-card */}
+      <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
+        {/* Header: Title | Counter */}
+        <div className="flex items-center justify-between">
+          <span className={TYPOGRAPHY.label}>Installments</span>
+          <span className={TYPOGRAPHY.caption}>
+            {String(circleData.installmentProgress).padStart(2, "0")}/{circleData.totalMonths}
+          </span>
+        </div>
+
+        {/* Progress bar with fill indicator */}
+        <div className="h-2 w-full overflow-hidden rounded-full bg-[#E5E5E5]">
+          <div
+            className="h-full bg-[#1A1A1A] rounded-full transition-all"
+            style={{ width: `${progressPercentage}%` }}
+          />
+        </div>
+
+        {/* Footer row: label left, amount right */}
+        <div className="flex items-center justify-between">
+          <span className="font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
+          <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.dueAmount)}</span>
+        </div>
       </div>
     </div>
   )
