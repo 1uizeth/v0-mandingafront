@@ -420,16 +420,21 @@ export default function JoinCirclePage() {
 
   // Step 3: Confirm transaction with execution simulation
   const handleConfirm = () => {
+    console.log('[v0] User confirmed join with entry:', selectedEntry)
     setIsExecuting(true)
     showToast("Processing transactions...")
     
     // Simulate execution cascade
     setExecutionStep(1)
+    console.log('[v0] Execution step 1: Signing agreement')
     setTimeout(() => {
       setExecutionStep(2)
+      console.log('[v0] Execution step 2: Processing payment')
       setTimeout(() => {
         setExecutionStep(3) // All done - show success
         setIsExecuting(false)
+        localStorage.setItem('hasJoined', 'true')
+        console.log('[v0] Join complete! Saved hasJoined to localStorage')
       }, 800)
     }, 800)
   }

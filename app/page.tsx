@@ -837,8 +837,10 @@ function EntryStatusCard({ isWalletConnected, hasJoined, selectedEntry, hoveredE
     }
     
     // Start simulation for selected entry
+    console.log("[v0] User selected entry:", entryId)
     onSelectEntry(entryId)
-    console.log("[v0] Starting simulation for:", entryId)
+    localStorage.setItem('selectedEntry', entryId)
+    console.log("[v0] Entry saved to localStorage:", localStorage.getItem('selectedEntry'))
   }
 
   // Filter to only show selected entry when joined
@@ -1124,34 +1126,19 @@ export default function FundingCirclePage() {
 
   // Load state from localStorage on mount (client-only, after hydration)
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
+    const storedWallet = localStorage.getItem('isWalletConnected')
+    const storedJoined = localStorage.getItem('hasJoined')
+    const storedEntry = localStorage.getItem('selectedEntry')
     
-    // Check if user just completed joining (coming back from /join)
-    if (urlParams.get('joined') === 'true') {
-      console.log('[v0] User joined - setting joined state')
-      localStorage.setItem('walletConnected', 'true')
-      localStorage.setItem('hasJoined', 'true')
-      localStorage.setItem('selectedEntry', 'early')
-      
-      setIsWalletConnected(true)
-      setHasJoined(true)
-      setSelectedEntry("early")
-      
-      // Clean up URL
-      window.history.replaceState({}, '', window.location.pathname)
-    } else {
-      // Load persisted state from localStorage
-      const savedWalletConnected = localStorage.getItem('walletConnected') === 'true'
-      const savedHasJoined = localStorage.getItem('hasJoined') === 'true'
-      const savedSelectedEntry = localStorage.getItem('selectedEntry') || ""
-      
-      if (savedWalletConnected) setIsWalletConnected(true)
-      if (savedHasJoined) setHasJoined(true)
-      if (savedSelectedEntry) setSelectedEntry(savedSelectedEntry)
-    }
+    console.log('[v0] Main page loaded - localStorage state:', { storedWallet, storedJoined, storedEntry })
+    
+    if (storedWallet === 'true') setIsWalletConnected(true)
+    if (storedJoined === 'true') setHasJoined(true)
+    if (storedEntry) setSelectedEntry(storedEntry)
   }, [])
 
   const handleConnectWallet = () => {
+    console.log('[v0] Connecting wallet...')
     toast({
       title: "Connecting wallet...",
       duration: 2000,
@@ -1162,6 +1149,7 @@ export default function FundingCirclePage() {
       localStorage.setItem('selectedEntry', 'early')
       setIsWalletConnected(true)
       setSelectedEntry("early") // Auto-select early entry after wallet connects
+      console.log('[v0] Wallet connected - auto-selected early entry')
     }, 1500)
   }
 
