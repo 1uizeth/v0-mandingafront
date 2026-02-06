@@ -597,65 +597,35 @@ export default function FundingCirclePage() {
           <div style={{ gridArea: 'arc' }}><ArcCard /></div>
         </div>
 
-        {/* DESKTOP (1024px+): Strict 2-row layout with aligned baselines */}
-        {/* DESKTOP (1024px+): 3×3 Grid Module with unified cohesion */}
+        {/* DESKTOP (1024px+): 3-column explicit layout */}
         <div 
-          className={`hidden lg:grid ${GRID_GAP} w-full`}
+          className={`hidden lg:grid w-full`}
           style={{
             gridTemplateColumns: '1fr 1fr 1fr',
-            gridTemplateRows: 'minmax(0, 1fr) minmax(0, 1fr) auto',
-            alignContent: 'stretch',
-            alignItems: 'stretch'
+            gap: `1rem`, // GAP_M = 16px = 1rem
           }}
         >
-          {/* ROW 1 */}
-          
-          {/* Row 1, Col 1: Active (Slots) */}
-          <div style={{ gridColumn: 1, gridRow: 1, height: '100%' }}>
+          {/* COLUMN 1: Active → Started/Ends → Payout */}
+          <div className={`flex flex-col ${GRID_GAP}`}>
             <SlotsCard />
-          </div>
-          
-          {/* Row 1, Col 2: Pay $892/mo (spans rows 1-2) */}
-          <div 
-            style={{ gridColumn: 2, gridRow: '1 / span 2', height: '100%', width: '100%' }}
-            className="flex flex-col justify-between"
-          >
-            <PaymentVisualizationCard />
-          </div>
-          
-          {/* Row 1, Col 3: ENS */}
-          <div style={{ gridColumn: 3, gridRow: 1, height: '100%' }}>
-            <EnsCard />
-          </div>
-
-          {/* ROW 2 */}
-          
-          {/* Row 2, Col 1: Started/Ends */}
-          <div style={{ gridColumn: 1, gridRow: 2, height: '100%', width: '100%' }}>
             <TimelineCard />
-          </div>
-          
-          {/* Row 2, Col 2: (empty - Pay card already spans here) */}
-          
-          {/* Row 2, Col 3: Active members */}
-          <div style={{ gridColumn: 3, gridRow: 2, height: '100%' }}>
-            <MembersCard />
-          </div>
-
-          {/* ROW 3: Bottom compact cards (180px fixed height) */}
-          
-          {/* Row 3, Col 1: Payout */}
-          <div style={{ gridColumn: 1, gridRow: 3, height: '100%', width: '100%' }}>
             <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
-          
-          {/* Row 3, Col 2: Installments */}
-          <div style={{ gridColumn: 2, gridRow: 3, height: '100%', width: '100%' }}>
+
+          {/* COLUMN 2: Pay $892/mo → Installments → Entry Status (placeholder) */}
+          <div className={`flex flex-col ${GRID_GAP}`}>
+            <PaymentVisualizationCard />
             <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
+            {/* Entry Status card placeholder - empty for now */}
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex items-center justify-center min-h-20 text-[#999999]">
+              Entry Status
+            </div>
           </div>
-          
-          {/* Row 3, Col 3: Arc */}
-          <div style={{ gridColumn: 3, gridRow: 3, height: '100%', width: '100%' }}>
+
+          {/* COLUMN 3: Active members → ENS → Arc */}
+          <div className={`flex flex-col ${GRID_GAP}`}>
+            <MembersCard />
+            <EnsCard />
             <ArcCard />
           </div>
         </div>
