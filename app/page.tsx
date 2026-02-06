@@ -416,9 +416,19 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
             </svg>
           </div>
         )}
+
+        {/* Info text - adaptive based on selected/hovered entry */}
+        {activeEntry && (
+          <p className={`${TYPOGRAPHY.bodyMuted} text-sm text-center mt-4 leading-relaxed`}>
+            {activeEntry === "early" && "Join as an Early entry and you'll likely receive your payout between March 1, 2026 and October 1, 2026."}
+            {activeEntry === "middle" && "Join as a Middle entry and you'll likely receive your payout between November 1, 2026 and June 1, 2027."}
+            {activeEntry === "late" && "Join as a Late entry and you'll likely receive your payout between July 1, 2027 and February 1, 2028."}
+          </p>
+        )}
       </div>
-    )
-  }
+    </div>
+  )
+}
 
   // Joined state
   return (
