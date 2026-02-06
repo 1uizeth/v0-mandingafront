@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { useEffect, useRef, useState } from "react"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
-import { RadialBarChart, RadialBar, PolarAngleAxis } from "recharts"
 
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
@@ -207,35 +206,38 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
   const isPreJoin = !isWalletConnected || !hasJoined
   const progressPercentage = Math.max(1, (circleData.payoutProgress / circleData.totalMonths) * 100)
 
-  // Calculate chart data based on selected entry
-  const getChartData = () => {
-    const months = ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar"]
+  // Generate 24 rings (months) for the circular chart
+  const getRings = () => {
+    const rings = []
+    const totalMonths = 24
     
-    if (selectedEntry === "early") {
-      // Early: months 1-8
-      return Array.from({ length: 8 }, (_, i) => ({
-        month: months[i],
-        value: 80 + (i * 2.5),
-        fill: `hsl(var(--entry-early-default))`
-      }))
-    } else if (selectedEntry === "middle") {
-      // Middle: months 8-16
-      return Array.from({ length: 8 }, (_, i) => ({
-        month: months[i],
-        value: 60 + (i * 2.5),
-        fill: `hsl(var(--entry-middle-default))`
-      }))
-    } else {
-      // Late: months 16-24
-      return Array.from({ length: 8 }, (_, i) => ({
-        month: months[i],
-        value: 40 + (i * 2.5),
-        fill: `hsl(var(--entry-late-default))`
-      }))
+    for (let i = 0; i < totalMonths; i++) {
+      let isActive = false
+      let color = "#E5E5E5" // Inactive gray
+      
+      // Early entry: rings 0-7 (innermost)
+      if (selectedEntry === "early" && i < 8) {
+        isActive = true
+        color = "hsl(var(--entry-early-default))"
+      }
+      // Middle entry: rings 8-15
+      else if (selectedEntry === "middle" && i >= 8 && i < 16) {
+        isActive = true
+        color = "hsl(var(--entry-middle-default))"
+      }
+      // Late entry: rings 16-23 (outermost)
+      else if (selectedEntry === "late" && i >= 16) {
+        isActive = true
+        color = "hsl(var(--entry-late-default))"
+      }
+      
+      rings.push({ index: i, isActive, color })
     }
+    
+    return rings
   }
 
-  const chartData = isWalletConnected ? getChartData() : []
+  const rings = isWalletConnected ? getRings() : []
 
   if (isPreJoin) {
     return (
@@ -257,28 +259,28 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
           <span className="font-semibold text-[#1A1A1A]">March 1</span>
         </div>
 
-        {/* Radial chart - shows when wallet connected */}
-        {isWalletConnected && chartData.length > 0 && (
-          <div className="flex justify-center mt-2">
-            <RadialBarChart
-              width={200}
-              height={200}
-              cx={100}
-              cy={100}
-              innerRadius={30}
-              outerRadius={90}
-              barSize={8}
-              data={chartData}
-              startAngle={180}
-              endAngle={0}
-            >
-              <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
-              <RadialBar
-                background
-                dataKey="value"
-                cornerRadius={10}
-              />
-            </RadialBarChart>
+        {/* Circular rings chart - shows when wallet connected */}
+        {isWalletConnected && rings.length > 0 && (
+          <div className="flex justify-center mt-4">
+            <svg width="240" height="120" viewBox="0 0 240 120">
+              {rings.map((ring, i) => {
+                const radius = 20 + (i * 4.5) // Inner rings are smaller radius
+                const strokeWidth = 3.5
+                const circumference = Math.PI * radius // Half circle
+                
+                return (
+                  <path
+                    key={i}
+                    d={`M ${120 - radius} 120 A ${radius} ${radius} 0 0 1 ${120 + radius} 120`}
+                    fill="none"
+                    stroke={ring.color}
+                    strokeWidth={strokeWidth}
+                    strokeLinecap="round"
+                    opacity={ring.isActive ? 1 : 0.3}
+                  />
+                )
+              })}
+            </svg>
           </div>
         )}
       </div>
@@ -310,28 +312,27 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
         <span className="font-semibold text-[#1A1A1A]">{circleData.payoutDueDate}</span>
       </div>
 
-      {/* Radial chart */}
-      {chartData.length > 0 && (
-        <div className="flex justify-center mt-2">
-          <RadialBarChart
-            width={200}
-            height={200}
-            cx={100}
-            cy={100}
-            innerRadius={30}
-            outerRadius={90}
-            barSize={8}
-            data={chartData}
-            startAngle={180}
-            endAngle={0}
-          >
-            <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
-            <RadialBar
-              background
-              dataKey="value"
-              cornerRadius={10}
-            />
-          </RadialBarChart>
+      {/* Circular rings chart */}
+      {rings.length > 0 && (
+        <div className="flex justify-center mt-4">
+          <svg width="240" height="120" viewBox="0 0 240 120">
+            {rings.map((ring, i) => {
+              const radius = 20 + (i * 4.5) // Inner rings are smaller radius
+              const strokeWidth = 3.5
+              
+              return (
+                <path
+                  key={i}
+                  d={`M ${120 - radius} 120 A ${radius} ${radius} 0 0 1 ${120 + radius} 120`}
+                  fill="none"
+                  stroke={ring.color}
+                  strokeWidth={strokeWidth}
+                  strokeLinecap="round"
+                  opacity={ring.isActive ? 1 : 0.3}
+                />
+              )
+            })}
+          </svg>
         </div>
       )}
     </div>
@@ -459,8 +460,15 @@ function CircleGrid({
 
 // FULL CARD: Payment Container
 // Container card with title and embedded Installments sub-card
-function PaymentVisualizationCard({ isWalletConnected }: { isWalletConnected: boolean }) {
+function PaymentVisualizationCard({ isWalletConnected, selectedEntry }: { isWalletConnected: boolean; selectedEntry: string }) {
   const progressPercentage = Math.max(1, (circleData.installmentProgress / circleData.totalMonths) * 100)
+  
+  // Get button color based on selected entry
+  const getButtonColor = () => {
+    if (selectedEntry === "early") return "hsl(var(--entry-early-default))"
+    if (selectedEntry === "middle") return "hsl(var(--entry-middle-default))"
+    return "hsl(var(--entry-late-default))"
+  }
   
   return (
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
@@ -489,14 +497,15 @@ function PaymentVisualizationCard({ isWalletConnected }: { isWalletConnected: bo
 
         {/* Footer row: label left, amount right */}
         <div className="flex items-center justify-between">
-          <span className="font-semibold text-[#1A1A1A]">Due on sign up</span>
+          <span className="font-semibold text-[#1A1A1A]">Due now</span>
           <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.dueAmount)}</span>
         </div>
 
         {/* Join button - shows when wallet is connected */}
         {isWalletConnected && (
           <Button 
-            className="w-full rounded-full bg-[#1A1A1A] text-white hover:bg-[#333333] mt-2"
+            className="w-full rounded-full text-white mt-2 transition-colors"
+            style={{ backgroundColor: getButtonColor() }}
             asChild
           >
             <Link href="/join">Join</Link>
@@ -809,7 +818,7 @@ export default function FundingCirclePage() {
         {/* MOBILE (<768px): Single column stack */}
         <div className="flex flex-col gap-4 md:hidden">
           <SlotsCard />
-          <PaymentVisualizationCard isWalletConnected={isWalletConnected} />
+          <PaymentVisualizationCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} />
           <EntryStatusCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
           <TimelineCard />
           <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} />
@@ -832,7 +841,7 @@ export default function FundingCirclePage() {
           `
         }}>
           <div style={{ gridArea: 'slots' }}><SlotsCard /></div>
-          <div style={{ gridArea: 'payment' }}><PaymentVisualizationCard isWalletConnected={isWalletConnected} /></div>
+          <div style={{ gridArea: 'payment' }}><PaymentVisualizationCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} /></div>
           <div style={{ gridArea: 'entry' }}><EntryStatusCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} /></div>
           <div style={{ gridArea: 'timeline' }}><TimelineCard /></div>
           <div style={{ gridArea: 'ens' }}><EnsCard /></div>
@@ -860,7 +869,7 @@ export default function FundingCirclePage() {
 
           {/* COLUMN 2: Center stack - WIDER (Pay container with embedded Installments, Entry Status) */}
           <div className={`flex flex-col ${GAP_M}`}>
-            <PaymentVisualizationCard isWalletConnected={isWalletConnected} />
+            <PaymentVisualizationCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} />
             <EntryStatusCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
           </div>
 
