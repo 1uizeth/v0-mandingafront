@@ -444,31 +444,42 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
   // Joined state
   return (
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col gap-3`}>
-      {/* Header: Title | Counter */}
+      {/* Header: Title | Counter (simulation counter when hovering) */}
       <div className="flex items-center justify-between">
         <span className={TYPOGRAPHY.label}>Payouts</span>
         <span className={TYPOGRAPHY.caption}>
-          {String(circleData.payoutProgress).padStart(2, "0")}/{circleData.totalMonths}
+          {simulationData ? simulationData.counter : `${String(circleData.payoutProgress).padStart(2, "0")}/${circleData.totalMonths}`}
         </span>
       </div>
 
-      {/* Progress bar with fill indicator */}
-      <div className="h-2 w-full overflow-hidden rounded-full bg-[#E5E5E5]">
-        <div
-          className="h-full bg-[#1A1A1A] rounded-full transition-all"
-          style={{ width: `${progressPercentage}%` }}
-        />
+      {/* Progress bar with simulation fill when hovering over entry */}
+      <div className="h-2 w-full overflow-hidden rounded-full bg-[#E5E5E5] relative">
+        {simulationData ? (
+          <div 
+            className="h-full rounded-full transition-all absolute" 
+            style={{ 
+              left: activeEntry === "early" ? "0%" : activeEntry === "middle" ? "33.33%" : "66.66%",
+              width: "33.33%",
+              backgroundColor: simulationData.color
+            }} 
+          />
+        ) : (
+          <div
+            className="h-full bg-[#1A1A1A] rounded-full transition-all"
+            style={{ width: `${progressPercentage}%` }}
+          />
+        )}
       </div>
 
-      {/* Round info */}
+      {/* Round info (updates when hovering) */}
       <div className="flex items-start justify-between gap-1">
         <div className="flex flex-col gap-1">
-          <span className="font-semibold text-[#1A1A1A]">Round 1</span>
-          <span className={TYPOGRAPHY.label}>Next round</span>
+          <span className="font-semibold text-[#1A1A1A]">{simulationData?.nextRound || "Round 1"}</span>
+          <span className={TYPOGRAPHY.label}>{simulationData?.nextRoundLabel || "Next round"}</span>
         </div>
         <div className="flex flex-col gap-1 items-end">
-          <span className="font-semibold text-[#1A1A1A]">{circleData.payoutDueDate}</span>
-          <span className={TYPOGRAPHY.label}>2026</span>
+          <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">{simulationData?.nextRoundDate || circleData.payoutDueDate}</span>
+          <span className={TYPOGRAPHY.label}>{simulationData?.nextRoundYear || "2026"}</span>
         </div>
       </div>
 
