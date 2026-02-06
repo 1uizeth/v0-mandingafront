@@ -568,7 +568,7 @@ export default function FundingCirclePage() {
           <SlotsCard />
           <PaymentVisualizationCard />
           <TimelineCard />
-          <PayoutCard />
+          <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           <EnsCard />
           <MembersCard />
@@ -591,7 +591,7 @@ export default function FundingCirclePage() {
           <div style={{ gridArea: 'payment' }}><PaymentVisualizationCard /></div>
           <div style={{ gridArea: 'timeline' }}><TimelineCard /></div>
           <div style={{ gridArea: 'ens' }}><EnsCard /></div>
-          <div style={{ gridArea: 'payout' }}><PayoutCard /></div>
+          <div style={{ gridArea: 'payout' }}><PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} /></div>
           <div style={{ gridArea: 'installment' }}><InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} /></div>
           <div style={{ gridArea: 'members' }}><MembersCard /></div>
           <div style={{ gridArea: 'arc' }}><ArcCard /></div>
