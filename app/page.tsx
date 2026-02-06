@@ -198,13 +198,16 @@ function TimelineCard() {
 // FULL CARD: Payout Progress
 // Header: Title | Counter ("01/24")
 // Progress bar with minimum 1% visible fill indicator
-function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletConnected: boolean; hasJoined: boolean; selectedEntry: string }) {
+function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry, onHoverEntry }: { isWalletConnected: boolean; hasJoined: boolean; selectedEntry: string; hoveredEntry: string; onHoverEntry: (id: string) => void }) {
   const isPreJoin = !isWalletConnected || !hasJoined
   const progressPercentage = Math.max(1, (circleData.payoutProgress / circleData.totalMonths) * 100)
+  
+  // Use hovered entry if present, otherwise use selected entry
+  const activeEntry = hoveredEntry || selectedEntry
 
-  // Get simulation data based on selected entry
+  // Get simulation data based on active entry (hovered or selected)
   const getSimulationData = () => {
-    if (selectedEntry === "early") {
+    if (activeEntry === "early") {
       return {
         start: 0,
         end: 8,
@@ -215,7 +218,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
         color: "hsl(var(--entry-early-default))",
         percentage: 33.33 // 8/24
       }
-    } else if (selectedEntry === "middle") {
+    } else if (activeEntry === "middle") {
       return {
         start: 8,
         end: 16,
@@ -226,7 +229,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
         color: "hsl(var(--entry-middle-default))",
         percentage: 66.66 // 16/24
       }
-    } else if (selectedEntry === "late") {
+    } else if (activeEntry === "late") {
       return {
         start: 16,
         end: 24,
@@ -256,17 +259,17 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
         isActive = true
       }
       // Early entry: rings 1-7 (innermost)
-      else if (selectedEntry === "early" && i > 0 && i < 8) {
+      else if (activeEntry === "early" && i > 0 && i < 8) {
         isActive = true
         color = "hsl(var(--entry-early-default))"
       }
       // Middle entry: rings 8-15
-      else if (selectedEntry === "middle" && i >= 8 && i < 16) {
+      else if (activeEntry === "middle" && i >= 8 && i < 16) {
         isActive = true
         color = "hsl(var(--entry-middle-default))"
       }
       // Late entry: rings 16-23 (outermost)
-      else if (selectedEntry === "late" && i >= 16) {
+      else if (activeEntry === "late" && i >= 16) {
         isActive = true
         color = "hsl(var(--entry-late-default))"
       }
@@ -277,7 +280,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
     return rings
   }
 
-  const simulationData = isWalletConnected && selectedEntry ? getSimulationData() : null
+  const simulationData = activeEntry ? getSimulationData() : null
   
   // Generate rings - show all in gray with first ring black when no wallet or no selection
   const getDefaultRings = () => {
@@ -295,7 +298,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
     return rings
   }
   
-  const rings = (isWalletConnected && selectedEntry) ? getRings() : getDefaultRings()
+  const rings = activeEntry ? getRings() : getDefaultRings()
 
   if (isPreJoin) {
     return (
@@ -344,6 +347,12 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
                 const radius = 20 + (i * 4.2) // Spacing between rings
                 const strokeWidth = 3
                 
+                // Determine which entry group this ring belongs to
+                let entryGroup = ""
+                if (i > 0 && i < 8) entryGroup = "early"
+                else if (i >= 8 && i < 16) entryGroup = "middle"
+                else if (i >= 16) entryGroup = "late"
+                
                 return (
                   <circle
                     key={i}
@@ -354,6 +363,9 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
                     stroke={ring.color}
                     strokeWidth={strokeWidth}
                     opacity={ring.isActive ? 1 : 0.3}
+                    className={entryGroup ? "cursor-pointer transition-opacity" : ""}
+                    onMouseEnter={() => entryGroup && onHoverEntry(entryGroup)}
+                    onMouseLeave={() => onHoverEntry("")}
                   />
                 )
               })}
@@ -602,7 +614,7 @@ function PaymentVisualizationCard({ isWalletConnected, selectedEntry }: { isWall
 
 // FULL CARD: Entry Status
 // Interactive entry selection with hover states and wallet gating
-function EntryStatusCard({ isWalletConnected, selectedEntry, onSelectEntry }: { isWalletConnected: boolean; selectedEntry: string; onSelectEntry: (id: string) => void }) {
+function EntryStatusCard({ isWalletConnected, selectedEntry, hoveredEntry, onSelectEntry, onHoverEntry }: { isWalletConnected: boolean; selectedEntry: string; hoveredEntry: string; onSelectEntry: (id: string) => void; onHoverEntry: (id: string) => void }) {
   const { toast } = useToast()
   
   const entryGroups = [
@@ -657,6 +669,8 @@ function EntryStatusCard({ isWalletConnected, selectedEntry, onSelectEntry }: { 
           <button
             key={group.id}
             onClick={() => handleEntryClick(group.id)}
+            onMouseEnter={() => onHoverEntry(group.id)}
+            onMouseLeave={() => onHoverEntry("")}
             aria-label={`Select ${group.label}`}
             className={`
               group relative
@@ -667,9 +681,10 @@ function EntryStatusCard({ isWalletConnected, selectedEntry, onSelectEntry }: { 
               cursor-pointer
               hover:ring-2 hover:ring-inset
               ${selectedEntry === group.id ? 'ring-2 ring-inset' : ''}
+              ${hoveredEntry === group.id && selectedEntry !== group.id ? 'ring-2 ring-inset' : ''}
             `}
             style={{
-              backgroundColor: selectedEntry === group.id ? `${group.colorDefault}15` : 'transparent',
+              backgroundColor: (selectedEntry === group.id || hoveredEntry === group.id) ? `${group.colorDefault}15` : 'transparent',
               '--tw-ring-color': group.colorDefault,
               '--focus-ring': group.colorDefault,
             } as React.CSSProperties}
@@ -880,6 +895,7 @@ export default function FundingCirclePage() {
   const [isWalletConnected, setIsWalletConnected] = useState(false)
   const [hasJoined, setHasJoined] = useState(false)
   const [selectedEntry, setSelectedEntry] = useState<string>("")
+  const [hoveredEntry, setHoveredEntry] = useState<string>("")
 
   const handleConnectWallet = () => {
     toast({
@@ -903,12 +919,11 @@ export default function FundingCirclePage() {
         <div className="flex flex-col gap-4 md:hidden">
           <SlotsCard />
           <PaymentVisualizationCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} />
-          <EntryStatusCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
+          <EntryStatusCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onSelectEntry={setSelectedEntry} onHoverEntry={setHoveredEntry} />
           <TimelineCard />
-          <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} />
+          <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} />
           <EnsCard />
           <MembersCard />
-          <ArcCard />
         </div>
 
         {/* TABLET (768px - 1023px): 2-column grid with row-based areas */}
@@ -926,10 +941,10 @@ export default function FundingCirclePage() {
         }}>
           <div style={{ gridArea: 'slots' }}><SlotsCard /></div>
           <div style={{ gridArea: 'payment' }}><PaymentVisualizationCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} /></div>
-          <div style={{ gridArea: 'entry' }}><EntryStatusCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} /></div>
+          <div style={{ gridArea: 'entry' }}><EntryStatusCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onSelectEntry={setSelectedEntry} onHoverEntry={setHoveredEntry} /></div>
           <div style={{ gridArea: 'timeline' }}><TimelineCard /></div>
           <div style={{ gridArea: 'ens' }}><EnsCard /></div>
-          <div style={{ gridArea: 'payout' }}><PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} /></div>
+          <div style={{ gridArea: 'payout' }}><PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} /></div>
           <div style={{ gridArea: 'members' }}><MembersCard /></div>
           <div style={{ gridArea: 'arc' }}><ArcCard /></div>
         </div>
@@ -947,13 +962,13 @@ export default function FundingCirclePage() {
           {/* COLUMN 1: Left stack (Started/Ends, Payout) */}
           <div className={`flex flex-col ${GAP_M}`}>
             <TimelineCard />
-            <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} />
+            <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} />
           </div>
 
           {/* COLUMN 2: Center stack - WIDER (Pay container with embedded Installments, Entry Status) */}
           <div className={`flex flex-col ${GAP_M}`}>
             <PaymentVisualizationCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} />
-            <EntryStatusCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
+            <EntryStatusCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onSelectEntry={setSelectedEntry} onHoverEntry={setHoveredEntry} />
           </div>
 
           {/* COLUMN 3: Right stack (Active slots, Active members, ENS, Arc) */}
