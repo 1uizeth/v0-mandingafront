@@ -688,7 +688,7 @@ function EntryStatusCard({ isWalletConnected, selectedEntry, hoveredEntry, onSel
   }
 
   return (
-    <div className={`rounded-3xl border border-[#E5E5E5] bg-white ${PADDING_L}`}>
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L}`}>
       {/* Responsive: Column mode on desktop (xl), List mode on smaller screens */}
       <div className="flex flex-col xl:grid xl:grid-cols-3">
         {entryGroups.map((group) => (
