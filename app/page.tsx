@@ -781,9 +781,8 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
           <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.dueAmount)}</span>
         </div>
       </div>
-    </div>
-  )
-}
+    )
+  }
 
   // Joined state
   return (
