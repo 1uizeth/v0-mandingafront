@@ -493,7 +493,7 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
   return (
     <div className={`rounded-3xl border border-[#E5E5E5] bg-white ${PADDING_L}`}>
       {/* Responsive: Column mode on desktop (xl), List mode on smaller screens */}
-      <div className="flex flex-col gap-3 xl:grid xl:grid-cols-3 xl:gap-4">
+      <div className="flex flex-col gap-3 xl:grid xl:grid-cols-3 xl:gap-8">
         {entryGroups.map((group) => (
           <button
             key={group.id}
@@ -517,7 +517,7 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
           >
             {/* Dots grid - fixed width in list mode, full width in column mode */}
             <div className="flex justify-center flex-shrink-0 xl:w-full">
-              <div className="grid grid-cols-4 gap-x-3 gap-y-3 xl:w-full xl:gap-x-6 xl:gap-y-4 xl:place-items-center">
+              <div className="grid grid-cols-4 gap-x-3 gap-y-3 xl:w-full xl:gap-x-8 xl:gap-y-5 xl:place-items-center">
                 {Array.from({ length: group.count }).map((_, i) => (
                   <div
                     key={i}
@@ -531,7 +531,7 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
             </div>
             
             {/* Text block - left-aligned in list mode, centered in column mode */}
-            <div className="flex flex-col gap-0.5 items-start min-w-0 xl:items-center xl:text-center xl:gap-1">
+            <div className="flex flex-col gap-0.5 items-start min-w-0 xl:items-center xl:text-center xl:gap-2">
               <span className="font-semibold text-base xl:text-lg whitespace-nowrap leading-tight" style={{ color: group.colorDefault }}>{group.label}</span>
               <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-tight line-clamp-3 text-left xl:text-center xl:max-w-[220px]`}>{group.description}</p>
             </div>
