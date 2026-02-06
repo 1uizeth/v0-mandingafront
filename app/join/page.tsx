@@ -15,16 +15,15 @@ function formatNumber(num: number): string {
 // Mock connected wallet ENS name
 const MOCK_WALLET_ENS = "1uiz.eth"
 
-// Step type
-type Step = 1 | 2 | 3
+  // Step type
+  type Step = 1 | 2
 
-// Stepper: clickable, only completed steps enabled
-function NumericStepper({ currentStep, onStepClick }: { currentStep: Step; onStepClick?: (step: Step) => void }) {
-  const steps = [
-    { num: 1, label: "Agreement" },
-    { num: 2, label: "Review" },
-    { num: 3, label: "Confirm" },
-  ]
+  // Stepper: clickable, only completed steps enabled
+  function NumericStepper({ currentStep, onStepClick }: { currentStep: Step; onStepClick?: (step: Step) => void }) {
+    const steps = [
+      { num: 1, label: "Agreement" },
+      { num: 2, label: "Review & Confirm" },
+    ]
 
   return (
     <div className="flex items-center gap-0">
@@ -69,9 +68,9 @@ function NumericStepper({ currentStep, onStepClick }: { currentStep: Step; onSte
   )
 }
 
-// Mobile stepper - compact inline
-function MobileStepper({ currentStep }: { currentStep: Step }) {
-  const labels = ["Agreement", "Review", "Confirm"]
+  // Mobile stepper - compact inline
+  function MobileStepper({ currentStep }: { currentStep: Step }) {
+    const labels = ["Agreement", "Review & Confirm"]
   return (
     <span className="text-sm text-[#666666]">
       {currentStep}/3 <span className="font-medium text-[#1A1A1A]">{labels[currentStep - 1]}</span>
@@ -138,14 +137,37 @@ function TermsStep({ onSign }: { onSign: () => void }) {
   )
 }
 
-// Step 2: Review
-function PreviewStep({ onContinue, getEntryLabel }: { onContinue: () => void; getEntryLabel: () => string }) {
+// Step 2: Review & Confirm - merged from old steps 2 and 3
+function ReviewAndConfirmStep({ 
+  onConfirm,
+  agreementSignedAt,
+  executionStep,
+  isExecuting,
+  getEntryLabel
+}: { 
+  onConfirm: () => void
+  agreementSignedAt: Date | null
+  executionStep: number
+  isExecuting: boolean
+  getEntryLabel: () => string
+}) {
+  const formattedDate = agreementSignedAt 
+    ? agreementSignedAt.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })
+    : 'Just now'
+
+  // All execution steps including agreement (step 0 is always complete)
+  const txSteps = [
+    { step: 0, label: "Agreement signed" },
+    { step: 1, label: "Pay installment" },
+    { step: 2, label: "Mint position & claim tokens" }
+  ]
+
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white">
       {/* Header */}
       <div className="px-5 lg:px-6 pt-5 lg:pt-6">
-        <h2 className="text-lg font-semibold text-[#1A1A1A]">Review</h2>
-        <p className="text-sm text-[#666666] mt-1">Verify your commitment before proceeding.</p>
+        <h2 className="text-lg font-semibold text-[#1A1A1A]">Review & Confirm</h2>
+        <p className="text-sm text-[#666666] mt-1">Verify your commitment and execute transaction.</p>
       </div>
 
       {/* Body */}
@@ -157,10 +179,6 @@ function PreviewStep({ onContinue, getEntryLabel }: { onContinue: () => void; ge
             <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
               <span className="text-[#666666]">Monthly installment</span>
               <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.contributionPerMonth)} USDC</span>
-            </div>
-            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-              <span className="text-[#666666]">Duration</span>
-              <span className="font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
             </div>
             <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
               <span className="text-[#666666]">Duration</span>
@@ -203,13 +221,59 @@ function PreviewStep({ onContinue, getEntryLabel }: { onContinue: () => void; ge
             </div>
           </div>
         </div>
+
+        {/* Transaction Execution */}
+        <div className="mt-5">
+          <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-3">Transaction Execution</h3>
+          <div className="space-y-3 text-sm">
+            {txSteps.map((item) => {
+              // Step 0 (Agreement) is always complete
+              const isComplete = item.step === 0 || executionStep > item.step
+              const isActive = item.step !== 0 && executionStep === item.step && isExecuting
+
+              return (
+                <div key={item.step} className="flex items-center gap-2.5">
+                  <div 
+                    className={`w-5 h-5 rounded-full flex items-center justify-center text-xs transition-all ${
+                      isComplete 
+                        ? "bg-[#1A1A1A] text-white" 
+                        : isActive
+                        ? "border-2 border-[#1A1A1A] text-[#1A1A1A]"
+                        : "border border-[#E0E0E0] text-[#999999]"
+                    }`}
+                  >
+                    {isComplete ? (
+                      <Check className="w-3 h-3" strokeWidth={2.5} />
+                    ) : isActive ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      item.step
+                    )}
+                  </div>
+                  <span className={isComplete ? "text-[#1A1A1A]" : "text-[#666666]"}>{item.label}</span>
+                </div>
+              )
+            })}
+          </div>
+          <p className="text-xs font-bold text-[#999999] mt-3">Each step requires wallet approval.</p>
+        </div>
       </div>
 
       {/* Footer */}
       <div className="px-5 lg:px-6 pb-5 lg:pb-6 pt-4 border-t border-[#F0F0F0]">
-        <Button onClick={onContinue}
-          className="w-full rounded-full bg-[#1A1A1A] px-6 py-4 text-sm font-semibold text-white hover:bg-[#333333]">
-          Continue
+        <Button 
+          onClick={onConfirm}
+          disabled={isExecuting}
+          className="w-full rounded-full bg-[#1A1A1A] px-6 py-4 text-sm font-semibold text-white hover:bg-[#333333] disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isExecuting ? (
+            <span className="flex items-center justify-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Processing...
+            </span>
+          ) : (
+            "Confirm & Execute"
+          )}
         </Button>
       </div>
     </div>
@@ -261,120 +325,6 @@ function SuccessScreen() {
   )
 }
 
-// Step 3: Confirm - flex column card anatomy with execution simulation
-function ConfirmStep({ 
-  onConfirm,
-  agreementSignedAt,
-  executionStep,
-  isExecuting,
-  getEntryLabel
-}: { 
-  onConfirm: () => void
-  agreementSignedAt: Date | null
-  executionStep: number
-  isExecuting: boolean
-  getEntryLabel: () => string
-}) {
-  const formattedDate = agreementSignedAt 
-    ? agreementSignedAt.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })
-    : 'Just now'
-
-  // All execution steps including agreement (step 0 is always complete)
-  const txSteps = [
-    { step: 0, label: "Agreement signed" },
-    { step: 1, label: "Pay installment" },
-    { step: 2, label: "Mint position & claim tokens" }
-  ]
-
-  return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white">
-      {/* Header */}
-      <div className="px-5 lg:px-6 pt-5 lg:pt-6">
-        <h2 className="text-lg font-semibold text-[#1A1A1A]">Confirm</h2>
-        <p className="text-sm text-[#666666] mt-1">Execute your membership transaction.</p>
-      </div>
-
-      {/* Body */}
-      <div className="px-5 lg:px-6 py-5">
-        {/* Summary Section */}
-        <div className="text-sm">
-          <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-            <span className="text-[#666666]">Circle</span>
-            <span className="font-medium text-[#1A1A1A]">{circleData.name}</span>
-          </div>
-          <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-            <span className="text-[#666666]">First payment</span>
-            <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.contributionPerMonth)} USDC</span>
-          </div>
-          <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-            <span className="text-[#666666]">Duration</span>
-            <span className="font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
-          </div>
-          <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-            <span className="text-[#666666]">Position</span>
-            <span className="font-medium text-[#1A1A1A]">{getEntryLabel()}</span>
-          </div>
-          <div className="flex justify-between py-1.5">
-            <span className="text-[#666666]">Total commitment</span>
-            <span className="font-semibold text-[#1A1A1A]">${formatNumber(circleData.totalWithFees)}</span>
-          </div>
-        </div>
-
-        {/* Transaction Execution - Agreement as first completed step */}
-        <div className="mt-5">
-          <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-3">Transaction Execution</h3>
-          <div className="space-y-3 text-sm">
-            {txSteps.map((item) => {
-              // Step 0 (Agreement) is always complete
-              const isComplete = item.step === 0 || executionStep > item.step
-              const isActive = item.step !== 0 && executionStep === item.step && isExecuting
-
-              return (
-                <div key={item.step} className="flex items-center gap-2.5">
-                  <div 
-                    className={`w-5 h-5 rounded-full flex items-center justify-center text-xs transition-all ${
-                      isComplete 
-                        ? "bg-[#1A1A1A] text-white" 
-                        : isActive
-                        ? "border-2 border-[#1A1A1A] text-[#1A1A1A]"
-                        : "border border-[#E0E0E0] text-[#999999]"
-                    }`}
-                  >
-                    {isComplete ? (
-                      <Check className="w-3 h-3" strokeWidth={2.5} />
-                    ) : isActive ? (
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                    ) : (
-                      item.step
-                    )}
-                  </div>
-                  <span className={isComplete ? "text-[#1A1A1A]" : "text-[#666666]"}>{item.label}</span>
-                </div>
-              )
-            })}
-          </div>
-          <p className="text-xs font-bold text-[#999999] mt-3">Each step requires wallet approval.</p>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="px-5 lg:px-6 pb-5 lg:pb-6 pt-4 border-t border-[#F0F0F0]">
-        <Button 
-          onClick={onConfirm}
-          disabled={isExecuting}
-          className={`w-full rounded-full px-6 py-4 text-sm font-semibold ${
-            isExecuting 
-              ? "bg-[#E5E5E5] text-[#999999] cursor-not-allowed" 
-              : "bg-[#1A1A1A] text-white hover:bg-[#333333]"
-          }`}
-        >
-          {isExecuting ? "Processing..." : "Confirm & Join"}
-        </Button>
-      </div>
-    </div>
-  )
-}
-
 export default function JoinCirclePage() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState<Step>(1)
@@ -404,21 +354,16 @@ export default function JoinCirclePage() {
     setTimeout(() => setToastMessage(null), 3000)
   }
 
-  // Step 1: Sign agreement
+  // Step 1: Sign agreement - moves directly to step 2 (review & confirm)
   const handleSignAgreement = () => {
     showToast("Signing agreement...")
     setTimeout(() => {
       setAgreementSignedAt(new Date())
       setCurrentStep(2)
-    }, 1500)
+    }, 800)
   }
 
-  // Step 2: Continue to confirm
-  const handlePreviewContinue = () => {
-    setCurrentStep(3)
-  }
-
-  // Step 3: Confirm transaction with execution simulation
+  // Step 2: Confirm transaction with execution simulation
   const handleConfirm = () => {
     console.log('[v0] User confirmed join with entry:', selectedEntry)
     setIsExecuting(true)
@@ -527,14 +472,11 @@ export default function JoinCirclePage() {
             <SuccessScreen />
           ) : (
             <>
-              {currentStep === 1 && (
-                <TermsStep onSign={handleSignAgreement} />
-              )}
-  {currentStep === 2 && (
-    <PreviewStep onContinue={handlePreviewContinue} getEntryLabel={() => getEntryLabel(selectedEntry)} />
+  {currentStep === 1 && (
+    <TermsStep onSign={handleSignAgreement} />
   )}
-  {currentStep === 3 && (
-    <ConfirmStep
+  {currentStep === 2 && (
+    <ReviewAndConfirmStep
       onConfirm={handleConfirm}
       agreementSignedAt={agreementSignedAt}
       executionStep={executionStep}
