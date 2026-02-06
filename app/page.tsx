@@ -63,8 +63,8 @@ const circleData = {
   amount: 20000,
   title: "for Devcon 2026",
   slotsLeft: 21,
-  startDate: "February 1, 2026",
-  endDate: "March 1, 2028",
+  startDate: "February, 2026",
+  endDate: "March, 2028",
   monthlyAmount: 892,
   totalMonths: 24,
   currentMonth: 1,
@@ -72,7 +72,7 @@ const circleData = {
   payoutProgress: 1,
   installmentProgress: 1,
   dueAmount: 892,
-  payoutDueDate: "March 1",
+  payoutDueDate: "March",
   ensDomain: "devcon.mandinga.eth",
   ensUrl: "https://app.ens.domains/devcon.mandinga.eth",
   arcscanUrl: "https://arcscan.io",
@@ -215,7 +215,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
         counter: "01/08",
         nextRound: "Round 1",
         nextRoundLabel: "Next round - Early",
-        nextRoundDate: "March 1",
+        nextRoundDate: "March",
         nextRoundYear: "2026",
         color: "hsl(var(--entry-early-default))",
         percentage: (1 / 24) * 100 // Round 1 of 24 total rounds
@@ -227,7 +227,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
         counter: "09/16",
         nextRound: "Round 9",
         nextRoundLabel: "Next round - Middle",
-        nextRoundDate: "November 1",
+        nextRoundDate: "November",
         nextRoundYear: "2026",
         color: "hsl(var(--entry-middle-default))",
         percentage: (9 / 24) * 100 // Round 9 of 24 total rounds
@@ -239,7 +239,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
         counter: "17/24",
         nextRound: "Round 17",
         nextRoundLabel: "Next round - Late",
-        nextRoundDate: "July 1",
+        nextRoundDate: "July",
         nextRoundYear: "2027",
         color: "hsl(var(--entry-late-default))",
         percentage: (17 / 24) * 100 // Round 17 of 24 total rounds
@@ -341,7 +341,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
             <span className={TYPOGRAPHY.label}>{simulationData?.nextRoundLabel || "Next round"}</span>
           </div>
           <div className="flex flex-col gap-1 items-end">
-            <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">{simulationData?.nextRoundDate || "March 1"}</span>
+            <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">{simulationData?.nextRoundDate || "March"}</span>
             <span className={TYPOGRAPHY.label}>{simulationData?.nextRoundYear || "2026"}</span>
           </div>
         </div>
