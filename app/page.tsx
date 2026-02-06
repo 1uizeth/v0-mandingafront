@@ -506,23 +506,14 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
               transition-all duration-200 ease-out
               focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
               cursor-pointer
-              ${selectedEntry === group.id ? 'xl:ring-2 xl:ring-inset' : ''}
+              hover:ring-2 hover:ring-inset
+              ${selectedEntry === group.id ? 'ring-2 ring-inset' : ''}
             `}
             style={{
               backgroundColor: selectedEntry === group.id ? `${group.colorDefault}15` : 'transparent',
               '--tw-ring-color': group.colorDefault,
               '--focus-ring': group.colorDefault,
             } as React.CSSProperties}
-            onMouseEnter={(e) => {
-              if (selectedEntry !== group.id) {
-                e.currentTarget.style.backgroundColor = `${group.colorDefault}08`
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (selectedEntry !== group.id) {
-                e.currentTarget.style.backgroundColor = 'transparent'
-              }
-            }}
           >
             {/* Dots grid - fixed width in list mode, centered in column mode */}
             <div className="flex-shrink-0 xl:w-full xl:flex xl:justify-center xl:min-h-[120px] xl:items-center">
@@ -539,10 +530,10 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
               </div>
             </div>
             
-            {/* Text block - fixed width structure */}
-            <div className="flex flex-col gap-1 min-w-0 xl:items-center xl:text-center xl:gap-1.5">
+            {/* Text block - left-aligned in list mode, centered in column mode */}
+            <div className="flex flex-col gap-1 items-start min-w-0 xl:items-center xl:text-center xl:gap-1.5">
               <span className="font-semibold text-base xl:text-lg whitespace-nowrap leading-tight" style={{ color: group.colorDefault }}>{group.label}</span>
-              <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-snug line-clamp-3 xl:max-w-[220px]`}>{group.description}</p>
+              <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-snug line-clamp-3 text-left xl:text-center xl:max-w-[220px]`}>{group.description}</p>
             </div>
           </button>
         ))}
