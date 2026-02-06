@@ -522,12 +522,12 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
               }
             }}
           >
-            {/* Circles: Compact in list mode, properly spaced in column mode */}
-            <div className="grid grid-cols-4 gap-2 flex-shrink-0 xl:gap-3">
+            {/* Circles: 4x2 grid with adequate spacing to prevent overlap */}
+            <div className="grid grid-cols-4 gap-2 flex-shrink-0 xl:gap-4">
               {Array.from({ length: group.count }).map((_, i) => (
                 <div
                   key={i}
-                  className="rounded-full w-7 h-7 xl:w-11 xl:h-11"
+                  className="rounded-full w-7 h-7 xl:w-9 xl:h-9"
                   style={{
                     backgroundColor: group.colorDefault
                   }}
