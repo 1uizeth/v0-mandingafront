@@ -492,16 +492,15 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
 
   return (
     <div className={`rounded-3xl border border-[#E5E5E5] bg-white ${PADDING_L}`}>
-      {/* Responsive: List mode on mobile, Column mode on tablet/desktop */}
-      <div className="flex flex-col gap-8 lg:grid lg:grid-cols-3 lg:gap-6">
+      {/* List mode on ALL screen sizes - prevents any overlap */}
+      <div className="flex flex-col gap-6">
         {entryGroups.map((group) => (
           <button
             key={group.id}
             onClick={() => handleEntryClick(group.id)}
             aria-label={`Select ${group.label}`}
             className={`
-              flex items-start gap-4 p-4 rounded-2xl
-              lg:flex-col lg:items-center lg:gap-3 lg:p-6
+              flex items-start gap-6 p-4 rounded-2xl
               transition-all duration-150 ease-out
               focus:outline-none focus:ring-2 focus:ring-offset-2
               cursor-pointer
@@ -522,24 +521,24 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
               }
             }}
           >
-            {/* Circles: 4x2 grid (no overlap) */}
-            <div className="grid grid-cols-4 gap-1.5 flex-shrink-0">
+            {/* Circles: 4x2 grid with proper spacing - NO overlap */}
+            <div className="grid grid-cols-4 gap-2 flex-shrink-0">
               {Array.from({ length: group.count }).map((_, i) => (
                 <div
                   key={i}
                   className="rounded-full"
                   style={{
-                    width: '36px',
-                    height: '36px',
+                    width: '40px',
+                    height: '40px',
                     backgroundColor: group.colorDefault
                   }}
                 />
               ))}
             </div>
             
-            {/* Text: left-aligned on mobile, centered on desktop, fills container */}
-            <div className="flex flex-col gap-1 text-left lg:text-center lg:items-center flex-1">
-              <span className="font-semibold text-base" style={{ color: group.colorDefault }}>{group.label}</span>
+            {/* Text: left-aligned, fills remaining space */}
+            <div className="flex flex-col gap-1.5 flex-1 justify-center">
+              <span className="font-semibold text-lg" style={{ color: group.colorDefault }}>{group.label}</span>
               <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-relaxed`}>{group.description}</p>
             </div>
           </button>
