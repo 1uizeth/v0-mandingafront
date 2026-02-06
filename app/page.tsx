@@ -600,7 +600,7 @@ function EntryStatusCard({ isWalletConnected, selectedEntry, onSelectEntry }: { 
     {
       id: "early",
       label: "Early entry",
-      description: "Priority access to payout in the first 8 months.",
+      description: "Priority access to payout in the first 8 months",
       colorDefault: "hsl(var(--entry-early-default))",
       colorHover: "hsl(var(--entry-early-hover))",
       colorActive: "hsl(var(--entry-early-active))",
@@ -609,7 +609,7 @@ function EntryStatusCard({ isWalletConnected, selectedEntry, onSelectEntry }: { 
     {
       id: "middle",
       label: "Middle entry",
-      description: "Payout in 8 to 16 months.",
+      description: "Payout in 8 to 16 months",
       colorDefault: "hsl(var(--entry-middle-default))",
       colorHover: "hsl(var(--entry-middle-hover))",
       colorActive: "hsl(var(--entry-middle-active))",
@@ -618,7 +618,7 @@ function EntryStatusCard({ isWalletConnected, selectedEntry, onSelectEntry }: { 
     {
       id: "late",
       label: "Late entry",
-      description: "Payout up to 8 months before ending.",
+      description: "Payout up to 8 months before ending",
       colorDefault: "hsl(var(--entry-late-default))",
       colorHover: "hsl(var(--entry-late-hover))",
       colorActive: "hsl(var(--entry-late-active))",
