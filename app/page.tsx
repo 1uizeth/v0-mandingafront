@@ -984,29 +984,16 @@ function SlotsCard({ hasJoined }: { hasJoined: boolean }) {
 
 export default function FundingCirclePage() {
   const { toast } = useToast()
-  const [isWalletConnected, setIsWalletConnected] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('walletConnected') === 'true'
-    }
-    return false
-  })
-  const [hasJoined, setHasJoined] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('hasJoined') === 'true'
-    }
-    return false
-  })
-  const [selectedEntry, setSelectedEntry] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('selectedEntry') || ""
-    }
-    return ""
-  })
+  const [isWalletConnected, setIsWalletConnected] = useState(false)
+  const [hasJoined, setHasJoined] = useState(false)
+  const [selectedEntry, setSelectedEntry] = useState<string>("")
   const [hoveredEntry, setHoveredEntry] = useState<string>("")
 
-  // Check if user just completed joining (coming back from /join)
+  // Load state from localStorage on mount (client-only, after hydration)
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
+    
+    // Check if user just completed joining (coming back from /join)
     if (urlParams.get('joined') === 'true') {
       console.log('[v0] User joined - setting joined state')
       localStorage.setItem('walletConnected', 'true')
@@ -1019,6 +1006,15 @@ export default function FundingCirclePage() {
       
       // Clean up URL
       window.history.replaceState({}, '', window.location.pathname)
+    } else {
+      // Load persisted state from localStorage
+      const savedWalletConnected = localStorage.getItem('walletConnected') === 'true'
+      const savedHasJoined = localStorage.getItem('hasJoined') === 'true'
+      const savedSelectedEntry = localStorage.getItem('selectedEntry') || ""
+      
+      if (savedWalletConnected) setIsWalletConnected(true)
+      if (savedHasJoined) setHasJoined(true)
+      if (savedSelectedEntry) setSelectedEntry(savedSelectedEntry)
     }
   }, [])
 
