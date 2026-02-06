@@ -521,7 +521,7 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
                 {Array.from({ length: group.count }).map((_, i) => (
                   <div
                     key={i}
-                    className="rounded-full w-5 h-5 xl:w-8 xl:h-8"
+                    className="rounded-full w-5 h-5 xl:w-6 xl:h-6"
                     style={{
                       backgroundColor: group.colorDefault
                     }}
