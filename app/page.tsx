@@ -913,7 +913,7 @@ export default function FundingCirclePage() {
         </div>
 
         {/* DESKTOP (1024px+): Redesigned 3-column layout */}
-        {/* Column 1: Active, Started/Ends, Payout | Column 2 (wider): Pay with embedded Installments, Entry Status | Column 3: Active members, ENS, Arc */}
+        {/* Column 1: Started/Ends, Payout | Column 2 (wider): Pay with embedded Installments, Entry Status | Column 3: Active slots, Active members, ENS, Arc */}
         <div 
           className={`hidden lg:grid ${GAP_M} w-full`}
           style={{
@@ -922,9 +922,8 @@ export default function FundingCirclePage() {
             alignItems: 'start'
           }}
         >
-          {/* COLUMN 1: Left stack (Active, Started/Ends, Payout) */}
+          {/* COLUMN 1: Left stack (Started/Ends, Payout) */}
           <div className={`flex flex-col ${GAP_M}`}>
-            <SlotsCard />
             <TimelineCard />
             <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} />
           </div>
@@ -935,8 +934,9 @@ export default function FundingCirclePage() {
             <EntryStatusCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
           </div>
 
-          {/* COLUMN 3: Right stack (Active members, ENS, Arc) */}
+          {/* COLUMN 3: Right stack (Active slots, Active members, ENS, Arc) */}
           <div className={`flex flex-col ${GAP_M}`}>
+            <SlotsCard />
             <MembersCard />
             <EnsCard />
             <ArcCard />
