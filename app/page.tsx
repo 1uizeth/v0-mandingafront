@@ -198,7 +198,7 @@ function TimelineCard() {
 // FULL CARD: Payout Progress
 // Header: Title | Counter ("01/24")
 // Progress bar with minimum 1% visible fill indicator
-function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry, onHoverEntry }: { isWalletConnected: boolean; hasJoined: boolean; selectedEntry: string; hoveredEntry: string; onHoverEntry: (id: string) => void }) {
+function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry, onHoverEntry, onSelectEntry }: { isWalletConnected: boolean; hasJoined: boolean; selectedEntry: string; hoveredEntry: string; onHoverEntry: (id: string) => void; onSelectEntry: (id: string) => void }) {
   const isPreJoin = !isWalletConnected || !hasJoined
   const progressPercentage = Math.max(1, (circleData.payoutProgress / circleData.totalMonths) * 100)
   
@@ -372,6 +372,12 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
                 className="cursor-pointer"
                 onMouseEnter={() => onHoverEntry("late")}
                 onMouseLeave={() => onHoverEntry("")}
+                onClick={() => {
+                  if (isWalletConnected) {
+                    console.log('[v0] Ring click - selecting late entry')
+                    onSelectEntry("late")
+                  }
+                }}
               />
               
               {/* Middle entry: rings 8-15 - circle covering early + middle */}
@@ -383,6 +389,12 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
                 className="cursor-pointer"
                 onMouseEnter={() => onHoverEntry("middle")}
                 onMouseLeave={() => onHoverEntry("")}
+                onClick={() => {
+                  if (isWalletConnected) {
+                    console.log('[v0] Ring click - selecting middle entry')
+                    onSelectEntry("middle")
+                  }
+                }}
               />
               
               {/* Early entry: rings 1-7 (innermost) - on top, highest priority */}
@@ -394,6 +406,12 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
                 className="cursor-pointer"
                 onMouseEnter={() => onHoverEntry("early")}
                 onMouseLeave={() => onHoverEntry("")}
+                onClick={() => {
+                  if (isWalletConnected) {
+                    console.log('[v0] Ring click - selecting early entry')
+                    onSelectEntry("early")
+                  }
+                }}
               />
             </svg>
           </div>
@@ -951,7 +969,7 @@ export default function FundingCirclePage() {
           <PaymentVisualizationCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} />
           <EntryStatusCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onSelectEntry={setSelectedEntry} onHoverEntry={setHoveredEntry} />
           <TimelineCard />
-          <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} />
+          <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} onSelectEntry={setSelectedEntry} />
           <EnsCard />
           <MembersCard />
         </div>
@@ -974,7 +992,7 @@ export default function FundingCirclePage() {
           <div style={{ gridArea: 'entry' }}><EntryStatusCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onSelectEntry={setSelectedEntry} onHoverEntry={setHoveredEntry} /></div>
           <div style={{ gridArea: 'timeline' }}><TimelineCard /></div>
           <div style={{ gridArea: 'ens' }}><EnsCard /></div>
-          <div style={{ gridArea: 'payout' }}><PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} /></div>
+          <div style={{ gridArea: 'payout' }}><PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} onSelectEntry={setSelectedEntry} /></div>
           <div style={{ gridArea: 'members' }}><MembersCard /></div>
           <div style={{ gridArea: 'arc' }}><ArcCard /></div>
         </div>
@@ -992,7 +1010,7 @@ export default function FundingCirclePage() {
           {/* COLUMN 1: Left stack (Started/Ends, Payout) */}
           <div className={`flex flex-col ${GAP_M}`}>
             <TimelineCard />
-            <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} />
+            <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} onSelectEntry={setSelectedEntry} />
           </div>
 
           {/* COLUMN 2: Center stack - WIDER (Pay container with embedded Installments, Entry Status) */}
