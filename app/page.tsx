@@ -1216,22 +1216,123 @@ export default function FundingCirclePage() {
         <main className="flex-1 flex flex-col justify-center mx-auto max-w-[1280px] w-full px-6 md:px-10 pb-12 pt-4">
           {/* Mobile skeleton */}
           <div className="flex flex-col gap-4 md:hidden">
-            {[...Array(7)].map((_, i) => (
-              <div key={i} className="rounded-xl border border-[#E5E5E5] bg-white p-6 h-48 animate-pulse">
-                <div className="h-4 w-24 bg-[#F0F0F0] rounded mb-4" />
-                <div className="h-32 bg-[#F0F0F0] rounded" />
+            {/* SlotsCard skeleton - short horizontal */}
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex items-center justify-between">
+              <div className="h-7 w-20 bg-[#F0F0F0] rounded-2xl animate-pulse" />
+              <div className="h-5 w-24 bg-[#F0F0F0] rounded animate-pulse" />
+            </div>
+            {/* PaymentVisualizationCard skeleton - tall with nested card */}
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
+              <div className="h-6 w-3/4 mx-auto bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
+                <div className="flex justify-between">
+                  <div className="h-5 w-16 bg-[#F0F0F0] rounded animate-pulse" />
+                  <div className="h-5 w-12 bg-[#F0F0F0] rounded animate-pulse" />
+                </div>
+                <div className="h-3 bg-[#F0F0F0] rounded-full animate-pulse" />
+                <div className="h-5 w-32 bg-[#F0F0F0] rounded animate-pulse" />
               </div>
-            ))}
+              <div className="h-11 bg-[#F0F0F0] rounded-full animate-pulse" />
+            </div>
+            {/* EntryStatusCard skeleton - tall with 3 entry items */}
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
+              <div className="h-5 w-32 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="space-y-3">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="rounded-2xl border border-[#E5E5E5] p-4 flex items-center gap-6">
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {[...Array(8)].map((_, j) => (
+                        <div key={j} className="h-4 w-4 rounded-full bg-[#F0F0F0] animate-pulse" />
+                      ))}
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <div className="h-5 w-24 bg-[#F0F0F0] rounded animate-pulse" />
+                      <div className="h-4 w-48 bg-[#F0F0F0] rounded animate-pulse" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* TimelineCard skeleton */}
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
+              <div className="h-5 w-24 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="space-y-3">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <div className="h-6 w-6 rounded-full bg-[#F0F0F0] animate-pulse" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 w-32 bg-[#F0F0F0] rounded animate-pulse" />
+                      <div className="h-3 w-full bg-[#F0F0F0] rounded animate-pulse" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* PayoutCard skeleton */}
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
+              <div className="h-5 w-32 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="h-12 w-full bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="h-10 w-full bg-[#F0F0F0] rounded-full animate-pulse" />
+            </div>
+            {/* EnsCard skeleton */}
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex items-center justify-between">
+              <div className="h-5 w-40 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="h-4 w-4 rounded bg-[#F0F0F0] animate-pulse" />
+            </div>
+            {/* MembersCard skeleton */}
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex items-center justify-between">
+              <div className="h-5 w-32 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="h-4 w-4 rounded bg-[#F0F0F0] animate-pulse" />
+            </div>
           </div>
 
-          {/* Desktop skeleton */}
-          <div className="hidden md:grid lg:grid-cols-3 gap-4">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="rounded-xl border border-[#E5E5E5] bg-white p-6 h-64 animate-pulse">
-                <div className="h-4 w-24 bg-[#F0F0F0] rounded mb-4" />
-                <div className="h-48 bg-[#F0F0F0] rounded" />
+          {/* Desktop skeleton - matches actual grid layouts */}
+          <div className="hidden md:flex flex-col gap-4">
+            {/* Same cards as mobile but in grid layout */}
+            <div className="grid lg:grid-cols-3 gap-4">
+              {/* SlotsCard */}
+              <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex items-center justify-between">
+                <div className="h-7 w-20 bg-[#F0F0F0] rounded-2xl animate-pulse" />
+                <div className="h-5 w-24 bg-[#F0F0F0] rounded animate-pulse" />
               </div>
-            ))}
+              {/* PaymentVisualizationCard - spans 2 cols on desktop */}
+              <div className="lg:col-span-2 rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
+                <div className="h-6 w-3/4 mx-auto bg-[#F0F0F0] rounded animate-pulse" />
+                <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
+                  <div className="flex justify-between">
+                    <div className="h-5 w-16 bg-[#F0F0F0] rounded animate-pulse" />
+                    <div className="h-5 w-12 bg-[#F0F0F0] rounded animate-pulse" />
+                  </div>
+                  <div className="h-3 bg-[#F0F0F0] rounded-full animate-pulse" />
+                </div>
+                <div className="h-11 bg-[#F0F0F0] rounded-full animate-pulse" />
+              </div>
+            </div>
+            {/* EntryStatusCard - full width */}
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
+              <div className="h-5 w-32 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="grid lg:grid-cols-3 gap-4">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="rounded-2xl border border-[#E5E5E5] p-6 flex flex-col items-center gap-4">
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {[...Array(8)].map((_, j) => (
+                        <div key={j} className="h-4 w-4 rounded-full bg-[#F0F0F0] animate-pulse" />
+                      ))}
+                    </div>
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="h-5 w-24 bg-[#F0F0F0] rounded animate-pulse" />
+                      <div className="h-4 w-48 bg-[#F0F0F0] rounded animate-pulse" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Bottom row with TimelineCard, PayoutCard, EnsCard, MembersCard */}
+            <div className="grid lg:grid-cols-3 gap-4">
+              <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 h-64 bg-[#F0F0F0] animate-pulse" />
+              <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 h-64 bg-[#F0F0F0] animate-pulse" />
+              <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 h-64 bg-[#F0F0F0] animate-pulse" />
+            </div>
           </div>
         </main>
       </div>
