@@ -493,7 +493,7 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
   return (
     <div className={`rounded-3xl border border-[#E5E5E5] bg-white ${PADDING_L}`}>
       {/* Responsive: Column mode on desktop (xl), List mode on smaller screens */}
-      <div className="flex flex-col gap-6 xl:grid xl:grid-cols-3 xl:gap-0">
+      <div className="flex flex-col gap-6 xl:grid xl:grid-cols-3 xl:gap-4">
         {entryGroups.map((group) => (
           <button
             key={group.id}
@@ -502,7 +502,7 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
             className={`
               group relative
               flex items-start gap-4 p-4 rounded-2xl
-              xl:flex-col xl:items-center xl:gap-4 xl:p-6
+              xl:flex-col xl:items-center xl:gap-6 xl:p-8
               transition-all duration-200 ease-out
               focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
               cursor-pointer
