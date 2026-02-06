@@ -644,48 +644,39 @@ export default function FundingCirclePage() {
           <div style={{ gridArea: 'arc' }}><ArcCard /></div>
         </div>
 
-        {/* DESKTOP (1024px+): Restructured 3-column layout */}
-        {/* Column 1: 4 stacked cards | Column 2: Pay + Arc | Column 3: ENS + Members */}
+        {/* DESKTOP (1024px+): Redesigned 3-column layout */}
+        {/* Column 1: Active, Started/Ends, Payout | Column 2: Pay, Installments, Entry Status | Column 3: Active members, ENS, Arc */}
         <div 
-          className={`hidden lg:grid ${GRID_GAP} w-full`}
+          className={`hidden lg:grid ${GAP_M} w-full`}
           style={{
             gridTemplateColumns: '1fr 1fr 1fr',
-            gridTemplateRows: 'auto',
             alignContent: 'start',
             alignItems: 'start'
           }}
         >
-          {/* COLUMN 1: 4 Stacked Cards (Active, Timeline, Payout, Installments) */}
-          <div className={`flex flex-col ${GRID_GAP}`}>
-            {/* Row 1: Active (Slots) */}
+          {/* COLUMN 1: Left stack (Active, Started/Ends, Payout) */}
+          <div className={`flex flex-col ${GAP_M}`}>
             <SlotsCard />
-            
-            {/* Row 2: Timeline (Started/Ends) */}
             <TimelineCard />
-            
-            {/* Row 3: Payout */}
             <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
-            
-            {/* Row 4: Installments */}
-            <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
 
-          {/* COLUMN 2: Pay Card + Arc Card */}
-          <div className={`flex flex-col ${GRID_GAP}`}>
-            {/* Row 1: Pay */}
+          {/* COLUMN 2: Center stack (Pay, Installments, Entry Status) */}
+          <div className={`flex flex-col ${GAP_M}`}>
             <PaymentVisualizationCard />
-            
-            {/* Row 2: Arc */}
-            <ArcCard />
+            <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
+            {/* Entry Status card - placeholder for now */}
+            <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
+              <span className={TYPOGRAPHY.label}>Entry Status</span>
+              <span className={TYPOGRAPHY.bodyMuted}>Coming soon</span>
+            </div>
           </div>
 
-          {/* COLUMN 3: ENS + Members */}
-          <div className={`flex flex-col ${GRID_GAP}`}>
-            {/* Row 1: ENS */}
-            <EnsCard />
-            
-            {/* Row 2: Members */}
+          {/* COLUMN 3: Right stack (Active members, ENS, Arc) */}
+          <div className={`flex flex-col ${GAP_M}`}>
             <MembersCard />
+            <EnsCard />
+            <ArcCard />
           </div>
         </div>
       </main>
