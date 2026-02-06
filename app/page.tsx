@@ -517,7 +517,7 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
           >
             {/* Dots grid - fixed width in list mode, full width in column mode */}
             <div className="flex justify-center flex-shrink-0 xl:w-full">
-              <div className="grid grid-cols-4 gap-x-3 gap-y-3 xl:w-full xl:gap-x-8 xl:gap-y-5 xl:place-items-center">
+              <div className="grid grid-cols-4 gap-x-3 gap-y-3 xl:w-full xl:gap-x-3 xl:gap-y-3 xl:place-items-center">
                 {Array.from({ length: group.count }).map((_, i) => (
                   <div
                     key={i}
