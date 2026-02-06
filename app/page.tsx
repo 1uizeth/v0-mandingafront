@@ -684,8 +684,14 @@ function EntryStatusCard({ isWalletConnected, selectedEntry, hoveredEntry, onSel
           <button
             key={group.id}
             onClick={() => handleEntryClick(group.id)}
-            onMouseEnter={() => onHoverEntry(group.id)}
-            onMouseLeave={() => onHoverEntry("")}
+            onMouseEnter={() => {
+              console.log('[v0] Hover enter:', group.id)
+              onHoverEntry(group.id)
+            }}
+            onMouseLeave={() => {
+              console.log('[v0] Hover leave')
+              onHoverEntry("")
+            }}
             aria-label={`Select ${group.label}`}
             className={`
               group relative
@@ -698,7 +704,7 @@ function EntryStatusCard({ isWalletConnected, selectedEntry, hoveredEntry, onSel
               ${hoveredEntry === group.id && selectedEntry === group.id ? 'ring-2 ring-inset' : ''}
             `}
             style={{
-              backgroundColor: hoveredEntry === group.id ? `${group.colorDefault}15` : 'transparent',
+              backgroundColor: hoveredEntry === group.id ? `color-mix(in srgb, ${group.colorDefault} 10%, transparent)` : 'transparent',
               '--tw-ring-color': group.colorDefault,
               '--focus-ring': group.colorDefault,
             } as React.CSSProperties}
