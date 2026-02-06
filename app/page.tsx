@@ -1,14 +1,11 @@
 "use client"
 
-import * as React from "react"
-
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Check } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
-
-// Main funding circle page component
 
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
@@ -93,7 +90,7 @@ const MOCK_WALLET_ENS = "1uiz.eth"
 
 // Wallet Button Component with disconnect on hover
 function WalletButton({ onDisconnect }: { onDisconnect: () => void }) {
-  const [isHovered, setIsHovered] = React.useState(false)
+  const [isHovered, setIsHovered] = useState(false)
 
   return (
     <div
@@ -1121,19 +1118,19 @@ function SlotsCard({ hasJoined }: { hasJoined: boolean }) {
 
 export default function FundingCirclePage() {
   const { toast } = useToast()
-  const [isWalletConnected, setIsWalletConnected] = React.useState(false)
-  const [hasJoined, setHasJoined] = React.useState(false)
-  const [selectedEntry, setSelectedEntry] = React.useState<string>("")
-  const [hoveredEntry, setHoveredEntry] = React.useState<string>("")
-  const [isLoaded, setIsLoaded] = React.useState(false)
+  const [isWalletConnected, setIsWalletConnected] = useState(false)
+  const [hasJoined, setHasJoined] = useState(false)
+  const [selectedEntry, setSelectedEntry] = useState<string>("")
+  const [hoveredEntry, setHoveredEntry] = useState<string>("")
+  const [isLoaded, setIsLoaded] = useState(false)
 
   // Instant page load
-  React.useEffect(() => {
+  useEffect(() => {
     setIsLoaded(true)
   }, [])
 
   // Load state from localStorage on mount (client-only, after hydration)
-  React.useEffect(() => {
+  useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     
     // Check if user just completed joining (coming back from /join)
