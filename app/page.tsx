@@ -27,13 +27,13 @@ const TYPOGRAPHY = {
   body: "text-sm font-normal",
   
   // Body muted: Secondary copy, descriptions
-  bodyMuted: "text-xs text-[#999999]",
+  bodyMuted: "text-xs font-bold text-[#999999]",
   
   // Labels: Small labels like "Started on", "Payout"
-  label: "text-xs text-[#666666]",
+  label: "text-xs font-bold text-[#666666]",
   
   // Caption: Tiny metadata like "1d ago", "01/24"
-  caption: "text-xs text-[#999999]",
+  caption: "text-xs font-bold text-[#999999]",
   
   // Button: Button and link text
   button: "text-sm font-medium",

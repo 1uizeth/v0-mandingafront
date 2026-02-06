@@ -121,7 +121,7 @@ function TermsStep({ onSign }: { onSign: () => void }) {
                 <span className="text-[#1A1A1A] font-semibold shrink-0">{t.num}.</span>
                 <div>
                   <span className="text-[#1A1A1A] font-medium">{t.title}</span>
-                  <p className="text-[#666666] text-xs mt-0.5">{t.desc}</p>
+                  <p className="text-[#666666] text-xs font-bold mt-0.5">{t.desc}</p>
                 </div>
               </div>
             ))}
@@ -305,7 +305,7 @@ function ConfirmStep({
               )
             })}
           </div>
-          <p className="text-xs text-[#999999] mt-3">Each step requires wallet approval.</p>
+          <p className="text-xs font-bold text-[#999999] mt-3">Each step requires wallet approval.</p>
         </div>
       </div>
 
