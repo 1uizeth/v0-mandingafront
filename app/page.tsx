@@ -420,15 +420,6 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
             </svg>
           </div>
         )}
-
-        {/* Info text - adaptive based on selected/hovered entry */}
-        {activeEntry && (
-          <p className={`${TYPOGRAPHY.bodyMuted} text-sm text-center mt-4 leading-relaxed`}>
-            {activeEntry === "early" && "Join as an Early entry and you'll likely receive your payout between March 1, 2026 and October 1, 2026."}
-            {activeEntry === "middle" && "Join as a Middle entry and you'll likely receive your payout between November 1, 2026 and June 1, 2027."}
-            {activeEntry === "late" && "Join as a Late entry and you'll likely receive your payout between July 1, 2027 and February 1, 2028."}
-          </p>
-        )}
       </div>
     )
   }
@@ -678,7 +669,7 @@ function EntryStatusCard({ isWalletConnected, selectedEntry, hoveredEntry, onSel
     {
       id: "early",
       label: "Early entry",
-      description: "Priority access to payout in the first 8 months",
+      description: "Payout between March - October 2026",
       colorDefault: "hsl(var(--entry-early-default))",
       colorHover: "hsl(var(--entry-early-hover))",
       colorActive: "hsl(var(--entry-early-active))",
@@ -687,7 +678,7 @@ function EntryStatusCard({ isWalletConnected, selectedEntry, hoveredEntry, onSel
     {
       id: "middle",
       label: "Middle entry",
-      description: "Payout in 8 to 16 months",
+      description: "Payout between November 2026 - June 2027",
       colorDefault: "hsl(var(--entry-middle-default))",
       colorHover: "hsl(var(--entry-middle-hover))",
       colorActive: "hsl(var(--entry-middle-active))",
@@ -696,7 +687,7 @@ function EntryStatusCard({ isWalletConnected, selectedEntry, hoveredEntry, onSel
     {
       id: "late",
       label: "Late entry",
-      description: "Payout up to 8 months before ending",
+      description: "Payout between July 2027 - February 2028",
       colorDefault: "hsl(var(--entry-late-default))",
       colorHover: "hsl(var(--entry-late-hover))",
       colorActive: "hsl(var(--entry-late-active))",
