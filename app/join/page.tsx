@@ -97,10 +97,11 @@ function TermsStep({ onSign }: { onSign: () => void }) {
   const [agreed, setAgreed] = useState(false)
 
   const terms = [
-    { num: "01", title: "Shared Financial Risk", desc: "Collective system. Other members may affect outcomes." },
-    { num: "02", title: "Missed Payments", desc: "Penalties may apply. Rules enforced automatically." },
-    { num: "03", title: "Blockchain Finality", desc: "Transactions irreversible once confirmed." },
-    { num: "04", title: "Legal Responsibility", desc: "You handle legal/tax obligations in your country." }
+    { num: "01", title: "Fixed Monthly Installment", desc: "You agree to pay $892 every month for 24 months. Early exit is not guaranteed." },
+    { num: "02", title: "Missed Payments", desc: "Penalties may apply. Rules are enforced automatically." },
+    { num: "03", title: "Shared Financial Risk", desc: "This is a collective system. Other members may affect outcomes." },
+    { num: "04", title: "Legal Responsibility", desc: "You are responsible for handling legal and tax obligations in your country." },
+    { num: "05", title: "Blockchain Finality", desc: "Transactions are irreversible once confirmed." }
   ]
 
   return (
