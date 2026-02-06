@@ -453,12 +453,12 @@ function EntryStatusCard() {
 
   return (
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
-      {/* Three groups in a row */}
-      <div className="grid grid-cols-3 gap-8">
+      {/* Three groups - responsive: stacked on mobile, 3 columns on desktop */}
+      <div className="flex flex-col gap-6 lg:grid lg:grid-cols-3 lg:gap-8">
         {entryGroups.map((group, groupIndex) => (
           <div key={groupIndex} className="flex flex-col items-center gap-3">
-            {/* Dot grid: 4 dots per row, 2 rows */}
-            <div className="grid grid-cols-4 gap-2">
+            {/* Dot grid: 4 dots per row, 2 rows with proper spacing */}
+            <div className="grid grid-cols-4 gap-3">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div
                   key={i}
