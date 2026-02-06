@@ -1124,6 +1124,12 @@ export default function FundingCirclePage() {
   const [hasJoined, setHasJoined] = useState(false)
   const [selectedEntry, setSelectedEntry] = useState<string>("")
   const [hoveredEntry, setHoveredEntry] = useState<string>("")
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  // Instant page load
+  useEffect(() => {
+    setIsLoaded(true)
+  }, [])
 
   // Load state from localStorage on mount (client-only, after hydration)
   useEffect(() => {
@@ -1189,6 +1195,46 @@ export default function FundingCirclePage() {
     setHoveredEntry("")
     
     console.log('[v0] Wallet disconnected - reset to before-joining state')
+  }
+
+  // Skeleton loading screen for instant render
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col">
+        {/* Header skeleton */}
+        <header className="w-full border-b border-[#F0F0F0] py-6 md:py-8">
+          <div className="mx-auto max-w-[1280px] w-full px-6 md:px-10">
+            <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-center">
+              <div className="h-6 w-24 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="h-8 w-32 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="justify-self-end h-10 w-28 bg-[#F0F0F0] rounded-full animate-pulse" />
+            </div>
+          </div>
+        </header>
+
+        <main className="flex-1 flex flex-col justify-center mx-auto max-w-[1280px] w-full px-6 md:px-10 pb-12 pt-4">
+          {/* Mobile skeleton */}
+          <div className="flex flex-col gap-4 md:hidden">
+            {[...Array(7)].map((_, i) => (
+              <div key={i} className="rounded-xl border border-[#E5E5E5] bg-white p-6 h-48 animate-pulse">
+                <div className="h-4 w-24 bg-[#F0F0F0] rounded mb-4" />
+                <div className="h-32 bg-[#F0F0F0] rounded" />
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop skeleton */}
+          <div className="hidden md:grid lg:grid-cols-3 gap-4">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="rounded-xl border border-[#E5E5E5] bg-white p-6 h-64 animate-pulse">
+                <div className="h-4 w-24 bg-[#F0F0F0] rounded mb-4" />
+                <div className="h-48 bg-[#F0F0F0] rounded" />
+              </div>
+            ))}
+          </div>
+        </main>
+      </div>
+    )
   }
 
   return (
