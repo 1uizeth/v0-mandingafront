@@ -502,7 +502,7 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
             className={`
               group relative
               flex items-start gap-4 p-4 rounded-2xl
-              xl:flex-col xl:items-center xl:gap-6 xl:p-8
+              xl:flex-col xl:items-center xl:gap-3 xl:py-6 xl:px-6
               transition-all duration-200 ease-out
               focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
               cursor-pointer
@@ -543,9 +543,9 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
             </div>
             
             {/* Text: left-aligned in list mode, centered in column mode */}
-            <div className="flex flex-col gap-1 flex-1 justify-center xl:items-center xl:text-center xl:gap-2 xl:min-h-[120px]">
+            <div className="flex flex-col gap-0.5 flex-1 justify-center xl:items-center xl:text-center xl:gap-1.5">
               <span className="font-semibold text-base xl:text-lg whitespace-nowrap" style={{ color: group.colorDefault }}>{group.label}</span>
-              <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-relaxed line-clamp-3`}>{group.description}</p>
+              <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-snug line-clamp-3`}>{group.description}</p>
             </div>
           </button>
         ))}
