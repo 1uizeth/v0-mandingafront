@@ -4,7 +4,7 @@ import { ArrowLeft, Check, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
@@ -389,6 +389,12 @@ export default function JoinCirclePage() {
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [executionStep, setExecutionStep] = useState(0)
   const [isExecuting, setIsExecuting] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  // Instant page load with skeleton
+  useEffect(() => {
+    setIsLoaded(true)
+  }, [])
 
   // Show toast notification
   const showToast = (message: string) => {
@@ -440,6 +446,38 @@ export default function JoinCirclePage() {
     } else {
       router.push("/")
     }
+  }
+
+  // Skeleton loading screen for instant render
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col">
+        <header 
+          className="w-full border-b border-[#F0F0F0]"
+          style={{ paddingTop: 'clamp(32px, 6vh, 64px)', paddingBottom: 'clamp(16px, 2vh, 24px)' }}
+        >
+          <div className="mx-auto max-w-[760px] px-6">
+            <div className="h-8 w-16 bg-[#F0F0F0] rounded-full animate-pulse mb-4" />
+            <div className="flex items-center justify-between gap-4">
+              <div className="h-7 w-48 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="h-10 w-40 bg-[#F0F0F0] rounded-full animate-pulse" />
+            </div>
+          </div>
+        </header>
+        <main className="flex-1 flex flex-col pb-8" style={{ paddingTop: 'clamp(16px, 3vh, 32px)' }}>
+          <div className="mx-auto max-w-[760px] w-full px-6">
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-8">
+              <div className="h-6 w-32 bg-[#F0F0F0] rounded animate-pulse mb-6" />
+              <div className="space-y-4">
+                <div className="h-20 bg-[#F0F0F0] rounded animate-pulse" />
+                <div className="h-20 bg-[#F0F0F0] rounded animate-pulse" />
+                <div className="h-20 bg-[#F0F0F0] rounded animate-pulse" />
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    )
   }
 
   return (
