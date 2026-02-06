@@ -117,13 +117,10 @@ function Header({ isWalletConnected, onConnectWallet, onDisconnectWallet }: { is
     <header 
       className="mx-auto max-w-[1280px] w-full px-6 md:px-10 pt-6 pb-6"
     >
-      {/* Mobile + Tablet Header (<1024px): 3-column grid for stable centering */}
-      <div 
-        className="grid lg:hidden items-center"
-        style={{ gridTemplateColumns: '1fr auto 1fr' }}
-      >
-        {/* Column 1: Back button - start aligned */}
-        <div className="justify-self-start">
+      {/* Mobile + Tablet Header (<1024px): Two rows - controls then title */}
+      <div className="flex flex-col gap-3 lg:hidden">
+        {/* Row 1: Back button + Connect wallet */}
+        <div className="flex items-center justify-between">
           <Link
             href="#"
             className="inline-flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
@@ -131,29 +128,25 @@ function Header({ isWalletConnected, onConnectWallet, onDisconnectWallet }: { is
             <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
             <span className="text-sm md:text-base whitespace-nowrap">Back</span>
           </Link>
+          <div>
+            {isWalletConnected ? (
+              <WalletButton onDisconnect={onDisconnectWallet} />
+            ) : (
+              <Button 
+                variant="outline" 
+                className="rounded-full border-[#E5E5E5] px-4 py-1.5 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent"
+                onClick={onConnectWallet}
+              >
+                Connect wallet
+              </Button>
+            )}
+          </div>
         </div>
 
-        {/* Column 2: Title - always centered */}
-        <div className="justify-self-center text-center">
-          <h1 className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">
-            ${formatNumber(circleData.amount)} {circleData.title}
-          </h1>
-        </div>
-
-        {/* Column 3: Wallet - end aligned */}
-        <div className="justify-self-end">
-          {isWalletConnected ? (
-            <WalletButton onDisconnect={onDisconnectWallet} />
-          ) : (
-            <Button 
-              variant="outline" 
-              className="rounded-full border-[#E5E5E5] px-4 py-1.5 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent"
-              onClick={onConnectWallet}
-            >
-              Connect wallet
-            </Button>
-          )}
-        </div>
+        {/* Row 2: Title */}
+        <h1 className="text-xl font-semibold text-[#1A1A1A]">
+          ${formatNumber(circleData.amount)} {circleData.title}
+        </h1>
       </div>
 
       {/* Desktop Header (1024px+) - 3-column grid: left auto-center auto-right */}
@@ -1218,6 +1211,17 @@ export default function FundingCirclePage() {
               <div className="h-7 w-20 bg-[#F0F0F0] rounded-2xl animate-pulse" />
               <div className="h-5 w-24 bg-[#F0F0F0] rounded animate-pulse" />
             </div>
+            {/* TimelineCard skeleton - second on mobile */}
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
+              <div className="flex justify-between items-center">
+                <div className="h-4 w-20 bg-[#F0F0F0] rounded animate-pulse" />
+                <div className="h-6 w-36 bg-[#F0F0F0] rounded animate-pulse" />
+              </div>
+              <div className="flex justify-between items-center">
+                <div className="h-4 w-16 bg-[#F0F0F0] rounded animate-pulse" />
+                <div className="h-6 w-32 bg-[#F0F0F0] rounded animate-pulse" />
+              </div>
+            </div>
             {/* PaymentVisualizationCard skeleton - tall with nested card */}
             <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
               <div className="h-6 w-3/4 mx-auto bg-[#F0F0F0] rounded animate-pulse" />
@@ -1245,21 +1249,6 @@ export default function FundingCirclePage() {
                     <div className="flex flex-col gap-1">
                       <div className="h-5 w-24 bg-[#F0F0F0] rounded animate-pulse" />
                       <div className="h-4 w-48 bg-[#F0F0F0] rounded animate-pulse" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* TimelineCard skeleton */}
-            <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
-              <div className="h-5 w-24 bg-[#F0F0F0] rounded animate-pulse" />
-              <div className="space-y-3">
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className="h-6 w-6 rounded-full bg-[#F0F0F0] animate-pulse" />
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 w-32 bg-[#F0F0F0] rounded animate-pulse" />
-                      <div className="h-3 w-full bg-[#F0F0F0] rounded animate-pulse" />
                     </div>
                   </div>
                 ))}
@@ -1344,13 +1333,13 @@ export default function FundingCirclePage() {
       <main className="flex-1 flex flex-col justify-center mx-auto max-w-[1280px] w-full px-6 md:px-10 pb-12 pt-4 box-border">
         {/* MOBILE (<768px): Single column stack */}
         <div className="flex flex-col gap-4 md:hidden">
-          <SlotsCard hasJoined={hasJoined} />
-          <PaymentVisualizationCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} />
-          <EntryStatusCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onSelectEntry={setSelectedEntry} onHoverEntry={setHoveredEntry} />
-          <TimelineCard />
-          <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} onSelectEntry={setSelectedEntry} showJoinedToast={showJoinedToast} />
-          <EnsCard />
-          <MembersCard />
+<SlotsCard hasJoined={hasJoined} />
+<TimelineCard />
+<PaymentVisualizationCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} />
+<EntryStatusCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onSelectEntry={setSelectedEntry} onHoverEntry={setHoveredEntry} />
+<PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} onSelectEntry={setSelectedEntry} showJoinedToast={showJoinedToast} />
+<EnsCard />
+<MembersCard />
         </div>
 
         {/* TABLET (768px - 1023px): 2-column grid with row-based areas */}
