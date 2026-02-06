@@ -891,9 +891,9 @@ function EntryStatusCard({ isWalletConnected, hasJoined, selectedEntry, hoveredE
                 {Array.from({ length: group.count }).map((_, i) => (
                   <div
                     key={i}
-                    className="rounded-full w-5 h-5"
+                    className="rounded-full w-5 h-5 border-2"
                     style={{
-                      backgroundColor: group.colorDefault
+                      borderColor: group.colorDefault
                     }}
                   />
                 ))}
