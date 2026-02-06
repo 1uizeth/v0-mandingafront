@@ -423,6 +423,60 @@ function PaymentVisualizationCard() {
   )
 }
 
+// FULL CARD: Entry Status
+// Three color-coded dot grids (Early, Middle, Late entry) with labels and descriptions
+function EntryStatusCard() {
+  const entryGroups = [
+    {
+      label: "Early entry",
+      description: "Priority access to payout in the first 8 months.",
+      color: "#10B981" // green
+    },
+    {
+      label: "Middle entry",
+      description: "Payout in 8 to 16 months.",
+      color: "#14B8A6" // teal
+    },
+    {
+      label: "Late entry",
+      description: "Up to 8 months before end of circle anticipation.",
+      color: "#3B82F6" // blue
+    }
+  ]
+
+  return (
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
+      {/* Three groups in a row */}
+      <div className="grid grid-cols-3 gap-4">
+        {entryGroups.map((group, groupIndex) => (
+          <div key={groupIndex} className="flex flex-col items-center gap-2">
+            {/* Dot grid: 4 dots per row, 2 rows */}
+            <div className="grid grid-cols-4 gap-1">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="rounded-full"
+                  style={{
+                    width: '12px',
+                    height: '12px',
+                    backgroundColor: group.color
+                  }}
+                />
+              ))}
+            </div>
+            
+            {/* Label and description */}
+            <div className="flex flex-col items-center gap-1 text-center">
+              <span className="font-semibold text-[#1A1A1A] text-xs">{group.label}</span>
+              <p className={`${TYPOGRAPHY.bodyMuted} text-center`}>{group.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // FULL CARD: Installment Progress
 // Header: Title | Counter ("01/24")
 // Progress bar with minimum 1% visible fill indicator
@@ -665,11 +719,7 @@ export default function FundingCirclePage() {
           <div className={`flex flex-col ${GAP_M}`}>
             <PaymentVisualizationCard />
             <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
-            {/* Entry Status card - placeholder for now */}
-            <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
-              <span className={TYPOGRAPHY.label}>Entry Status</span>
-              <span className={TYPOGRAPHY.bodyMuted}>Coming soon</span>
-            </div>
+            <EntryStatusCard />
           </div>
 
           {/* COLUMN 3: Right stack (Active members, ENS, Arc) */}
