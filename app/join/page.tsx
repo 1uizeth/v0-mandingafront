@@ -219,6 +219,51 @@ function PreviewStep({ onContinue }: { onContinue: () => void }) {
   )
 }
 
+// Success Screen - shows after all transactions complete
+function SuccessScreen() {
+  const router = useRouter()
+
+  return (
+    <div className="rounded-xl border border-[#E5E5E5] bg-white">
+      {/* Body */}
+      <div className="px-5 lg:px-6 py-8 lg:py-12 flex flex-col items-center text-center">
+        {/* Success Icon */}
+        <div className="w-16 h-16 rounded-full bg-[#1A1A1A] flex items-center justify-center mb-6">
+          <Check className="w-8 h-8 text-white" strokeWidth={2.5} />
+        </div>
+
+        {/* Success Message */}
+        <h2 className="text-2xl font-semibold text-[#1A1A1A] mb-2">Successfully Joined!</h2>
+        <p className="text-sm text-[#666666] max-w-md">
+          You're now part of the ${formatNumber(circleData.amount)} circle {circleData.title}. Your first payment has been processed.
+        </p>
+
+        {/* Details */}
+        <div className="mt-8 w-full max-w-sm">
+          <div className="bg-[#FAFAFA] rounded-lg border border-[#E5E5E5] p-4 text-sm">
+            <div className="flex justify-between py-1.5">
+              <span className="text-[#666666]">DINGA tokens received</span>
+              <span className="font-semibold text-[#1A1A1A]">{formatNumber(circleData.dingaTokens)}</span>
+            </div>
+            <div className="flex justify-between py-1.5">
+              <span className="text-[#666666]">Position</span>
+              <span className="font-medium text-[#1A1A1A]">Early entry</span>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA Button */}
+        <Button 
+          onClick={() => router.push("/")}
+          className="w-full max-w-sm rounded-full bg-[#1A1A1A] px-6 py-4 text-sm font-semibold text-white hover:bg-[#333333] mt-8"
+        >
+          Go back to circle
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 // Step 3: Confirm - flex column card anatomy with execution simulation
 function ConfirmStep({ 
   onConfirm,
@@ -365,10 +410,8 @@ export default function JoinCirclePage() {
     setTimeout(() => {
       setExecutionStep(2)
       setTimeout(() => {
-        setExecutionStep(3) // All done
-        setTimeout(() => {
-          router.push("/")
-        }, 500)
+        setExecutionStep(3) // All done - show success
+        setIsExecuting(false)
       }, 800)
     }, 800)
   }
@@ -426,19 +469,25 @@ export default function JoinCirclePage() {
 
       <main className="flex-1 flex flex-col pb-8" style={{ paddingTop: 'clamp(16px, 3vh, 32px)' }}>
         <div className="mx-auto max-w-[760px] w-full px-6">
-          {currentStep === 1 && (
-            <TermsStep onSign={handleSignAgreement} />
-          )}
-          {currentStep === 2 && (
-            <PreviewStep onContinue={handlePreviewContinue} />
-          )}
-          {currentStep === 3 && (
-            <ConfirmStep 
-              onConfirm={handleConfirm}
-              agreementSignedAt={agreementSignedAt}
-              executionStep={executionStep}
-              isExecuting={isExecuting}
-            />
+          {executionStep === 3 ? (
+            <SuccessScreen />
+          ) : (
+            <>
+              {currentStep === 1 && (
+                <TermsStep onSign={handleSignAgreement} />
+              )}
+              {currentStep === 2 && (
+                <PreviewStep onContinue={handlePreviewContinue} />
+              )}
+              {currentStep === 3 && (
+                <ConfirmStep 
+                  onConfirm={handleConfirm}
+                  agreementSignedAt={agreementSignedAt}
+                  executionStep={executionStep}
+                  isExecuting={isExecuting}
+                />
+              )}
+            </>
           )}
         </div>
       </main>
