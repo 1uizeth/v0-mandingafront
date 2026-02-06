@@ -119,7 +119,7 @@ function TermsStep({ onSign }: { onSign: () => void }) {
           <p className="font-mono text-sm text-[#1A1A1A] mb-4">If you accept, you agree that:</p>
           <div className="flex flex-col gap-4">
             {terms.map((t) => (
-              <div key={t.num} className="font-mono text-sm flex gap-3">
+              <div key={`term-${t.num}-${t.title}`} className="font-mono text-sm flex gap-3">
                 <span className="text-[#1A1A1A] font-semibold shrink-0">{t.num}.</span>
                 <div>
                   <span className="text-[#1A1A1A] font-medium">{t.title}</span>
