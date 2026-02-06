@@ -599,21 +599,21 @@ export default function FundingCirclePage() {
 
         {/* DESKTOP (1024px+): 3-column explicit layout */}
         <div 
-          className={`hidden lg:grid w-full`}
+          className="hidden lg:grid w-full"
           style={{
             gridTemplateColumns: '1fr 1fr 1fr',
-            gap: `1rem`, // GAP_M = 16px = 1rem
+            gap: '1rem',
           }}
         >
           {/* COLUMN 1: Active → Started/Ends → Payout */}
-          <div className={`flex flex-col ${GRID_GAP}`}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <SlotsCard />
             <TimelineCard />
             <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
 
           {/* COLUMN 2: Pay $892/mo → Installments → Entry Status (placeholder) */}
-          <div className={`flex flex-col ${GRID_GAP}`}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <PaymentVisualizationCard />
             <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
             {/* Entry Status card placeholder - empty for now */}
@@ -623,7 +623,7 @@ export default function FundingCirclePage() {
           </div>
 
           {/* COLUMN 3: Active members → ENS → Arc */}
-          <div className={`flex flex-col ${GRID_GAP}`}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <MembersCard />
             <EnsCard />
             <ArcCard />
