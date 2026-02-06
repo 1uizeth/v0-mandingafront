@@ -176,6 +176,10 @@ function PreviewStep({ onContinue }: { onContinue: () => void }) {
               <span className="font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
             </div>
             <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+              <span className="text-[#666666]">Position</span>
+              <span className="font-medium text-[#1A1A1A]">Early entry</span>
+            </div>
+            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
               <span className="text-[#666666]">Subtotal</span>
               <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.totalCommitment)}</span>
             </div>
@@ -312,6 +316,10 @@ function ConfirmStep({
           <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
             <span className="text-[#666666]">Duration</span>
             <span className="font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
+          </div>
+          <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+            <span className="text-[#666666]">Position</span>
+            <span className="font-medium text-[#1A1A1A]">Early entry</span>
           </div>
           <div className="flex justify-between py-1.5">
             <span className="text-[#666666]">Total commitment</span>
