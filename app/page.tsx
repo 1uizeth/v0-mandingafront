@@ -516,7 +516,7 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
             } as React.CSSProperties}
           >
             {/* Dots grid - fixed width in list mode, centered in column mode */}
-            <div className="flex-shrink-0 xl:w-full xl:flex xl:justify-center">
+            <div className="flex justify-center flex-shrink-0">
               <div className="grid grid-cols-4 gap-x-3 gap-y-3 xl:gap-x-4 xl:gap-y-4">
                 {Array.from({ length: group.count }).map((_, i) => (
                   <div
