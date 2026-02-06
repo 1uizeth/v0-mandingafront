@@ -96,6 +96,7 @@ function MobileStepper({ currentStep }: { currentStep: Step }) {
 function TermsStep({ onSign }: { onSign: () => void }) {
   const [agreed, setAgreed] = useState(false)
 
+  // Updated agreement terms
   const terms = [
     { num: "01", title: "Fixed Monthly Installment", desc: "You agree to pay $892 every month for 24 months. Early exit is not guaranteed." },
     { num: "02", title: "Missed Payments", desc: "Penalties may apply. Rules are enforced automatically." },
