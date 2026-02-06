@@ -543,9 +543,9 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
             </div>
             
             {/* Text: left-aligned in list mode, centered in column mode */}
-            <div className="flex flex-col gap-1 flex-1 justify-center xl:items-center xl:text-center xl:gap-2">
-              <span className="font-semibold text-base xl:text-lg" style={{ color: group.colorDefault }}>{group.label}</span>
-              <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-normal xl:leading-relaxed`}>{group.description}</p>
+            <div className="flex flex-col gap-1 flex-1 justify-center xl:items-center xl:text-center xl:gap-2 xl:min-h-[120px]">
+              <span className="font-semibold text-base xl:text-lg whitespace-nowrap" style={{ color: group.colorDefault }}>{group.label}</span>
+              <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-relaxed line-clamp-3`}>{group.description}</p>
             </div>
           </button>
         ))}
