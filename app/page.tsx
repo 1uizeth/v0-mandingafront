@@ -492,8 +492,8 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
 
   return (
     <div className={`rounded-3xl border border-[#E5E5E5] bg-white ${PADDING_L}`}>
-      {/* Responsive: Column mode on desktop (lg), List mode on smaller screens */}
-      <div className="flex flex-col gap-8 lg:grid lg:grid-cols-3 lg:gap-12">
+      {/* Responsive: Column mode on desktop (xl), List mode on smaller screens */}
+      <div className="flex flex-col gap-6 xl:grid xl:grid-cols-3 xl:gap-4">
         {entryGroups.map((group) => (
           <button
             key={group.id}
@@ -501,47 +501,48 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
             aria-label={`Select ${group.label}`}
             className={`
               group relative
-              flex items-center gap-8 p-6 rounded-[32px]
-              lg:flex-col lg:items-center lg:gap-4 lg:py-8
-              transition-colors duration-150 ease-out
+              flex items-start gap-4 p-4 rounded-2xl
+              xl:flex-col xl:items-center xl:gap-3 xl:py-6 xl:px-6
+              transition-all duration-200 ease-out
               focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
               cursor-pointer
-              ${selectedEntry === group.id ? 'ring-2' : ''}
+              hover:border-2 hover:border-current
+              ${selectedEntry === group.id ? 'border-2 border-current' : 'border-2 border-transparent'}
             `}
             style={{
-              backgroundColor: selectedEntry === group.id ? `${group.colorDefault}10` : 'transparent',
-              '--tw-ring-color': selectedEntry === group.id ? `${group.colorDefault}40` : 'transparent',
+              backgroundColor: selectedEntry === group.id ? `${group.colorDefault}15` : 'transparent',
+              borderColor: selectedEntry === group.id ? group.colorDefault : 'transparent',
               '--focus-ring': group.colorDefault,
             } as React.CSSProperties}
             onMouseEnter={(e) => {
               if (selectedEntry !== group.id) {
-                e.currentTarget.style.backgroundColor = `${group.colorDefault}10`
+                e.currentTarget.style.backgroundColor = `${group.colorDefault}08`
+                e.currentTarget.style.borderColor = group.colorDefault
               }
             }}
             onMouseLeave={(e) => {
               if (selectedEntry !== group.id) {
                 e.currentTarget.style.backgroundColor = 'transparent'
+                e.currentTarget.style.borderColor = 'transparent'
               }
             }}
           >
-            {/* Circles: 2 rows × 4 dots grid, centered */}
-            <div className="flex justify-center">
-              <div className="grid grid-cols-4 gap-x-2 gap-y-2 lg:gap-x-3 lg:gap-y-3">
-                {Array.from({ length: group.count }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="rounded-full w-6 h-6 lg:w-12 lg:h-12"
-                    style={{
-                      backgroundColor: group.colorDefault
-                    }}
-                  />
-                ))}
-              </div>
+            {/* Circles: 4x2 grid with equal row/column spacing, centered */}
+            <div className="grid grid-cols-4 gap-3 xl:gap-5 w-fit mx-auto">
+              {Array.from({ length: group.count }).map((_, i) => (
+                <div
+                  key={i}
+                  className="rounded-full w-5 h-5 xl:w-6 xl:h-6"
+                  style={{
+                    backgroundColor: group.colorDefault
+                  }}
+                />
+              ))}
             </div>
             
             {/* Text: left-aligned in list mode, centered in column mode */}
-            <div className="flex flex-col gap-1 flex-1 lg:flex-initial lg:items-center lg:text-center lg:gap-2">
-              <span className="font-semibold text-base lg:text-lg whitespace-nowrap" style={{ color: group.colorDefault }}>{group.label}</span>
+            <div className="flex flex-col gap-0.5 flex-1 justify-center xl:items-center xl:text-center xl:gap-1.5 xl:flex-initial">
+              <span className="font-semibold text-base xl:text-lg whitespace-nowrap" style={{ color: group.colorDefault }}>{group.label}</span>
               <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-snug line-clamp-3`}>{group.description}</p>
             </div>
           </button>
