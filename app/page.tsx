@@ -201,7 +201,7 @@ function TimelineCard() {
 // Header: Title | Counter ("01/24")
 // Progress bar with minimum 1% visible fill indicator
 // Round info and rings visualization
-function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry, onHoverEntry, onSelectEntry }: { isWalletConnected: boolean; hasJoined: boolean; selectedEntry: string; hoveredEntry: string; onHoverEntry: (id: string) => void; onSelectEntry: (id: string) => void }) {
+function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry, onHoverEntry, onSelectEntry, showJoinedToast }: { isWalletConnected: boolean; hasJoined: boolean; selectedEntry: string; hoveredEntry: string; onHoverEntry: (id: string) => void; onSelectEntry: (id: string) => void; showJoinedToast: () => void }) {
   const isPreJoin = !isWalletConnected || !hasJoined
   const progressPercentage = Math.max(1, (circleData.payoutProgress / circleData.totalMonths) * 100)
   
@@ -383,8 +383,12 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
                 onMouseLeave={() => onHoverEntry("")}
                 onClick={() => {
                   if (isWalletConnected) {
-                    console.log('[v0] Ring click - selecting late entry')
-                    onSelectEntry("late")
+                    if (hasJoined) {
+                      showJoinedToast()
+                    } else {
+                      console.log('[v0] Ring click - selecting late entry')
+                      onSelectEntry("late")
+                    }
                   }
                 }}
               />
@@ -400,8 +404,12 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
                 onMouseLeave={() => onHoverEntry("")}
                 onClick={() => {
                   if (isWalletConnected) {
-                    console.log('[v0] Ring click - selecting middle entry')
-                    onSelectEntry("middle")
+                    if (hasJoined) {
+                      showJoinedToast()
+                    } else {
+                      console.log('[v0] Ring click - selecting middle entry')
+                      onSelectEntry("middle")
+                    }
                   }
                 }}
               />
@@ -417,8 +425,12 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
                 onMouseLeave={() => onHoverEntry("")}
                 onClick={() => {
                   if (isWalletConnected) {
-                    console.log('[v0] Ring click - selecting early entry')
-                    onSelectEntry("early")
+                    if (hasJoined) {
+                      showJoinedToast()
+                    } else {
+                      console.log('[v0] Ring click - selecting early entry')
+                      onSelectEntry("early")
+                    }
                   }
                 }}
               />
@@ -1058,6 +1070,14 @@ export default function FundingCirclePage() {
     }, 1500)
   }
 
+  const showJoinedToast = () => {
+    const entryLabel = selectedEntry === "early" ? "Early entry" : selectedEntry === "middle" ? "Middle entry" : "Late entry"
+    toast({
+      title: `You've joined this circle on ${entryLabel}`,
+      duration: 4000,
+    })
+  }
+
   return (
     <>
     <div className="min-h-screen bg-white flex flex-col">
@@ -1070,7 +1090,7 @@ export default function FundingCirclePage() {
           <PaymentVisualizationCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} />
           <EntryStatusCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onSelectEntry={setSelectedEntry} onHoverEntry={setHoveredEntry} />
           <TimelineCard />
-          <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} onSelectEntry={setSelectedEntry} />
+          <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} onSelectEntry={setSelectedEntry} showJoinedToast={showJoinedToast} />
           <EnsCard />
           <MembersCard />
         </div>
@@ -1093,7 +1113,7 @@ export default function FundingCirclePage() {
           <div style={{ gridArea: 'entry' }}><EntryStatusCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onSelectEntry={setSelectedEntry} onHoverEntry={setHoveredEntry} /></div>
           <div style={{ gridArea: 'timeline' }}><TimelineCard /></div>
           <div style={{ gridArea: 'ens' }}><EnsCard /></div>
-          <div style={{ gridArea: 'payout' }}><PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} onSelectEntry={setSelectedEntry} /></div>
+          <div style={{ gridArea: 'payout' }}><PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} onSelectEntry={setSelectedEntry} showJoinedToast={showJoinedToast} /></div>
           <div style={{ gridArea: 'members' }}><MembersCard /></div>
           <div style={{ gridArea: 'arc' }}><ArcCard /></div>
         </div>
@@ -1111,7 +1131,7 @@ export default function FundingCirclePage() {
           {/* COLUMN 1: Left stack (Started/Ends, Payout) */}
           <div className={`flex flex-col ${GAP_M}`}>
             <TimelineCard />
-            <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} onSelectEntry={setSelectedEntry} />
+            <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} onSelectEntry={setSelectedEntry} showJoinedToast={showJoinedToast} />
           </div>
 
           {/* COLUMN 2: Center stack - WIDER (Pay container with embedded Installments, Entry Status) */}
