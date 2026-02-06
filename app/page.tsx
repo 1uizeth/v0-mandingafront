@@ -191,13 +191,14 @@ function TimelineCard() {
         <p className={TYPOGRAPHY.label}>Ends on</p>
         <p className="font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.endDate}</p>
       </div>
-    </div>
-  )
-}
+      </div>
+    )
+  }
 
 // FULL CARD: Payout Progress
 // Header: Title | Counter ("01/24")
 // Progress bar with minimum 1% visible fill indicator
+// Round info and rings visualization
 function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry, onHoverEntry, onSelectEntry }: { isWalletConnected: boolean; hasJoined: boolean; selectedEntry: string; hoveredEntry: string; onHoverEntry: (id: string) => void; onSelectEntry: (id: string) => void }) {
   const isPreJoin = !isWalletConnected || !hasJoined
   const progressPercentage = Math.max(1, (circleData.payoutProgress / circleData.totalMonths) * 100)
@@ -244,19 +245,20 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
     return null
   }
 
-  // Generate 24 rings (months) for the circular chart
+  const simulationData = activeEntry ? getSimulationData() : null
+
   const getRings = () => {
     const rings = []
     const totalMonths = 24
     
     for (let i = 0; i < totalMonths; i++) {
       let isActive = false
-      let color = "#E5E5E5" // Inactive gray
-      
-      // First ring (smallest/innermost) is always black to represent current round
+      let color = "#E5E5E5" // Default gray
+
+      // First ring is always black (current position)
       if (i === 0) {
-        color = "#1A1A1A"
         isActive = true
+        color = "#1A1A1A"
       }
       // Early entry: rings 1-7 (innermost)
       else if (activeEntry === "early" && i > 0 && i < 8) {
@@ -273,14 +275,16 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
         isActive = true
         color = "hsl(var(--entry-late-default))"
       }
-      
-      rings.push({ index: i, isActive, color })
+
+      rings.push({
+        index: i,
+        isActive,
+        color
+      })
     }
     
     return rings
   }
-
-  const simulationData = activeEntry ? getSimulationData() : null
   
   // Generate rings - show all in gray with first ring black when no wallet or no selection
   const getDefaultRings = () => {
@@ -367,7 +371,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
               <circle
                 cx="120"
                 cy="120"
-                r={120} // Cover entire visualization area
+                r={120}
                 fill="transparent"
                 className="cursor-pointer"
                 onMouseEnter={() => onHoverEntry("late")}
@@ -384,7 +388,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
               <circle
                 cx="120"
                 cy="120"
-                r={20 + (15 * 4.2) + 2.1} // Cover up to end of ring 15
+                r={20 + (15 * 4.2) + 2.1}
                 fill="transparent"
                 className="cursor-pointer"
                 onMouseEnter={() => onHoverEntry("middle")}
@@ -401,7 +405,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
               <circle
                 cx="120"
                 cy="120"
-                r={20 + (7 * 4.2) + 2.1} // Cover up to end of ring 7
+                r={20 + (7 * 4.2) + 2.1}
                 fill="transparent"
                 className="cursor-pointer"
                 onMouseEnter={() => onHoverEntry("early")}
@@ -428,7 +432,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
       </div>
     )
   }
-
+  
   // Joined state
   return (
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col gap-3`}>
