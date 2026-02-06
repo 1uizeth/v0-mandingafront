@@ -262,20 +262,20 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
         {/* Circular rings chart - shows when wallet connected */}
         {isWalletConnected && rings.length > 0 && (
           <div className="flex justify-center mt-4">
-            <svg width="240" height="120" viewBox="0 0 240 120">
+            <svg width="240" height="240" viewBox="0 0 240 240">
               {rings.map((ring, i) => {
-                const radius = 20 + (i * 4.5) // Inner rings are smaller radius
-                const strokeWidth = 3.5
-                const circumference = Math.PI * radius // Half circle
+                const radius = 20 + (i * 4.2) // Spacing between rings
+                const strokeWidth = 3
                 
                 return (
-                  <path
+                  <circle
                     key={i}
-                    d={`M ${120 - radius} 120 A ${radius} ${radius} 0 0 1 ${120 + radius} 120`}
+                    cx="120"
+                    cy="120"
+                    r={radius}
                     fill="none"
                     stroke={ring.color}
                     strokeWidth={strokeWidth}
-                    strokeLinecap="round"
                     opacity={ring.isActive ? 1 : 0.3}
                   />
                 )
@@ -315,19 +315,20 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
       {/* Circular rings chart */}
       {rings.length > 0 && (
         <div className="flex justify-center mt-4">
-          <svg width="240" height="120" viewBox="0 0 240 120">
+          <svg width="240" height="240" viewBox="0 0 240 240">
             {rings.map((ring, i) => {
-              const radius = 20 + (i * 4.5) // Inner rings are smaller radius
-              const strokeWidth = 3.5
+              const radius = 20 + (i * 4.2) // Spacing between rings
+              const strokeWidth = 3
               
               return (
-                <path
+                <circle
                   key={i}
-                  d={`M ${120 - radius} 120 A ${radius} ${radius} 0 0 1 ${120 + radius} 120`}
+                  cx="120"
+                  cy="120"
+                  r={radius}
                   fill="none"
                   stroke={ring.color}
                   strokeWidth={strokeWidth}
-                  strokeLinecap="round"
                   opacity={ring.isActive ? 1 : 0.3}
                 />
               )
