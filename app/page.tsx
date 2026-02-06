@@ -224,7 +224,7 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
 
         {/* Due info row: label left, date right */}
         <div className="flex items-center justify-between">
-          <span className="font-semibold text-[#1A1A1A]">Next due on</span>
+          <span className="font-semibold text-[#1A1A1A]">Next round</span>
           <span className="font-semibold text-[#1A1A1A]">March 1</span>
         </div>
       </div>
@@ -252,7 +252,7 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
 
       {/* Due info row: label left, date right */}
       <div className="flex items-center justify-between">
-        <span className="font-semibold text-[#1A1A1A]">Next due on</span>
+        <span className="font-semibold text-[#1A1A1A]">Next round</span>
         <span className="font-semibold text-[#1A1A1A]">{circleData.payoutDueDate}</span>
       </div>
     </div>
@@ -579,7 +579,7 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
 
       {/* Footer row: label left, date right */}
       <div className="flex items-center justify-between">
-        <span className={TYPOGRAPHY.label}>Next due on</span>
+        <span className={TYPOGRAPHY.label}>Next round</span>
         <span className="font-semibold text-[#1A1A1A]">March 5</span>
       </div>
 
