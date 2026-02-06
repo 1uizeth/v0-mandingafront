@@ -5,28 +5,15 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
+import { circleData, getEntryLabel, getEntryData } from "@/lib/circle-data"
 
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
-// Mock data for the funding circle
-const circleData = {
-  amount: 20000,
-  title: "for Devcon 2026",
-  monthlyAmount: 892,
-  totalMonths: 24,
-  totalCommitment: 21408,
-  protocolFee: 1498, // 7% fee
-  totalWithFees: 22906,
-  ensDomain: "housing.mandinga.eth",
-  dingaTokens: 21408,
-  estimatedGas: 0.12,
-}
-
 // Mock connected wallet ENS name
-const MOCK_WALLET_ENS = "user.eth"
+const MOCK_WALLET_ENS = "1uiz.eth"
 
 // Step type
 type Step = 1 | 2 | 3
@@ -168,8 +155,12 @@ function PreviewStep({ onContinue, getEntryLabel }: { onContinue: () => void; ge
           <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Your Commitment</h3>
           <div className="text-sm">
             <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-              <span className="text-[#666666]">Monthly payment</span>
-              <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.monthlyAmount)} USDC</span>
+              <span className="text-[#666666]">Monthly installment</span>
+              <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.contributionPerMonth)} USDC</span>
+            </div>
+            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+              <span className="text-[#666666]">Duration</span>
+              <span className="font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
             </div>
             <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
               <span className="text-[#666666]">Duration</span>
@@ -208,7 +199,7 @@ function PreviewStep({ onContinue, getEntryLabel }: { onContinue: () => void; ge
             </div>
             <div className="flex justify-between py-1.5">
               <span className="text-[#666666]">Estimated gas</span>
-              <span className="font-medium text-[#1A1A1A]">~${circleData.estimatedGas}</span>
+              <span className="font-medium text-[#1A1A1A]">~$0.12</span>
             </div>
           </div>
         </div>
@@ -241,7 +232,7 @@ function SuccessScreen() {
         {/* Success Message */}
         <h2 className="text-2xl font-semibold text-[#1A1A1A] mb-2">Successfully Joined!</h2>
         <p className="text-sm text-[#666666] max-w-md">
-          You're now part of the ${formatNumber(circleData.amount)} circle {circleData.title}. Your first payment has been processed.
+          You're now part of {circleData.name}. Your first payment has been processed.
         </p>
 
         {/* Details */}
@@ -249,7 +240,7 @@ function SuccessScreen() {
           <div className="bg-[#FAFAFA] rounded-lg border border-[#E5E5E5] p-4 text-sm">
             <div className="flex justify-between py-1.5">
               <span className="text-[#666666]">Claim tokens</span>
-              <span className="font-semibold text-[#1A1A1A]">{formatNumber(circleData.monthlyAmount)}</span>
+              <span className="font-semibold text-[#1A1A1A]">{formatNumber(circleData.totalCommitment)}</span>
             </div>
           <div className="flex justify-between py-1.5">
             <span className="text-[#666666]">Position</span>
@@ -309,11 +300,11 @@ function ConfirmStep({
         <div className="text-sm">
           <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
             <span className="text-[#666666]">Circle</span>
-            <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.amount)} {circleData.title}</span>
+            <span className="font-medium text-[#1A1A1A]">{circleData.name}</span>
           </div>
           <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
             <span className="text-[#666666]">First payment</span>
-            <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.monthlyAmount)} USDC</span>
+            <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.contributionPerMonth)} USDC</span>
           </div>
           <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
             <span className="text-[#666666]">Duration</span>
@@ -405,14 +396,6 @@ export default function JoinCirclePage() {
   useEffect(() => {
     setIsLoaded(true)
   }, [])
-
-  // Format entry label for display
-  const getEntryLabel = () => {
-    if (selectedEntry === 'early') return 'Early entry'
-    if (selectedEntry === 'middle') return 'Middle entry'
-    if (selectedEntry === 'late') return 'Late entry'
-    return 'Early entry' // fallback
-  }
 
   // Show toast notification
   const showToast = (message: string) => {
@@ -522,7 +505,7 @@ export default function JoinCirclePage() {
           {/* Title + Stepper row */}
           <div className="flex items-center justify-between gap-4">
             <h1 className="text-lg font-semibold text-[#1A1A1A]">
-              {"Join $" + formatNumber(circleData.amount) + " Circle"}
+              Join Circle
             </h1>
 
             {/* Stepper - desktop shows full, mobile shows compact */}
@@ -546,7 +529,7 @@ export default function JoinCirclePage() {
                 <TermsStep onSign={handleSignAgreement} />
               )}
   {currentStep === 2 && (
-    <PreviewStep onContinue={handlePreviewContinue} getEntryLabel={getEntryLabel} />
+    <PreviewStep onContinue={handlePreviewContinue} getEntryLabel={() => getEntryLabel(selectedEntry)} />
   )}
   {currentStep === 3 && (
     <ConfirmStep
@@ -554,7 +537,7 @@ export default function JoinCirclePage() {
       agreementSignedAt={agreementSignedAt}
       executionStep={executionStep}
       isExecuting={isExecuting}
-      getEntryLabel={getEntryLabel}
+      getEntryLabel={() => getEntryLabel(selectedEntry)}
     />
   )}
             </>
