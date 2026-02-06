@@ -507,7 +507,69 @@ function MembersCard() {
   )
 }
 
+// ENTRY STATUS CARD: Color-coded entry timing with dot grids
+// Shows 3 entry tiers (Early, Middle, Late) with grouped dots and labels
+function EntryStatusCard() {
+  const entryTiers = [
+    {
+      label: "Early entry",
+      description: "Priority access to payout in the first 8 months.",
+      color: "#10B981", // Green
+      dotsCount: 8,
+    },
+    {
+      label: "Middle entry",
+      description: "Payout in 8 to 16 months.",
+      color: "#14B8A6", // Teal
+      dotsCount: 8,
+    },
+    {
+      label: "Late entry",
+      description: "Up to 8 months before end of circle anticipation.",
+      color: "#3B82F6", // Blue
+      dotsCount: 8,
+    },
+  ]
+
+  return (
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
+      {/* Three-column grid for entry tiers */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+        {entryTiers.map((tier) => (
+          <div key={tier.label} className="flex flex-col items-center gap-2">
+            {/* Dot grid: 4 dots per row, 2 rows */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.375rem' }}>
+              {Array.from({ length: tier.dotsCount }).map((_, i) => (
+                <div
+                  key={i}
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    borderRadius: '9999px',
+                    backgroundColor: tier.color,
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Label (bold) */}
+            <p className="text-xs font-semibold text-[#1A1A1A] text-center mt-1">
+              {tier.label}
+            </p>
+
+            {/* Description (muted) */}
+            <p className="text-xs text-[#999999] text-center leading-tight">
+              {tier.description}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // INFRA CARD: Arc Integration
+
 // Header (two-column: logo+name | link) with CardHeaderRow pattern
 function ArcCard() {
   return (
@@ -612,14 +674,11 @@ export default function FundingCirclePage() {
             <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           </div>
 
-          {/* COLUMN 2: Pay $892/mo → Installments → Entry Status (placeholder) */}
+          {/* COLUMN 2: Pay $892/mo → Installments → Entry Status */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <PaymentVisualizationCard />
             <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
-            {/* Entry Status card placeholder - empty for now */}
-            <div className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex items-center justify-center min-h-20 text-[#999999]">
-              Entry Status
-            </div>
+            <EntryStatusCard />
           </div>
 
           {/* COLUMN 3: Active members → ENS → Arc */}
