@@ -73,7 +73,7 @@ const MOCK_WALLET_ENS = "1uiz.eth"
     const labels = ["Agreement", "Review"]
   return (
     <span className="text-sm text-[#666666]">
-      {currentStep}/3 <span className="font-medium text-[#1A1A1A]">{labels[currentStep - 1]}</span>
+      {currentStep}/2 <span className="font-medium text-[#1A1A1A]">{labels[currentStep - 1]}</span>
     </span>
   )
 }
