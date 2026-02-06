@@ -502,7 +502,7 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
             className={`
               group relative
               flex items-center gap-6 p-4 rounded-2xl
-              xl:flex-col xl:items-center xl:gap-6 xl:py-4 xl:px-6
+              xl:flex-col xl:items-center xl:gap-6 xl:py-4 xl:px-4
               transition-all duration-200 ease-out
               focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
               cursor-pointer
