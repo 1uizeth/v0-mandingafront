@@ -502,7 +502,7 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
             className={`
               group relative
               flex items-center gap-6 p-4 rounded-2xl
-              xl:flex-col xl:items-center xl:gap-6 xl:py-6 xl:px-6
+              xl:flex-col xl:items-center xl:gap-3 xl:py-4 xl:px-4
               transition-all duration-200 ease-out
               focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
               cursor-pointer
@@ -516,7 +516,7 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
             } as React.CSSProperties}
           >
             {/* Dots grid - fixed width in list mode, centered in column mode */}
-            <div className="flex-shrink-0 xl:w-full xl:flex xl:justify-center xl:min-h-[120px] xl:items-center">
+            <div className="flex-shrink-0 xl:w-full xl:flex xl:justify-center">
               <div className="grid grid-cols-4 gap-x-3 gap-y-3 xl:gap-x-4 xl:gap-y-4">
                 {Array.from({ length: group.count }).map((_, i) => (
                   <div
@@ -531,9 +531,9 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
             </div>
             
             {/* Text block - left-aligned in list mode, centered in column mode */}
-            <div className="flex flex-col gap-1 items-start min-w-0 xl:items-center xl:text-center xl:gap-1.5">
+            <div className="flex flex-col gap-0.5 items-start min-w-0 xl:items-center xl:text-center xl:gap-1">
               <span className="font-semibold text-base xl:text-lg whitespace-nowrap leading-tight" style={{ color: group.colorDefault }}>{group.label}</span>
-              <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-snug line-clamp-3 text-left xl:text-center xl:max-w-[220px]`}>{group.description}</p>
+              <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-tight line-clamp-3 text-left xl:text-center xl:max-w-[220px]`}>{group.description}</p>
             </div>
           </button>
         ))}
