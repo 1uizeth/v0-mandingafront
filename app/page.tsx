@@ -735,6 +735,18 @@ function EntryStatusCard({ isWalletConnected, selectedEntry, hoveredEntry, onSel
               <span className="font-semibold text-base xl:text-lg whitespace-nowrap leading-tight" style={{ color: group.colorDefault }}>{group.label}</span>
               <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-tight line-clamp-3 text-left xl:text-center xl:max-w-[220px]`}>{group.description}</p>
             </div>
+
+            {/* Join button - shows on hover when wallet is connected */}
+            {isWalletConnected && hoveredEntry === group.id && (
+              <Button 
+                className="w-full rounded-full text-white mt-4 transition-all"
+                style={{ backgroundColor: group.colorDefault }}
+                asChild
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Link href="/join">Join</Link>
+              </Button>
+            )}
           </button>
         ))}
       </div>
@@ -765,12 +777,13 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
 
         {/* Content row: text left, amount right */}
         <div className="flex items-center justify-between">
-          <span className="font-semibold text-[#1A1A1A]">Due on sign up</span>
-          <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.monthlyAmount)}</span>
+          <span className="font-semibold text-[#1A1A1A]">Due now</span>
+          <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.dueAmount)}</span>
         </div>
       </div>
-    )
-  }
+    </div>
+  )
+}
 
   // Joined state
   return (
