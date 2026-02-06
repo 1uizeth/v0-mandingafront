@@ -678,7 +678,6 @@ export default function FundingCirclePage() {
           <EntryStatusCard />
           <TimelineCard />
           <PayoutCard />
-          <InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
           <EnsCard />
           <MembersCard />
           <ArcCard />
@@ -687,14 +686,14 @@ export default function FundingCirclePage() {
         {/* TABLET (768px - 1023px): 2-column grid with row-based areas */}
         <div className="hidden md:grid lg:hidden gap-4" style={{
           gridTemplateColumns: '1fr 1fr',
-          gridTemplateRows: 'auto auto auto auto auto auto',
+          gridTemplateRows: 'auto auto auto auto auto',
           gridTemplateAreas: `
             "slots slots"
             "payment payment"
             "entry entry"
             "timeline ens"
-            "payout installment"
-            "members arc"
+            "payout members"
+            "arc arc"
           `
         }}>
           <div style={{ gridArea: 'slots' }}><SlotsCard /></div>
@@ -703,7 +702,6 @@ export default function FundingCirclePage() {
           <div style={{ gridArea: 'timeline' }}><TimelineCard /></div>
           <div style={{ gridArea: 'ens' }}><EnsCard /></div>
           <div style={{ gridArea: 'payout' }}><PayoutCard /></div>
-          <div style={{ gridArea: 'installment' }}><InstallmentCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} /></div>
           <div style={{ gridArea: 'members' }}><MembersCard /></div>
           <div style={{ gridArea: 'arc' }}><ArcCard /></div>
         </div>
