@@ -7,6 +7,8 @@ import { ArrowLeft, Check } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 
+// Main funding circle page component
+
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
