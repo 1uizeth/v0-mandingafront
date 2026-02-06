@@ -5,13 +5,17 @@ import Link from "next/link"
 import { ArrowLeft, Check, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { circleData, getEntryData } from "@/lib/circle-data"
-import Confetti from "react-confetti"
+import dynamic from "next/dynamic"
+
+// Dynamically import Confetti to avoid SSR issues
+const Confetti = dynamic(() => import("react-confetti"), { ssr: false })
 
 export default function PayoutPage() {
   const [selectedEntry, setSelectedEntry] = useState<string>("")
   const [hasWon, setHasWon] = useState(false)
   const [showConfetti, setShowConfetti] = useState(false)
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 })
+  const [mounted, setMounted] = useState(false)
   
   // Mock data - in real app this would come from blockchain
   const selectedWallet = "0x742d...4a8e"
@@ -21,6 +25,8 @@ export default function PayoutPage() {
   const isUserSelected = hasWon // User's wallet matches selected wallet
   
   useEffect(() => {
+    setMounted(true)
+    
     // Load selected entry from localStorage
     const storedEntry = localStorage.getItem('selectedEntry')
     if (storedEntry) {
@@ -38,10 +44,17 @@ export default function PayoutPage() {
     }
     
     // Set window size for confetti
-    setWindowSize({
-      width: window.innerWidth,
-      height: window.innerHeight
-    })
+    const updateWindowSize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      })
+    }
+    
+    updateWindowSize()
+    window.addEventListener('resize', updateWindowSize)
+    
+    return () => window.removeEventListener('resize', updateWindowSize)
   }, [])
 
   const entryData = getEntryData(selectedEntry)
@@ -50,7 +63,7 @@ export default function PayoutPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Confetti for winners */}
-      {showConfetti && (
+      {mounted && showConfetti && (
         <Confetti
           width={windowSize.width}
           height={windowSize.height}
