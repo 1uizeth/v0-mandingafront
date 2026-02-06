@@ -491,28 +491,24 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
   }
 
   return (
-    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L}`}>
-      {/* Responsive container: stacked on mobile, 3 columns on desktop */}
-      <div className="flex flex-col gap-8 lg:grid lg:grid-cols-3 lg:gap-6">
+    <div className={`rounded-3xl border border-[#E5E5E5] bg-white ${PADDING_L}`}>
+      {/* Vertical stack of entry groups on all screen sizes */}
+      <div className="flex flex-col gap-12">
         {entryGroups.map((group) => (
           <button
             key={group.id}
             onClick={() => handleEntryClick(group.id)}
             aria-label={`Select ${group.label}`}
             className={`
-              flex flex-col items-center gap-3 p-4 rounded-xl
-              transition-all duration-200 ease-out
-              hover:bg-opacity-10 focus:bg-opacity-10
-              active:scale-[0.98]
+              flex flex-col items-center gap-4 p-6 rounded-2xl
+              transition-all duration-150 ease-out
               focus:outline-none focus:ring-2 focus:ring-offset-2
               cursor-pointer
               ${selectedEntry === group.id ? 'ring-2 ring-offset-2' : ''}
             `}
             style={{
               backgroundColor: selectedEntry === group.id ? `${group.colorDefault}15` : 'transparent',
-              '--hover-bg': `${group.colorDefault}10`,
               '--focus-ring': group.colorDefault,
-              '--active-bg': `${group.colorDefault}15`,
             } as React.CSSProperties}
             onMouseEnter={(e) => {
               if (selectedEntry !== group.id) {
@@ -525,25 +521,25 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
               }
             }}
           >
-            {/* Circles: single row wrap on mobile, 4x2 grid on desktop */}
-            <div className="flex flex-wrap justify-center gap-2 lg:grid lg:grid-cols-4 lg:gap-2">
+            {/* Single row of 8 circles */}
+            <div className="flex items-center justify-center gap-3">
               {Array.from({ length: group.count }).map((_, i) => (
                 <div
                   key={i}
                   className="rounded-full flex-shrink-0"
                   style={{
-                    width: '40px',
-                    height: '40px',
+                    width: '56px',
+                    height: '56px',
                     backgroundColor: group.colorDefault
                   }}
                 />
               ))}
             </div>
             
-            {/* Label and description */}
-            <div className="flex flex-col items-center gap-1.5 text-center">
-              <span className="font-semibold text-base" style={{ color: group.colorDefault }}>{group.label}</span>
-              <p className={`${TYPOGRAPHY.bodyMuted} text-center text-sm`}>{group.description}</p>
+            {/* Label and description - centered */}
+            <div className="flex flex-col items-center gap-2 text-center max-w-md">
+              <span className="font-semibold text-lg" style={{ color: group.colorDefault }}>{group.label}</span>
+              <p className={`${TYPOGRAPHY.bodyMuted} text-center text-sm leading-relaxed`}>{group.description}</p>
             </div>
           </button>
         ))}
