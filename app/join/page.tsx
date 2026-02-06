@@ -177,7 +177,7 @@ function PreviewStep({ onContinue }: { onContinue: () => void }) {
             </div>
             <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
               <span className="text-[#666666]">Position</span>
-              <span className="font-medium text-[#1A1A1A]">Early entry</span>
+              <span className="font-medium text-[#1A1A1A]">{getEntryLabel()}</span>
             </div>
             <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
               <span className="text-[#666666]">Subtotal</span>
@@ -251,11 +251,11 @@ function SuccessScreen() {
               <span className="text-[#666666]">Claim tokens</span>
               <span className="font-semibold text-[#1A1A1A]">{formatNumber(circleData.monthlyAmount)}</span>
             </div>
-            <div className="flex justify-between py-1.5">
-              <span className="text-[#666666]">Position</span>
-              <span className="font-medium text-[#1A1A1A]">Early entry</span>
-            </div>
+          <div className="flex justify-between py-1.5">
+            <span className="text-[#666666]">Position</span>
+            <span className="font-medium text-[#1A1A1A]">{getEntryLabel()}</span>
           </div>
+        </div>
         </div>
 
         {/* CTA Button */}
@@ -319,7 +319,7 @@ function ConfirmStep({
           </div>
           <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
             <span className="text-[#666666]">Position</span>
-            <span className="font-medium text-[#1A1A1A]">Early entry</span>
+            <span className="font-medium text-[#1A1A1A]">{getEntryLabel()}</span>
           </div>
           <div className="flex justify-between py-1.5">
             <span className="text-[#666666]">Total commitment</span>
@@ -390,11 +390,27 @@ export default function JoinCirclePage() {
   const [executionStep, setExecutionStep] = useState(0)
   const [isExecuting, setIsExecuting] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [selectedEntry, setSelectedEntry] = useState<string>("early")
+
+  // Load selected entry from localStorage
+  useEffect(() => {
+    const entry = localStorage.getItem('selectedEntry') || 'early'
+    setSelectedEntry(entry)
+    console.log('[v0] Join page loaded with selected entry:', entry)
+  }, [])
 
   // Instant page load with skeleton
   useEffect(() => {
     setIsLoaded(true)
   }, [])
+
+  // Format entry label for display
+  const getEntryLabel = () => {
+    if (selectedEntry === 'early') return 'Early entry'
+    if (selectedEntry === 'middle') return 'Middle entry'
+    if (selectedEntry === 'late') return 'Late entry'
+    return 'Early entry' // fallback
+  }
 
   // Show toast notification
   const showToast = (message: string) => {
