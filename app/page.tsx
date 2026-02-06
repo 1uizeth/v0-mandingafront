@@ -622,17 +622,6 @@ function PaymentVisualizationCard({ isWalletConnected, selectedEntry }: { isWall
           <span className="font-semibold text-[#1A1A1A]">Due now</span>
           <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.dueAmount)}</span>
         </div>
-
-        {/* Join button - shows when wallet is connected */}
-        {isWalletConnected && (
-          <Button 
-            className="w-full rounded-full text-white mt-2 transition-colors"
-            style={{ backgroundColor: getButtonColor() }}
-            asChild
-          >
-            <Link href="/join">Join</Link>
-          </Button>
-        )}
       </div>
     </div>
   )
