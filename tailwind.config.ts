@@ -12,6 +12,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         handwriting: ['var(--font-patrick-hand)', 'cursive'],
+        'share-tech-mono': ['var(--font-share-tech-mono)', 'monospace'],
       },
       colors: {
         background: 'hsl(var(--background))',
