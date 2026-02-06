@@ -118,7 +118,7 @@ function Header({ isWalletConnected, onConnectWallet, onDisconnectWallet }: { is
       className="mx-auto max-w-[1280px] w-full px-6 md:px-10 pt-6 pb-6"
     >
       {/* Mobile + Tablet Header (<1024px): Two rows - controls then title */}
-      <div className="flex flex-col gap-3 lg:hidden">
+      <div className="flex flex-col gap-6 lg:hidden">
         {/* Row 1: Back button + Connect wallet */}
         <div className="flex items-center justify-between">
           <Link
@@ -143,8 +143,8 @@ function Header({ isWalletConnected, onConnectWallet, onDisconnectWallet }: { is
           </div>
         </div>
 
-        {/* Row 2: Title */}
-        <h1 className="text-xl font-semibold text-[#1A1A1A]">
+        {/* Row 2: Title - centered */}
+        <h1 className="text-xl font-semibold text-[#1A1A1A] text-center">
           ${formatNumber(circleData.amount)} {circleData.title}
         </h1>
       </div>
