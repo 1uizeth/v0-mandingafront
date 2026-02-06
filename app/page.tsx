@@ -492,15 +492,16 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
 
   return (
     <div className={`rounded-3xl border border-[#E5E5E5] bg-white ${PADDING_L}`}>
-      {/* Responsive: 3 columns on tablet+ (≥768px), stacked on mobile (≤767px) */}
-      <div className="flex flex-col gap-12 md:grid md:grid-cols-3 md:gap-6">
+      {/* Responsive: List mode on mobile, Column mode on tablet/desktop */}
+      <div className="flex flex-col gap-8 lg:grid lg:grid-cols-3 lg:gap-6">
         {entryGroups.map((group) => (
           <button
             key={group.id}
             onClick={() => handleEntryClick(group.id)}
             aria-label={`Select ${group.label}`}
             className={`
-              flex flex-col items-center gap-4 p-6 rounded-2xl
+              flex items-start gap-4 p-4 rounded-2xl
+              lg:flex-col lg:items-center lg:gap-3 lg:p-6
               transition-all duration-150 ease-out
               focus:outline-none focus:ring-2 focus:ring-offset-2
               cursor-pointer
@@ -521,25 +522,25 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
               }
             }}
           >
-            {/* Circles: 8 in single row on desktop, wrap on mobile */}
-            <div className="flex flex-wrap items-center justify-center gap-2 md:grid md:grid-cols-4 md:gap-2">
+            {/* Circles: 4x2 grid (no overlap) */}
+            <div className="grid grid-cols-4 gap-1.5 flex-shrink-0">
               {Array.from({ length: group.count }).map((_, i) => (
                 <div
                   key={i}
-                  className="rounded-full flex-shrink-0"
+                  className="rounded-full"
                   style={{
-                    width: '48px',
-                    height: '48px',
+                    width: '36px',
+                    height: '36px',
                     backgroundColor: group.colorDefault
                   }}
                 />
               ))}
             </div>
             
-            {/* Label and description - centered */}
-            <div className="flex flex-col items-center gap-2 text-center">
+            {/* Text: left-aligned on mobile, centered on desktop, fills container */}
+            <div className="flex flex-col gap-1 text-left lg:text-center lg:items-center flex-1">
               <span className="font-semibold text-base" style={{ color: group.colorDefault }}>{group.label}</span>
-              <p className={`${TYPOGRAPHY.bodyMuted} text-center text-sm leading-relaxed`}>{group.description}</p>
+              <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-relaxed`}>{group.description}</p>
             </div>
           </button>
         ))}
