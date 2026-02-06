@@ -527,8 +527,8 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
               }
             }}
           >
-            {/* Circles: 4x2 grid with equal row/column spacing, centered at top */}
-            <div className="grid grid-cols-4 gap-3 flex-shrink-0 xl:gap-5 xl:place-self-center">
+            {/* Circles: 4x2 grid with equal row/column spacing, centered */}
+            <div className="grid grid-cols-4 gap-3 flex-shrink-0 xl:gap-5 justify-center items-center">
               {Array.from({ length: group.count }).map((_, i) => (
                 <div
                   key={i}
