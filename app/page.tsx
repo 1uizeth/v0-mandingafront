@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { useEffect, useRef, useState } from "react"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
+import { RadialBarChart, RadialBar, PolarAngleAxis } from "recharts"
 
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
@@ -202,9 +203,39 @@ function TimelineCard() {
 // FULL CARD: Payout Progress
 // Header: Title | Counter ("01/24")
 // Progress bar with minimum 1% visible fill indicator
-function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boolean; hasJoined: boolean }) {
+function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletConnected: boolean; hasJoined: boolean; selectedEntry: string }) {
   const isPreJoin = !isWalletConnected || !hasJoined
   const progressPercentage = Math.max(1, (circleData.payoutProgress / circleData.totalMonths) * 100)
+
+  // Calculate chart data based on selected entry
+  const getChartData = () => {
+    const months = ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar"]
+    
+    if (selectedEntry === "early") {
+      // Early: months 1-8
+      return Array.from({ length: 8 }, (_, i) => ({
+        month: months[i],
+        value: 80 + (i * 2.5),
+        fill: `hsl(var(--entry-early-default))`
+      }))
+    } else if (selectedEntry === "middle") {
+      // Middle: months 8-16
+      return Array.from({ length: 8 }, (_, i) => ({
+        month: months[i],
+        value: 60 + (i * 2.5),
+        fill: `hsl(var(--entry-middle-default))`
+      }))
+    } else {
+      // Late: months 16-24
+      return Array.from({ length: 8 }, (_, i) => ({
+        month: months[i],
+        value: 40 + (i * 2.5),
+        fill: `hsl(var(--entry-late-default))`
+      }))
+    }
+  }
+
+  const chartData = isWalletConnected ? getChartData() : []
 
   if (isPreJoin) {
     return (
@@ -225,6 +256,31 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
           <span className="font-semibold text-[#1A1A1A]">Next round</span>
           <span className="font-semibold text-[#1A1A1A]">March 1</span>
         </div>
+
+        {/* Radial chart - shows when wallet connected */}
+        {isWalletConnected && chartData.length > 0 && (
+          <div className="flex justify-center mt-2">
+            <RadialBarChart
+              width={200}
+              height={200}
+              cx={100}
+              cy={100}
+              innerRadius={30}
+              outerRadius={90}
+              barSize={8}
+              data={chartData}
+              startAngle={180}
+              endAngle={0}
+            >
+              <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
+              <RadialBar
+                background
+                dataKey="value"
+                cornerRadius={10}
+              />
+            </RadialBarChart>
+          </div>
+        )}
       </div>
     )
   }
@@ -253,6 +309,31 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
         <span className="font-semibold text-[#1A1A1A]">Next round</span>
         <span className="font-semibold text-[#1A1A1A]">{circleData.payoutDueDate}</span>
       </div>
+
+      {/* Radial chart */}
+      {chartData.length > 0 && (
+        <div className="flex justify-center mt-2">
+          <RadialBarChart
+            width={200}
+            height={200}
+            cx={100}
+            cy={100}
+            innerRadius={30}
+            outerRadius={90}
+            barSize={8}
+            data={chartData}
+            startAngle={180}
+            endAngle={0}
+          >
+            <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
+            <RadialBar
+              background
+              dataKey="value"
+              cornerRadius={10}
+            />
+          </RadialBarChart>
+        </div>
+      )}
     </div>
   )
 }
@@ -378,7 +459,7 @@ function CircleGrid({
 
 // FULL CARD: Payment Container
 // Container card with title and embedded Installments sub-card
-function PaymentVisualizationCard() {
+function PaymentVisualizationCard({ isWalletConnected }: { isWalletConnected: boolean }) {
   const progressPercentage = Math.max(1, (circleData.installmentProgress / circleData.totalMonths) * 100)
   
   return (
@@ -411,6 +492,16 @@ function PaymentVisualizationCard() {
           <span className="font-semibold text-[#1A1A1A]">Due on sign up</span>
           <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.dueAmount)}</span>
         </div>
+
+        {/* Join button - shows when wallet is connected */}
+        {isWalletConnected && (
+          <Button 
+            className="w-full rounded-full bg-[#1A1A1A] text-white hover:bg-[#333333] mt-2"
+            asChild
+          >
+            <Link href="/join">Join</Link>
+          </Button>
+        )}
       </div>
     </div>
   )
@@ -418,9 +509,8 @@ function PaymentVisualizationCard() {
 
 // FULL CARD: Entry Status
 // Interactive entry selection with hover states and wallet gating
-function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) {
+function EntryStatusCard({ isWalletConnected, selectedEntry, onSelectEntry }: { isWalletConnected: boolean; selectedEntry: string; onSelectEntry: (id: string) => void }) {
   const { toast } = useToast()
-  const [selectedEntry, setSelectedEntry] = useState<string | null>(null)
   
   const entryGroups = [
     {
@@ -457,20 +547,13 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
       toast({
         title: "Connect your wallet to simulate entry",
         description: "You need to connect your wallet first",
-        action: {
-          altText: "Connect wallet",
-          onClick: () => {
-            // Trigger wallet connection
-            console.log("[v0] Connect wallet action triggered")
-          },
-        },
         duration: 4000,
       })
       return
     }
     
     // Start simulation for selected entry
-    setSelectedEntry(entryId)
+    onSelectEntry(entryId)
     console.log("[v0] Starting simulation for:", entryId)
   }
 
@@ -701,11 +784,20 @@ function SlotsCard() {
 }
 
 export default function FundingCirclePage() {
+  const { toast } = useToast()
   const [isWalletConnected, setIsWalletConnected] = useState(false)
   const [hasJoined, setHasJoined] = useState(false)
+  const [selectedEntry, setSelectedEntry] = useState<string>("early")
 
   const handleConnectWallet = () => {
-    setIsWalletConnected(true)
+    toast({
+      title: "Connecting wallet...",
+      duration: 2000,
+    })
+    
+    setTimeout(() => {
+      setIsWalletConnected(true)
+    }, 1500)
   }
 
   return (
@@ -717,10 +809,10 @@ export default function FundingCirclePage() {
         {/* MOBILE (<768px): Single column stack */}
         <div className="flex flex-col gap-4 md:hidden">
           <SlotsCard />
-          <PaymentVisualizationCard />
-          <EntryStatusCard isWalletConnected={isWalletConnected} />
+          <PaymentVisualizationCard isWalletConnected={isWalletConnected} />
+          <EntryStatusCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
           <TimelineCard />
-          <PayoutCard />
+          <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} />
           <EnsCard />
           <MembersCard />
           <ArcCard />
@@ -740,11 +832,11 @@ export default function FundingCirclePage() {
           `
         }}>
           <div style={{ gridArea: 'slots' }}><SlotsCard /></div>
-          <div style={{ gridArea: 'payment' }}><PaymentVisualizationCard /></div>
-          <div style={{ gridArea: 'entry' }}><EntryStatusCard isWalletConnected={isWalletConnected} /></div>
+          <div style={{ gridArea: 'payment' }}><PaymentVisualizationCard isWalletConnected={isWalletConnected} /></div>
+          <div style={{ gridArea: 'entry' }}><EntryStatusCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} /></div>
           <div style={{ gridArea: 'timeline' }}><TimelineCard /></div>
           <div style={{ gridArea: 'ens' }}><EnsCard /></div>
-          <div style={{ gridArea: 'payout' }}><PayoutCard /></div>
+          <div style={{ gridArea: 'payout' }}><PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} /></div>
           <div style={{ gridArea: 'members' }}><MembersCard /></div>
           <div style={{ gridArea: 'arc' }}><ArcCard /></div>
         </div>
@@ -763,13 +855,13 @@ export default function FundingCirclePage() {
           <div className={`flex flex-col ${GAP_M}`}>
             <SlotsCard />
             <TimelineCard />
-            <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} />
+            <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} />
           </div>
 
           {/* COLUMN 2: Center stack - WIDER (Pay container with embedded Installments, Entry Status) */}
           <div className={`flex flex-col ${GAP_M}`}>
-            <PaymentVisualizationCard />
-            <EntryStatusCard isWalletConnected={isWalletConnected} />
+            <PaymentVisualizationCard isWalletConnected={isWalletConnected} />
+            <EntryStatusCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
           </div>
 
           {/* COLUMN 3: Right stack (Active members, ENS, Arc) */}
