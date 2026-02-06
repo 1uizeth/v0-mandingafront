@@ -11,8 +11,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        script: ['var(--font-dancing-script)', 'cursive'],
-        champion: ['"Champ W90 Ultra"', 'cursive'],
+        handwriting: ['var(--font-patrick-hand)', 'cursive'],
       },
       colors: {
         background: 'hsl(var(--background))',
