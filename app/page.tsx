@@ -618,7 +618,7 @@ function EntryStatusCard({ isWalletConnected, selectedEntry, onSelectEntry }: { 
     {
       id: "late",
       label: "Late entry",
-      description: "Up to 8 months before end of circle anticipation.",
+      description: "Payout up to 8 months before ending.",
       colorDefault: "hsl(var(--entry-late-default))",
       colorHover: "hsl(var(--entry-late-hover))",
       colorActive: "hsl(var(--entry-late-active))",
