@@ -492,8 +492,8 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
 
   return (
     <div className={`rounded-3xl border border-[#E5E5E5] bg-white ${PADDING_L}`}>
-      {/* Vertical stack of entry groups on all screen sizes */}
-      <div className="flex flex-col gap-12">
+      {/* Responsive: 3 columns on tablet+ (≥768px), stacked on mobile (≤767px) */}
+      <div className="flex flex-col gap-12 md:grid md:grid-cols-3 md:gap-6">
         {entryGroups.map((group) => (
           <button
             key={group.id}
@@ -521,15 +521,15 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
               }
             }}
           >
-            {/* Single row of 8 circles */}
-            <div className="flex items-center justify-center gap-3">
+            {/* Circles: 8 in single row on desktop, wrap on mobile */}
+            <div className="flex flex-wrap items-center justify-center gap-2 md:grid md:grid-cols-4 md:gap-2">
               {Array.from({ length: group.count }).map((_, i) => (
                 <div
                   key={i}
                   className="rounded-full flex-shrink-0"
                   style={{
-                    width: '56px',
-                    height: '56px',
+                    width: '48px',
+                    height: '48px',
                     backgroundColor: group.colorDefault
                   }}
                 />
@@ -537,8 +537,8 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
             </div>
             
             {/* Label and description - centered */}
-            <div className="flex flex-col items-center gap-2 text-center max-w-md">
-              <span className="font-semibold text-lg" style={{ color: group.colorDefault }}>{group.label}</span>
+            <div className="flex flex-col items-center gap-2 text-center">
+              <span className="font-semibold text-base" style={{ color: group.colorDefault }}>{group.label}</span>
               <p className={`${TYPOGRAPHY.bodyMuted} text-center text-sm leading-relaxed`}>{group.description}</p>
             </div>
           </button>
