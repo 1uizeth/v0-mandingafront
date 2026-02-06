@@ -89,11 +89,7 @@ const MOCK_WALLET_ENS = "user.eth"
 function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boolean; onConnectWallet: () => void }) {
   return (
     <header 
-      className="mx-auto max-w-[1280px] w-full px-6 md:px-10"
-      style={{ 
-        paddingTop: 'clamp(32px, 6vh, 64px)', 
-        paddingBottom: 'clamp(24px, 4vh, 48px)' 
-      }}
+      className="mx-auto max-w-[1280px] w-full px-6 md:px-10 pt-6 pb-6"
     >
       {/* Mobile + Tablet Header (<1024px): 3-column grid for stable centering */}
       <div 
