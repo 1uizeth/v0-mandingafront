@@ -248,10 +248,15 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
         />
       </div>
 
-      {/* Content row: text left, amount right */}
+      {/* Footer row: label left, date right */}
       <div className="flex items-center justify-between">
-        <span className="font-semibold text-[#1A1A1A]">Always due on the 1st, every month</span>
-        <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.amount)}</span>
+        <span className={TYPOGRAPHY.label}>Next due on</span>
+        <span className="font-semibold text-[#1A1A1A]">{circleData.payoutDueDate}</span>
+      </div>
+
+      {/* Large amount pill */}
+      <div className="rounded-full bg-[#F5F5F5] px-6 py-3 text-center">
+        <span className={`${TYPOGRAPHY.display} text-[#1A1A1A]`}>${formatNumber(circleData.amount)}</span>
       </div>
     </div>
   )
@@ -377,10 +382,10 @@ function CircleGrid({
 }
 
 // FULL CARD: Payment Visualization
-// Content-driven layout: Title → Description → Dots Grid (no forced height)
+// Compact layout: Title → Description → Single-row progress dots (no forced height)
 function PaymentVisualizationCard() {
   return (
-    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M} w-full`}>
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
       <div>
         <h2 className={`${TYPOGRAPHY.h3} text-[#1A1A1A]`}>
           Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
@@ -389,16 +394,30 @@ function PaymentVisualizationCard() {
           Early entry: priority access to payouts in the first 8 months.
         </p>
       </div>
-      <div>
-        <CircleGrid 
-          totalDots={circleData.totalMonths}
-          filledDot={circleData.currentMonth}
-          earlyEntryDots={circleData.earlyEntryMonths}
-          dotSize={32}
-          baseGap={10}
-          minGap={6}
-          maxGap={18}
-        />
+      
+      {/* Single-row progress dots */}
+      <div className="flex items-center gap-1">
+        {Array.from({ length: circleData.totalMonths }).map((_, i) => {
+          const dotNumber = i + 1
+          const isFilled = dotNumber === circleData.currentMonth
+          const isEarlyEntry = circleData.earlyEntryMonths.includes(dotNumber)
+          
+          let bgColor = "#E5E5E5"
+          if (isFilled) bgColor = "#1A1A1A"
+          else if (isEarlyEntry) bgColor = "#C4B5FD"
+          
+          return (
+            <div
+              key={i}
+              className="rounded-full"
+              style={{
+                width: '12px',
+                height: '12px',
+                backgroundColor: bgColor
+              }}
+            />
+          )
+        })}
       </div>
     </div>
   )
@@ -453,17 +472,23 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
         />
       </div>
 
-      {/* Content row: text left, amount right */}
+      {/* Footer row: label left, date right */}
       <div className="flex items-center justify-between">
-        <span className="font-semibold text-[#1A1A1A]">Always due on the 5th, every month</span>
-        <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.dueAmount)}</span>
+        <span className={TYPOGRAPHY.label}>Next due on</span>
+        <span className="font-semibold text-[#1A1A1A]">March 5</span>
+      </div>
+
+      {/* Amount display */}
+      <div className="flex items-center justify-between">
+        <span className="font-semibold text-[#1A1A1A]">Amount</span>
+        <span className="text-2xl font-bold text-[#1A1A1A]">${formatNumber(circleData.dueAmount)}</span>
       </div>
     </div>
   )
 }
 
 // INFRA CARD: ENS Integration
-// Header (two-column: logo+name | link) → Description → ENS pill
+// Header (two-column: logo+name | link) → Compact tag (matches Arc card style)
 function EnsCard() {
   return (
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
@@ -486,14 +511,11 @@ function EnsCard() {
         </a>
       </div>
 
-      {/* Description - muted, below header */}
-      <p className={TYPOGRAPHY.bodyMuted}>
-        Public ENS name for this circle's vault.
-      </p>
-
-      {/* Primary Object - ENS pill */}
-      <div className="rounded-full bg-[#E3F2FD] px-4 py-2 text-center">
-        <span className={`${TYPOGRAPHY.button} text-[#1976D2]`}>{circleData.ensDomain}</span>
+      {/* Compact rounded tag */}
+      <div className="inline-flex self-start">
+        <div className="rounded-full bg-[#E3F2FD] px-3 py-1.5">
+          <span className={`${TYPOGRAPHY.button} text-[#1976D2]`}>{circleData.ensDomain}</span>
+        </div>
       </div>
     </div>
   )
