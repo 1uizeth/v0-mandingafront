@@ -1126,15 +1126,35 @@ export default function FundingCirclePage() {
 
   // Load state from localStorage on mount (client-only, after hydration)
   useEffect(() => {
-    const storedWallet = localStorage.getItem('isWalletConnected')
-    const storedJoined = localStorage.getItem('hasJoined')
-    const storedEntry = localStorage.getItem('selectedEntry')
+    const loadState = () => {
+      const storedWallet = localStorage.getItem('walletConnected')
+      const storedJoined = localStorage.getItem('hasJoined')
+      const storedEntry = localStorage.getItem('selectedEntry')
+      
+      console.log('[v0] Loading state from localStorage:', { storedWallet, storedJoined, storedEntry })
+      
+      if (storedWallet === 'true') setIsWalletConnected(true)
+      else setIsWalletConnected(false)
+      
+      if (storedJoined === 'true') setHasJoined(true)
+      else setHasJoined(false)
+      
+      if (storedEntry) setSelectedEntry(storedEntry)
+      else setSelectedEntry("")
+    }
     
-    console.log('[v0] Main page loaded - localStorage state:', { storedWallet, storedJoined, storedEntry })
+    loadState()
     
-    if (storedWallet === 'true') setIsWalletConnected(true)
-    if (storedJoined === 'true') setHasJoined(true)
-    if (storedEntry) setSelectedEntry(storedEntry)
+    // Refresh state when page becomes visible (user returns from join page)
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        console.log('[v0] Page became visible - refreshing state')
+        loadState()
+      }
+    }
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [])
 
   const handleConnectWallet = () => {
@@ -1162,18 +1182,14 @@ export default function FundingCirclePage() {
   }
 
   const handleDisconnectWallet = () => {
-    // Clear localStorage
+    console.log('[v0] Disconnecting wallet - clearing all state')
     localStorage.removeItem('walletConnected')
     localStorage.removeItem('hasJoined')
     localStorage.removeItem('selectedEntry')
-    
-    // Reset state to before-joining
     setIsWalletConnected(false)
     setHasJoined(false)
     setSelectedEntry("")
-    setHoveredEntry("")
-    
-    console.log('[v0] Wallet disconnected - reset to before-joining state')
+    console.log('[v0] Wallet disconnected - reset to initial state')
   }
 
   // Skeleton loading screen for instant render
