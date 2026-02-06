@@ -1,11 +1,12 @@
 import React from "react"
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Geist, Geist_Mono, Dancing_Script } from 'next/font/google'
 
 import './globals.css'
 
 const _geist = Geist({ subsets: ['latin'] })
 const _geistMono = Geist_Mono({ subsets: ['latin'] })
+export const dancingScript = Dancing_Script({ subsets: ['latin'], variable: '--font-dancing-script' })
 
 export const metadata: Metadata = {
   title: 'Funding Circle - Devcon 2026',
@@ -19,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={dancingScript.variable}>
       <body className="font-sans antialiased">{children}</body>
     </html>
   )

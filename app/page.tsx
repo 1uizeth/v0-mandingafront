@@ -229,7 +229,7 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
         {/* Large centered amount pill - primary focus */}
         <div className="flex justify-center mt-2">
           <div className="rounded-full bg-[#F5F5F5] px-8 py-4">
-            <span className="text-5xl font-semibold text-[#1A1A1A] italic tracking-tight">${formatNumber(circleData.amount)}</span>
+            <span className="font-script text-4xl text-[#1A1A1A] italic">${formatNumber(circleData.amount)}</span>
           </div>
         </div>
       </div>
@@ -264,7 +264,7 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
       {/* Large centered amount pill - primary focus */}
       <div className="flex justify-center mt-2">
         <div className="rounded-full bg-[#F5F5F5] px-8 py-4">
-          <span className="text-5xl font-semibold text-[#1A1A1A] italic tracking-tight">${formatNumber(circleData.amount)}</span>
+          <span className="font-script text-4xl text-[#1A1A1A] italic">${formatNumber(circleData.amount)}</span>
         </div>
       </div>
     </div>
