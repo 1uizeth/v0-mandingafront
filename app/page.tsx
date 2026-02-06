@@ -113,10 +113,9 @@ function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boo
 
         {/* Column 2: Title - always centered */}
         <div className="justify-self-center text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-[#1A1A1A]">
-            ${formatNumber(circleData.amount)}
+          <h1 className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">
+            ${formatNumber(circleData.amount)} {circleData.title}
           </h1>
-          <p className="text-sm md:text-base text-[#1A1A1A]">{circleData.title}</p>
         </div>
 
         {/* Column 3: Wallet - end aligned */}
@@ -154,11 +153,10 @@ function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boo
         </div>
 
         {/* Column 2: Title - always centered */}
-        <div className="justify-self-center text-center flex flex-col items-center gap-1 whitespace-nowrap">
-          <h1 className="text-5xl font-bold text-[#1A1A1A]">
-            ${formatNumber(circleData.amount)}
+        <div className="justify-self-center text-center whitespace-nowrap">
+          <h1 className="text-lg font-semibold text-[#1A1A1A]">
+            ${formatNumber(circleData.amount)} {circleData.title}
           </h1>
-          <p className="text-lg text-[#1A1A1A]">{circleData.title}</p>
         </div>
 
         {/* Column 3: Wallet - end aligned */}
