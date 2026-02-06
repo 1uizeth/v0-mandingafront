@@ -315,9 +315,10 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
         <div className="h-2 w-full overflow-hidden rounded-full bg-[#E5E5E5] relative">
           {simulationData ? (
             <div 
-              className="h-full rounded-full transition-all absolute left-0" 
+              className="h-full rounded-full transition-all absolute" 
               style={{ 
-                width: `${simulationData.percentage}%`,
+                left: activeEntry === "early" ? "0%" : activeEntry === "middle" ? "33.33%" : "66.66%",
+                width: "33.33%",
                 backgroundColor: simulationData.color
               }} 
             />
