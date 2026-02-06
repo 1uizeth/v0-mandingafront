@@ -633,8 +633,7 @@ function EntryStatusCard({ isWalletConnected, selectedEntry, onSelectEntry }: { 
   const handleEntryClick = (entryId: string) => {
     if (!isWalletConnected) {
       toast({
-        title: "Connect your wallet to simulate entry",
-        description: "You need to connect your wallet first",
+        title: "Please, connect your wallet",
         duration: 4000,
       })
       return
