@@ -431,55 +431,55 @@ function PaymentVisualizationCard() {
 }
 
 // FULL CARD: Entry Status
-// Three color-coded dot grids (Early, Middle, Late entry) with labels and descriptions
+// Three color-coded dot grids with fluid responsive layout - circles flow in lines
 function EntryStatusCard() {
   const entryGroups = [
     {
       label: "Early entry",
       description: "Priority access to payout in the first 8 months.",
-      color: "#10B981" // green
+      color: "#10B981", // green
+      count: 8
     },
     {
       label: "Middle entry",
       description: "Payout in 8 to 16 months.",
-      color: "#14B8A6" // teal
+      color: "#14B8A6", // teal
+      count: 8
     },
     {
       label: "Late entry",
       description: "Up to 8 months before end of circle anticipation.",
-      color: "#3B82F6" // blue
+      color: "#3B82F6", // blue
+      count: 8
     }
   ]
 
   return (
-    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
-      {/* Three groups - responsive: stacked on mobile, 3 columns on desktop */}
-      <div className="flex flex-col gap-6 lg:grid lg:grid-cols-3 lg:gap-8">
-        {entryGroups.map((group, groupIndex) => (
-          <div key={groupIndex} className="flex flex-col items-center gap-3">
-            {/* Dot grid: 4 dots per row, 2 rows with proper spacing */}
-            <div className="grid grid-cols-4 gap-3">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="rounded-full"
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    backgroundColor: group.color
-                  }}
-                />
-              ))}
-            </div>
-            
-            {/* Label and description */}
-            <div className="flex flex-col items-center gap-1.5 text-center">
-              <span className={`font-semibold text-sm`} style={{ color: group.color }}>{group.label}</span>
-              <p className={`${TYPOGRAPHY.bodyMuted} text-center text-sm`}>{group.description}</p>
-            </div>
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col gap-8`}>
+      {entryGroups.map((group, groupIndex) => (
+        <div key={groupIndex} className="flex flex-col items-center gap-4">
+          {/* Fluid circle grid - wraps based on available space */}
+          <div className="flex flex-wrap justify-center gap-2">
+            {Array.from({ length: group.count }).map((_, i) => (
+              <div
+                key={i}
+                className="rounded-full flex-shrink-0"
+                style={{
+                  width: '48px',
+                  height: '48px',
+                  backgroundColor: group.color
+                }}
+              />
+            ))}
           </div>
-        ))}
-      </div>
+          
+          {/* Label and description */}
+          <div className="flex flex-col items-center gap-1.5 text-center">
+            <span className="font-semibold text-base" style={{ color: group.color }}>{group.label}</span>
+            <p className={`${TYPOGRAPHY.bodyMuted} text-center text-sm max-w-md`}>{group.description}</p>
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
