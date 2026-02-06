@@ -706,10 +706,9 @@ function EntryStatusCard({ isWalletConnected, selectedEntry, hoveredEntry, onSel
               focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
               cursor-pointer
               ${selectedEntry === group.id && !hoveredEntry ? 'ring-2 ring-inset' : ''}
-              ${hoveredEntry === group.id ? 'ring-1 ring-inset' : ''}
             `}
             style={{
-              backgroundColor: selectedEntry === group.id && !hoveredEntry ? `${group.colorDefault}15` : hoveredEntry === group.id ? `${group.colorDefault}08` : 'transparent',
+              backgroundColor: hoveredEntry === group.id ? `${group.colorDefault}08` : 'transparent',
               '--tw-ring-color': group.colorDefault,
               '--focus-ring': group.colorDefault,
             } as React.CSSProperties}
