@@ -152,7 +152,7 @@ function TermsStep({ onSign }: { onSign: () => void }) {
 }
 
 // Step 2: Review
-function PreviewStep({ onContinue }: { onContinue: () => void }) {
+function PreviewStep({ onContinue, getEntryLabel }: { onContinue: () => void; getEntryLabel: () => string }) {
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white">
       {/* Header */}
@@ -275,12 +275,14 @@ function ConfirmStep({
   onConfirm,
   agreementSignedAt,
   executionStep,
-  isExecuting
+  isExecuting,
+  getEntryLabel
 }: { 
   onConfirm: () => void
   agreementSignedAt: Date | null
   executionStep: number
   isExecuting: boolean
+  getEntryLabel: () => string
 }) {
   const formattedDate = agreementSignedAt 
     ? agreementSignedAt.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })
@@ -543,17 +545,18 @@ export default function JoinCirclePage() {
               {currentStep === 1 && (
                 <TermsStep onSign={handleSignAgreement} />
               )}
-              {currentStep === 2 && (
-                <PreviewStep onContinue={handlePreviewContinue} />
-              )}
-              {currentStep === 3 && (
-                <ConfirmStep 
-                  onConfirm={handleConfirm}
-                  agreementSignedAt={agreementSignedAt}
-                  executionStep={executionStep}
-                  isExecuting={isExecuting}
-                />
-              )}
+  {currentStep === 2 && (
+    <PreviewStep onContinue={handlePreviewContinue} getEntryLabel={getEntryLabel} />
+  )}
+  {currentStep === 3 && (
+    <ConfirmStep
+      onConfirm={handleConfirm}
+      agreementSignedAt={agreementSignedAt}
+      executionStep={executionStep}
+      isExecuting={isExecuting}
+      getEntryLabel={getEntryLabel}
+    />
+  )}
             </>
           )}
         </div>
