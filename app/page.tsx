@@ -585,6 +585,14 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
           </svg>
         </div>
       )}
+
+      {/* View payout button - only shown when joined */}
+      <Button 
+        className="w-full rounded-full bg-[#1A1A1A] text-white hover:bg-[#333333] mt-2"
+        asChild
+      >
+        <Link href="/payout">View payout</Link>
+      </Button>
     </div>
   )
 }
