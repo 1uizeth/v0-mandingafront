@@ -216,6 +216,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
         nextRound: "Round 1",
         nextRoundLabel: "Next round - Early",
         nextRoundDate: "March 1",
+        nextRoundYear: "2026",
         color: "hsl(var(--entry-early-default))",
         percentage: (1 / 24) * 100 // Round 1 of 24 total rounds
       }
@@ -227,6 +228,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
         nextRound: "Round 9",
         nextRoundLabel: "Next round - Middle",
         nextRoundDate: "November 1",
+        nextRoundYear: "2026",
         color: "hsl(var(--entry-middle-default))",
         percentage: (9 / 24) * 100 // Round 9 of 24 total rounds
       }
@@ -238,6 +240,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
         nextRound: "Round 17",
         nextRoundLabel: "Next round - Late",
         nextRoundDate: "July 1",
+        nextRoundYear: "2027",
         color: "hsl(var(--entry-late-default))",
         percentage: (17 / 24) * 100 // Round 17 of 24 total rounds
       }
@@ -339,7 +342,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
           </div>
           <div className="flex flex-col gap-1 items-end">
             <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">{simulationData?.nextRoundDate || "March 1"}</span>
-            <span className={TYPOGRAPHY.label}>2026</span>
+            <span className={TYPOGRAPHY.label}>{simulationData?.nextRoundYear || "2026"}</span>
           </div>
         </div>
 
