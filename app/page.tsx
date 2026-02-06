@@ -815,8 +815,9 @@ function EntryStatusCard({ isWalletConnected, hasJoined, selectedEntry, hoveredE
     
     // If user has already joined, show toast instead of changing selection
     if (hasJoined) {
+      const entryLabel = entryGroups.find(g => g.id === selectedEntry)?.label || "this entry"
       toast({
-        title: "You can't change after joining",
+        title: `You've joined this circle on ${entryLabel}`,
         duration: 4000,
       })
       return
@@ -1146,9 +1147,9 @@ export default function FundingCirclePage() {
   }
 
   const showJoinedToast = () => {
-    // Show message when user tries to change entry after joining
+    const entryLabel = selectedEntry === "early" ? "Early entry" : selectedEntry === "middle" ? "Middle entry" : "Late entry"
     toast({
-      title: "You can't change after joining",
+      title: `You've joined this circle on ${entryLabel}`,
       duration: 4000,
     })
   }
