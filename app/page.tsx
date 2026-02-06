@@ -1146,6 +1146,7 @@ export default function FundingCirclePage() {
   }
 
   const showJoinedToast = () => {
+    // Show message when user tries to change entry after joining
     toast({
       title: "You can't change after joining",
       duration: 4000,
