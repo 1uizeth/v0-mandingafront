@@ -206,6 +206,36 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
   const isPreJoin = !isWalletConnected || !hasJoined
   const progressPercentage = Math.max(1, (circleData.payoutProgress / circleData.totalMonths) * 100)
 
+  // Get simulation data based on selected entry
+  const getSimulationData = () => {
+    if (selectedEntry === "early") {
+      return {
+        start: 0,
+        end: 8,
+        counter: "00/08",
+        color: "hsl(var(--entry-early-default))",
+        percentage: 33.33 // 8/24
+      }
+    } else if (selectedEntry === "middle") {
+      return {
+        start: 8,
+        end: 16,
+        counter: "08/16",
+        color: "hsl(var(--entry-middle-default))",
+        percentage: 66.66 // 16/24
+      }
+    } else if (selectedEntry === "late") {
+      return {
+        start: 16,
+        end: 24,
+        counter: "16/24",
+        color: "hsl(var(--entry-late-default))",
+        percentage: 100 // 24/24
+      }
+    }
+    return null
+  }
+
   // Generate 24 rings (months) for the circular chart
   const getRings = () => {
     const rings = []
@@ -215,8 +245,13 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
       let isActive = false
       let color = "#E5E5E5" // Inactive gray
       
-      // Early entry: rings 0-7 (innermost)
-      if (selectedEntry === "early" && i < 8) {
+      // First ring (smallest/innermost) is always black to represent current round
+      if (i === 0) {
+        color = "#1A1A1A"
+        isActive = true
+      }
+      // Early entry: rings 1-7 (innermost)
+      else if (selectedEntry === "early" && i > 0 && i < 8) {
         isActive = true
         color = "hsl(var(--entry-early-default))"
       }
@@ -237,26 +272,42 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
     return rings
   }
 
+  const simulationData = isWalletConnected && selectedEntry ? getSimulationData() : null
   const rings = isWalletConnected ? getRings() : []
 
   if (isPreJoin) {
     return (
       <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col gap-3`}>
-        {/* Header: Title | Counter (empty pre-join) */}
+        {/* Header: Title | Counter (simulation counter when selected) */}
         <div className="flex items-center justify-between">
           <span className={TYPOGRAPHY.label}>Payouts</span>
-          <span className={TYPOGRAPHY.caption}>00/{circleData.totalMonths}</span>
+          <span className={TYPOGRAPHY.caption}>
+            {simulationData ? simulationData.counter : `00/${circleData.totalMonths}`}
+          </span>
         </div>
 
-        {/* Progress bar with 1% initial fill */}
+        {/* Progress bar with simulation fill when entry selected */}
         <div className="h-2 w-full overflow-hidden rounded-full bg-[#E5E5E5]">
-          <div className="h-full w-[1%] bg-[#1A1A1A] rounded-full" />
+          {simulationData ? (
+            <div 
+              className="h-full rounded-full transition-all" 
+              style={{ 
+                width: `${simulationData.percentage}%`,
+                backgroundColor: simulationData.color
+              }} 
+            />
+          ) : (
+            <div className="h-full w-[1%] bg-[#1A1A1A] rounded-full" />
+          )}
         </div>
 
-        {/* Due info row: label left, date right */}
-        <div className="flex items-center justify-between">
-          <span className="font-semibold text-[#1A1A1A]">Next round</span>
-          <span className="font-semibold text-[#1A1A1A]">March 1</span>
+        {/* Round info */}
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold text-[#1A1A1A]">Round 1</span>
+            <span className="font-semibold text-[#1A1A1A]">March 1</span>
+          </div>
+          <span className={TYPOGRAPHY.label}>Next round</span>
         </div>
 
         {/* Circular rings chart - shows when wallet connected */}
@@ -306,10 +357,13 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
         />
       </div>
 
-      {/* Due info row: label left, date right */}
-      <div className="flex items-center justify-between">
-        <span className="font-semibold text-[#1A1A1A]">Next round</span>
-        <span className="font-semibold text-[#1A1A1A]">{circleData.payoutDueDate}</span>
+      {/* Round info */}
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center justify-between">
+          <span className="font-semibold text-[#1A1A1A]">Round 1</span>
+          <span className="font-semibold text-[#1A1A1A]">{circleData.payoutDueDate}</span>
+        </div>
+        <span className={TYPOGRAPHY.label}>Next round</span>
       </div>
 
       {/* Circular rings chart */}
