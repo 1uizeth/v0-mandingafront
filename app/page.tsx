@@ -86,9 +86,33 @@ const circleData = {
 }
 
 // Mock connected wallet ENS name
-const MOCK_WALLET_ENS = "user.eth"
+const MOCK_WALLET_ENS = "1uiz.eth"
 
-function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boolean; onConnectWallet: () => void }) {
+// Wallet Button Component with disconnect on hover
+function WalletButton({ onDisconnect }: { onDisconnect: () => void }) {
+  const [isHovered, setIsHovered] = useState(false)
+
+  return (
+    <div
+      className="relative rounded-full border border-[#E5E5E5] px-4 py-1.5 md:px-6 md:py-2 text-sm font-medium text-[#1A1A1A] whitespace-nowrap cursor-pointer transition-colors hover:bg-[#FAFAFA]"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {isHovered ? (
+        <button
+          onClick={onDisconnect}
+          className="text-[#1A1A1A] transition-colors hover:text-[#666666]"
+        >
+          Disconnect
+        </button>
+      ) : (
+        <span>{MOCK_WALLET_ENS}</span>
+      )}
+    </div>
+  )
+}
+
+function Header({ isWalletConnected, onConnectWallet, onDisconnectWallet }: { isWalletConnected: boolean; onConnectWallet: () => void; onDisconnectWallet: () => void }) {
   return (
     <header 
       className="mx-auto max-w-[1280px] w-full px-6 md:px-10 pt-6 pb-6"
@@ -119,9 +143,7 @@ function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boo
         {/* Column 3: Wallet - end aligned */}
         <div className="justify-self-end">
           {isWalletConnected ? (
-            <div className="rounded-full border border-[#E5E5E5] px-4 py-1.5 text-sm font-medium text-[#1A1A1A]">
-              {MOCK_WALLET_ENS}
-            </div>
+            <WalletButton onDisconnect={onDisconnectWallet} />
           ) : (
             <Button 
               variant="outline" 
@@ -160,9 +182,7 @@ function Header({ isWalletConnected, onConnectWallet }: { isWalletConnected: boo
         {/* Column 3: Wallet - end aligned */}
         <div className="justify-self-end">
           {isWalletConnected ? (
-            <div className="rounded-full border border-[#E5E5E5] px-6 py-2 text-sm font-medium text-[#1A1A1A] whitespace-nowrap">
-              {MOCK_WALLET_ENS}
-            </div>
+            <WalletButton onDisconnect={onDisconnectWallet} />
           ) : (
             <Button 
               variant="outline" 
@@ -1154,10 +1174,25 @@ export default function FundingCirclePage() {
     })
   }
 
+  const handleDisconnectWallet = () => {
+    // Clear localStorage
+    localStorage.removeItem('walletConnected')
+    localStorage.removeItem('hasJoined')
+    localStorage.removeItem('selectedEntry')
+    
+    // Reset state to before-joining
+    setIsWalletConnected(false)
+    setHasJoined(false)
+    setSelectedEntry("")
+    setHoveredEntry("")
+    
+    console.log('[v0] Wallet disconnected - reset to before-joining state')
+  }
+
   return (
     <>
     <div className="min-h-screen bg-white flex flex-col">
-      <Header isWalletConnected={isWalletConnected} onConnectWallet={handleConnectWallet} />
+      <Header isWalletConnected={isWalletConnected} onConnectWallet={handleConnectWallet} onDisconnectWallet={handleDisconnectWallet} />
 
       <main className="flex-1 flex flex-col justify-center mx-auto max-w-[1280px] w-full px-6 md:px-10 pb-12 pt-4 box-border">
         {/* MOBILE (<768px): Single column stack */}
