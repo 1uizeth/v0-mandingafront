@@ -254,7 +254,7 @@ function SuccessScreen() {
 
         {/* CTA Button */}
         <Button 
-          onClick={() => router.push("/")}
+          onClick={() => router.push("/?joined=true")}
           className="w-full max-w-sm rounded-full bg-[#1A1A1A] px-6 py-4 text-sm font-semibold text-white hover:bg-[#333333] mt-8"
         >
           Go back to circle
