@@ -500,35 +500,42 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
             onClick={() => handleEntryClick(group.id)}
             aria-label={`Select ${group.label}`}
             className={`
+              group relative
               flex items-start gap-4 p-4 rounded-2xl
               xl:flex-col xl:items-center xl:gap-4 xl:p-6
-              transition-all duration-150 ease-out
-              focus:outline-none focus:ring-2 focus:ring-offset-2
+              transition-all duration-200 ease-out
+              focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
               cursor-pointer
-              ${selectedEntry === group.id ? 'ring-2 ring-offset-2' : ''}
+              hover:border-2 hover:border-current
+              ${selectedEntry === group.id ? 'border-2 border-current' : 'border-2 border-transparent'}
             `}
             style={{
               backgroundColor: selectedEntry === group.id ? `${group.colorDefault}15` : 'transparent',
+              borderColor: selectedEntry === group.id ? group.colorDefault : 'transparent',
               '--focus-ring': group.colorDefault,
             } as React.CSSProperties}
             onMouseEnter={(e) => {
               if (selectedEntry !== group.id) {
-                e.currentTarget.style.backgroundColor = `${group.colorDefault}10`
+                e.currentTarget.style.backgroundColor = `${group.colorDefault}08`
+                e.currentTarget.style.borderColor = group.colorDefault
               }
             }}
             onMouseLeave={(e) => {
               if (selectedEntry !== group.id) {
                 e.currentTarget.style.backgroundColor = 'transparent'
+                e.currentTarget.style.borderColor = 'transparent'
               }
             }}
           >
-            {/* Circles: 4x2 grid with adequate spacing to prevent overlap */}
-            <div className="grid grid-cols-4 gap-2 flex-shrink-0 xl:gap-4">
+            {/* Circles: Compact 4x2 grid, no overlap guaranteed */}
+            <div className="grid grid-cols-4 gap-1.5 flex-shrink-0 xl:gap-3">
               {Array.from({ length: group.count }).map((_, i) => (
                 <div
                   key={i}
-                  className="rounded-full w-7 h-7 xl:w-9 xl:h-9"
+                  className="rounded-full"
                   style={{
+                    width: '28px',
+                    height: '28px',
                     backgroundColor: group.colorDefault
                   }}
                 />
