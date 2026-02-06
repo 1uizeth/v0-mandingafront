@@ -501,8 +501,8 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
             aria-label={`Select ${group.label}`}
             className={`
               group relative
-              flex items-start gap-4 p-4 rounded-2xl
-              xl:flex xl:flex-col xl:items-center xl:gap-6 xl:py-6 xl:px-6
+              flex items-center gap-6 p-4 rounded-2xl
+              xl:flex-col xl:items-center xl:gap-6 xl:py-6 xl:px-6
               transition-all duration-200 ease-out
               focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
               cursor-pointer
@@ -524,8 +524,8 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
               }
             }}
           >
-            {/* Dots block with fixed height for alignment */}
-            <div className="w-full flex justify-center min-h-[80px] xl:min-h-[120px] items-center">
+            {/* Dots grid - fixed width in list mode, centered in column mode */}
+            <div className="flex-shrink-0 xl:w-full xl:flex xl:justify-center xl:min-h-[120px] xl:items-center">
               <div className="grid grid-cols-4 gap-x-3 gap-y-3 xl:gap-x-4 xl:gap-y-4">
                 {Array.from({ length: group.count }).map((_, i) => (
                   <div
@@ -539,8 +539,8 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
               </div>
             </div>
             
-            {/* Text: left-aligned in list mode, centered in column mode */}
-            <div className="flex flex-col gap-0.5 flex-1 justify-center xl:items-center xl:text-center xl:gap-1.5 xl:flex-initial">
+            {/* Text block - fixed width structure */}
+            <div className="flex flex-col gap-1 min-w-0 xl:items-center xl:text-center xl:gap-1.5">
               <span className="font-semibold text-base xl:text-lg whitespace-nowrap leading-tight" style={{ color: group.colorDefault }}>{group.label}</span>
               <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-snug line-clamp-3 xl:max-w-[220px]`}>{group.description}</p>
             </div>
