@@ -242,8 +242,8 @@ function SuccessScreen() {
         <div className="mt-8 w-full max-w-sm">
           <div className="bg-[#FAFAFA] rounded-lg border border-[#E5E5E5] p-4 text-sm">
             <div className="flex justify-between py-1.5">
-              <span className="text-[#666666]">DINGA tokens received</span>
-              <span className="font-semibold text-[#1A1A1A]">{formatNumber(circleData.dingaTokens)}</span>
+              <span className="text-[#666666]">Claim tokens</span>
+              <span className="font-semibold text-[#1A1A1A]">{formatNumber(circleData.monthlyAmount)}</span>
             </div>
             <div className="flex justify-between py-1.5">
               <span className="text-[#666666]">Position</span>
