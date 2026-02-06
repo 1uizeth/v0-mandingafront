@@ -643,7 +643,7 @@ function EntryStatusCard({ isWalletConnected, selectedEntry, onSelectEntry }: { 
   return (
     <div className={`rounded-3xl border border-[#E5E5E5] bg-white ${PADDING_L}`}>
       {/* Responsive: Column mode on desktop (xl), List mode on smaller screens */}
-      <div className="flex flex-col gap-3 xl:grid xl:grid-cols-3 xl:gap-8">
+      <div className="flex flex-col gap-3 xl:grid xl:grid-cols-3 xl:gap-4">
         {entryGroups.map((group) => (
           <button
             key={group.id}
