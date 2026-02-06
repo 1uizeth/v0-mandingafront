@@ -766,18 +766,18 @@ function PaymentVisualizationCard({ isWalletConnected, hasJoined, selectedEntry 
           </span>
           <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.dueAmount)}</span>
         </div>
-
-        {/* Join/Pay button - shows when wallet is connected and entry is selected */}
-        {isWalletConnected && selectedEntry && (
-          <Button 
-            className="w-full rounded-full text-white mt-2 transition-colors"
-            style={{ backgroundColor: getButtonColor() }}
-            asChild
-          >
-            <Link href={hasJoined ? "/pay" : "/join"}>{hasJoined ? "Pay next installment" : "Join"}</Link>
-          </Button>
-        )}
       </div>
+
+      {/* Join/Pay button - shows when wallet is connected and entry is selected */}
+      {isWalletConnected && selectedEntry && (
+        <Button 
+          className="w-full rounded-full text-white transition-colors"
+          style={{ backgroundColor: getButtonColor() }}
+          asChild
+        >
+          <Link href={hasJoined ? "/pay" : "/join"}>{hasJoined ? "Pay next installment" : "Join"}</Link>
+        </Button>
+      )}
     </div>
   )
 }
