@@ -4,6 +4,8 @@ import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useEffect, useRef, useState } from "react"
+import { useToast } from "@/hooks/use-toast"
+import { Toaster } from "@/components/ui/toaster"
 
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
@@ -431,35 +433,98 @@ function PaymentVisualizationCard() {
 }
 
 // FULL CARD: Entry Status
-// Responsive: stacked rows on mobile/tablet, 3 columns with 4x2 grids on desktop
-function EntryStatusCard() {
+// Interactive entry selection with hover states and wallet gating
+function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) {
+  const { toast } = useToast()
+  const [selectedEntry, setSelectedEntry] = useState<string | null>(null)
+  
   const entryGroups = [
     {
+      id: "early",
       label: "Early entry",
       description: "Priority access to payout in the first 8 months.",
-      color: "#10B981", // green
+      colorDefault: "hsl(var(--entry-early-default))",
+      colorHover: "hsl(var(--entry-early-hover))",
+      colorActive: "hsl(var(--entry-early-active))",
       count: 8
     },
     {
+      id: "middle",
       label: "Middle entry",
       description: "Payout in 8 to 16 months.",
-      color: "#14B8A6", // teal
+      colorDefault: "hsl(var(--entry-middle-default))",
+      colorHover: "hsl(var(--entry-middle-hover))",
+      colorActive: "hsl(var(--entry-middle-active))",
       count: 8
     },
     {
+      id: "late",
       label: "Late entry",
       description: "Up to 8 months before end of circle anticipation.",
-      color: "#3B82F6", // blue
+      colorDefault: "hsl(var(--entry-late-default))",
+      colorHover: "hsl(var(--entry-late-hover))",
+      colorActive: "hsl(var(--entry-late-active))",
       count: 8
     }
   ]
+
+  const handleEntryClick = (entryId: string) => {
+    if (!isWalletConnected) {
+      toast({
+        title: "Connect your wallet to simulate entry",
+        description: "You need to connect your wallet first",
+        action: {
+          altText: "Connect wallet",
+          onClick: () => {
+            // Trigger wallet connection
+            console.log("[v0] Connect wallet action triggered")
+          },
+        },
+        duration: 4000,
+      })
+      return
+    }
+    
+    // Start simulation for selected entry
+    setSelectedEntry(entryId)
+    console.log("[v0] Starting simulation for:", entryId)
+  }
 
   return (
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L}`}>
       {/* Responsive container: stacked on mobile, 3 columns on desktop */}
       <div className="flex flex-col gap-8 lg:grid lg:grid-cols-3 lg:gap-6">
-        {entryGroups.map((group, groupIndex) => (
-          <div key={groupIndex} className="flex flex-col items-center gap-3">
+        {entryGroups.map((group) => (
+          <button
+            key={group.id}
+            onClick={() => handleEntryClick(group.id)}
+            aria-label={`Select ${group.label}`}
+            className={`
+              flex flex-col items-center gap-3 p-4 rounded-xl
+              transition-all duration-200 ease-out
+              hover:bg-opacity-10 focus:bg-opacity-10
+              active:scale-[0.98]
+              focus:outline-none focus:ring-2 focus:ring-offset-2
+              cursor-pointer
+              ${selectedEntry === group.id ? 'ring-2 ring-offset-2' : ''}
+            `}
+            style={{
+              backgroundColor: selectedEntry === group.id ? `${group.colorDefault}15` : 'transparent',
+              '--hover-bg': `${group.colorDefault}10`,
+              '--focus-ring': group.colorDefault,
+              '--active-bg': `${group.colorDefault}15`,
+            } as React.CSSProperties}
+            onMouseEnter={(e) => {
+              if (selectedEntry !== group.id) {
+                e.currentTarget.style.backgroundColor = `${group.colorDefault}10`
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (selectedEntry !== group.id) {
+                e.currentTarget.style.backgroundColor = 'transparent'
+              }
+            }}
+          >
             {/* Circles: single row wrap on mobile, 4x2 grid on desktop */}
             <div className="flex flex-wrap justify-center gap-2 lg:grid lg:grid-cols-4 lg:gap-2">
               {Array.from({ length: group.count }).map((_, i) => (
@@ -469,7 +534,7 @@ function EntryStatusCard() {
                   style={{
                     width: '40px',
                     height: '40px',
-                    backgroundColor: group.color
+                    backgroundColor: group.colorDefault
                   }}
                 />
               ))}
@@ -477,10 +542,10 @@ function EntryStatusCard() {
             
             {/* Label and description */}
             <div className="flex flex-col items-center gap-1.5 text-center">
-              <span className="font-semibold text-base" style={{ color: group.color }}>{group.label}</span>
+              <span className="font-semibold text-base" style={{ color: group.colorDefault }}>{group.label}</span>
               <p className={`${TYPOGRAPHY.bodyMuted} text-center text-sm`}>{group.description}</p>
             </div>
-          </div>
+          </button>
         ))}
       </div>
     </div>
@@ -670,6 +735,7 @@ export default function FundingCirclePage() {
   }
 
   return (
+    <>
     <div className="min-h-screen bg-white flex flex-col">
       <Header isWalletConnected={isWalletConnected} onConnectWallet={handleConnectWallet} />
 
@@ -678,7 +744,7 @@ export default function FundingCirclePage() {
         <div className="flex flex-col gap-4 md:hidden">
           <SlotsCard />
           <PaymentVisualizationCard />
-          <EntryStatusCard />
+          <EntryStatusCard isWalletConnected={isWalletConnected} />
           <TimelineCard />
           <PayoutCard />
           <EnsCard />
@@ -701,7 +767,7 @@ export default function FundingCirclePage() {
         }}>
           <div style={{ gridArea: 'slots' }}><SlotsCard /></div>
           <div style={{ gridArea: 'payment' }}><PaymentVisualizationCard /></div>
-          <div style={{ gridArea: 'entry' }}><EntryStatusCard /></div>
+          <div style={{ gridArea: 'entry' }}><EntryStatusCard isWalletConnected={isWalletConnected} /></div>
           <div style={{ gridArea: 'timeline' }}><TimelineCard /></div>
           <div style={{ gridArea: 'ens' }}><EnsCard /></div>
           <div style={{ gridArea: 'payout' }}><PayoutCard /></div>
@@ -729,7 +795,7 @@ export default function FundingCirclePage() {
           {/* COLUMN 2: Center stack - WIDER (Pay container with embedded Installments, Entry Status) */}
           <div className={`flex flex-col ${GAP_M}`}>
             <PaymentVisualizationCard />
-            <EntryStatusCard />
+            <EntryStatusCard isWalletConnected={isWalletConnected} />
           </div>
 
           {/* COLUMN 3: Right stack (Active members, ENS, Arc) */}
@@ -741,5 +807,7 @@ export default function FundingCirclePage() {
         </div>
       </main>
     </div>
+    <Toaster />
+    </>
   )
 }

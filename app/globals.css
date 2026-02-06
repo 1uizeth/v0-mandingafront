@@ -48,6 +48,15 @@ body {
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
     --compact-card-height: 200px;
+    --entry-early-default: 142 71% 45%;
+    --entry-early-hover: 142 71% 38%;
+    --entry-early-active: 142 71% 32%;
+    --entry-middle-default: 173 58% 50%;
+    --entry-middle-hover: 173 58% 43%;
+    --entry-middle-active: 173 58% 37%;
+    --entry-late-default: 217 91% 60%;
+    --entry-late-hover: 217 91% 53%;
+    --entry-late-active: 217 91% 47%;
   }
   .dark {
     --background: 0 0% 3.9%;
