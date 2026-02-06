@@ -73,8 +73,8 @@ const circleData = {
   installmentProgress: 1,
   dueAmount: 892,
   payoutDueDate: "March 1",
-  ensDomain: "housing.mandinga.eth",
-  ensUrl: "https://app.ens.domains/housing.mandinga.eth",
+  ensDomain: "devcon.mandinga.eth",
+  ensUrl: "https://app.ens.domains/devcon.mandinga.eth",
   arcscanUrl: "https://arcscan.io",
   members: [
     { name: "sassai.eth", joinedDaysAgo: 1 },
@@ -630,9 +630,9 @@ function EnsCard() {
         </a>
       </div>
 
-      {/* Compact rounded tag */}
-      <div className="inline-flex self-start">
-        <div className="rounded-full bg-[#E3F2FD] px-3 py-1.5">
+      {/* Full width centered rounded tag */}
+      <div className="flex justify-center w-full">
+        <div className="rounded-full bg-[#E3F2FD] px-4 py-2 w-full text-center">
           <span className={`${TYPOGRAPHY.button} text-[#1976D2]`}>{circleData.ensDomain}</span>
         </div>
       </div>
