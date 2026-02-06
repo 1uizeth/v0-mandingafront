@@ -4,40 +4,26 @@ import { ArrowLeft, Check, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { circleData, getEntryLabel, getEntryData } from "@/lib/circle-data"
 
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
-// Mock data for the funding circle
-const circleData = {
-  amount: 20000,
-  title: "for Devcon 2026",
-  monthlyAmount: 892,
-  totalMonths: 24,
-  totalCommitment: 21408,
-  protocolFee: 1498, // 7% fee
-  totalWithFees: 22906,
-  ensDomain: "housing.mandinga.eth",
-  dingaTokens: 21408,
-  estimatedGas: 0.12,
-}
-
 // Mock connected wallet ENS name
-const MOCK_WALLET_ENS = "user.eth"
+const MOCK_WALLET_ENS = "1uiz.eth"
 
-// Step type
-type Step = 1 | 2 | 3
+  // Step type
+  type Step = 1 | 2
 
-// Stepper: clickable, only completed steps enabled
-function NumericStepper({ currentStep, onStepClick }: { currentStep: Step; onStepClick?: (step: Step) => void }) {
-  const steps = [
-    { num: 1, label: "Agreement" },
-    { num: 2, label: "Review" },
-    { num: 3, label: "Confirm" },
-  ]
+  // Stepper: clickable, only completed steps enabled
+  function NumericStepper({ currentStep, onStepClick }: { currentStep: Step; onStepClick?: (step: Step) => void }) {
+    const steps = [
+      { num: 1, label: "Agreement" },
+      { num: 2, label: "Review" },
+    ]
 
   return (
     <div className="flex items-center gap-0">
@@ -82,12 +68,12 @@ function NumericStepper({ currentStep, onStepClick }: { currentStep: Step; onSte
   )
 }
 
-// Mobile stepper - compact inline
-function MobileStepper({ currentStep }: { currentStep: Step }) {
-  const labels = ["Agreement", "Review", "Confirm"]
+  // Mobile stepper - compact inline
+  function MobileStepper({ currentStep }: { currentStep: Step }) {
+    const labels = ["Agreement", "Review"]
   return (
     <span className="text-sm text-[#666666]">
-      {currentStep}/3 <span className="font-medium text-[#1A1A1A]">{labels[currentStep - 1]}</span>
+      {currentStep}/2 <span className="font-medium text-[#1A1A1A]">{labels[currentStep - 1]}</span>
     </span>
   )
 }
@@ -96,11 +82,13 @@ function MobileStepper({ currentStep }: { currentStep: Step }) {
 function TermsStep({ onSign }: { onSign: () => void }) {
   const [agreed, setAgreed] = useState(false)
 
+  // Updated agreement terms
   const terms = [
-    { num: "01", title: "Shared Financial Risk", desc: "Collective system. Other members may affect outcomes." },
-    { num: "02", title: "Missed Payments", desc: "Penalties may apply. Rules enforced automatically." },
-    { num: "03", title: "Blockchain Finality", desc: "Transactions irreversible once confirmed." },
-    { num: "04", title: "Legal Responsibility", desc: "You handle legal/tax obligations in your country." }
+    { num: "01", title: "Fixed Monthly Installment", desc: "You agree to pay $892 every month for 24 months. Early exit is not guaranteed." },
+    { num: "02", title: "Missed Payments", desc: "Penalties may apply. Rules are enforced automatically." },
+    { num: "03", title: "Shared Financial Risk", desc: "This is a collective system. Other members may affect outcomes." },
+    { num: "04", title: "Legal Responsibility", desc: "You are responsible for handling legal and tax obligations in your country." },
+    { num: "05", title: "Blockchain Finality", desc: "Transactions are irreversible once confirmed." }
   ]
 
   return (
@@ -117,11 +105,11 @@ function TermsStep({ onSign }: { onSign: () => void }) {
           <p className="font-mono text-sm text-[#1A1A1A] mb-4">If you accept, you agree that:</p>
           <div className="flex flex-col gap-4">
             {terms.map((t) => (
-              <div key={t.num} className="font-mono text-sm flex gap-3">
+              <div key={`term-${t.num}-${t.title}`} className="font-mono text-sm flex gap-3">
                 <span className="text-[#1A1A1A] font-semibold shrink-0">{t.num}.</span>
                 <div>
                   <span className="text-[#1A1A1A] font-medium">{t.title}</span>
-                  <p className="text-[#666666] text-xs mt-0.5">{t.desc}</p>
+                  <p className="text-[#666666] text-xs font-bold mt-0.5">{t.desc}</p>
                 </div>
               </div>
             ))}
@@ -149,14 +137,37 @@ function TermsStep({ onSign }: { onSign: () => void }) {
   )
 }
 
-// Step 2: Review
-function PreviewStep({ onContinue }: { onContinue: () => void }) {
+// Step 2: Review & Confirm - merged from old steps 2 and 3
+function ReviewAndConfirmStep({ 
+  onConfirm,
+  agreementSignedAt,
+  executionStep,
+  isExecuting,
+  getEntryLabel
+}: { 
+  onConfirm: () => void
+  agreementSignedAt: Date | null
+  executionStep: number
+  isExecuting: boolean
+  getEntryLabel: () => string
+}) {
+  const formattedDate = agreementSignedAt 
+    ? agreementSignedAt.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })
+    : 'Just now'
+
+  // All execution steps including agreement (step 0 is always complete)
+  const txSteps = [
+    { step: 0, label: "Agreement signed" },
+    { step: 1, label: "Pay installment" },
+    { step: 2, label: "Mint position & claim tokens" }
+  ]
+
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white">
       {/* Header */}
       <div className="px-5 lg:px-6 pt-5 lg:pt-6">
         <h2 className="text-lg font-semibold text-[#1A1A1A]">Review</h2>
-        <p className="text-sm text-[#666666] mt-1">Verify your commitment before proceeding.</p>
+        <p className="text-sm text-[#666666] mt-1">Review your commitment and confirm the transaction to complete.</p>
       </div>
 
       {/* Body */}
@@ -166,19 +177,23 @@ function PreviewStep({ onContinue }: { onContinue: () => void }) {
           <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-2">Your Commitment</h3>
           <div className="text-sm">
             <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-              <span className="text-[#666666]">Monthly payment</span>
-              <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.monthlyAmount)} USDC</span>
+              <span className="text-[#666666]">Monthly installment</span>
+              <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.contributionPerMonth)} USDC</span>
             </div>
             <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
               <span className="text-[#666666]">Duration</span>
               <span className="font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
             </div>
             <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
+              <span className="text-[#666666]">Position</span>
+              <span className="font-medium text-[#1A1A1A]">{getEntryLabel()}</span>
+            </div>
+            <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
               <span className="text-[#666666]">Subtotal</span>
               <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.totalCommitment)}</span>
             </div>
             <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-              <span className="text-[#666666]">Platform fee (7%)</span>
+              <span className="text-[#666666]">Vault fee (7%)</span>
               <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.protocolFee)}</span>
             </div>
             <div className="flex justify-between py-1.5">
@@ -202,77 +217,12 @@ function PreviewStep({ onContinue }: { onContinue: () => void }) {
             </div>
             <div className="flex justify-between py-1.5">
               <span className="text-[#666666]">Estimated gas</span>
-              <span className="font-medium text-[#1A1A1A]">~${circleData.estimatedGas}</span>
+              <span className="font-medium text-[#1A1A1A]">~$0.12</span>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Footer */}
-      <div className="px-5 lg:px-6 pb-5 lg:pb-6 pt-4 border-t border-[#F0F0F0]">
-        <Button onClick={onContinue}
-          className="w-full rounded-full bg-[#1A1A1A] px-6 py-4 text-sm font-semibold text-white hover:bg-[#333333]">
-          Continue
-        </Button>
-      </div>
-    </div>
-  )
-}
-
-// Step 3: Confirm - flex column card anatomy with execution simulation
-function ConfirmStep({ 
-  onConfirm,
-  agreementSignedAt,
-  executionStep,
-  isExecuting
-}: { 
-  onConfirm: () => void
-  agreementSignedAt: Date | null
-  executionStep: number
-  isExecuting: boolean
-}) {
-  const formattedDate = agreementSignedAt 
-    ? agreementSignedAt.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })
-    : 'Just now'
-
-  // All execution steps including agreement (step 0 is always complete)
-  const txSteps = [
-    { step: 0, label: "Agreement signed" },
-    { step: 1, label: "Pay installment" },
-    { step: 2, label: "Mint position & claim tokens" }
-  ]
-
-  return (
-    <div className="rounded-xl border border-[#E5E5E5] bg-white">
-      {/* Header */}
-      <div className="px-5 lg:px-6 pt-5 lg:pt-6">
-        <h2 className="text-lg font-semibold text-[#1A1A1A]">Confirm</h2>
-        <p className="text-sm text-[#666666] mt-1">Execute your membership transaction.</p>
-      </div>
-
-      {/* Body */}
-      <div className="px-5 lg:px-6 py-5">
-        {/* Summary Section */}
-        <div className="text-sm">
-          <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-            <span className="text-[#666666]">Circle</span>
-            <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.amount)} {circleData.title}</span>
-          </div>
-          <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-            <span className="text-[#666666]">First payment</span>
-            <span className="font-medium text-[#1A1A1A]">${formatNumber(circleData.monthlyAmount)} USDC</span>
-          </div>
-          <div className="flex justify-between py-1.5 border-b border-[#F0F0F0]">
-            <span className="text-[#666666]">Duration</span>
-            <span className="font-medium text-[#1A1A1A]">{circleData.totalMonths} months</span>
-          </div>
-          <div className="flex justify-between py-1.5">
-            <span className="text-[#666666]">Total commitment</span>
-            <span className="font-semibold text-[#1A1A1A]">${formatNumber(circleData.totalWithFees)}</span>
-          </div>
-        </div>
-
-        {/* Transaction Execution - Agreement as first completed step */}
+        {/* Transaction Execution */}
         <div className="mt-5">
           <h3 className="text-xs font-semibold text-[#999999] uppercase tracking-wide mb-3">Transaction Execution</h3>
           <div className="space-y-3 text-sm">
@@ -305,7 +255,7 @@ function ConfirmStep({
               )
             })}
           </div>
-          <p className="text-xs text-[#999999] mt-3">Each step requires wallet approval.</p>
+          <p className="text-xs font-bold text-[#999999] mt-3">Each step requires wallet approval.</p>
         </div>
       </div>
 
@@ -314,13 +264,61 @@ function ConfirmStep({
         <Button 
           onClick={onConfirm}
           disabled={isExecuting}
-          className={`w-full rounded-full px-6 py-4 text-sm font-semibold ${
-            isExecuting 
-              ? "bg-[#E5E5E5] text-[#999999] cursor-not-allowed" 
-              : "bg-[#1A1A1A] text-white hover:bg-[#333333]"
-          }`}
+          className="w-full rounded-full bg-[#1A1A1A] px-6 py-4 text-sm font-semibold text-white hover:bg-[#333333] disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isExecuting ? "Processing..." : "Confirm & Join"}
+          {isExecuting ? (
+            <span className="flex items-center justify-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Processing...
+            </span>
+          ) : (
+            "Confirm"
+          )}
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+// Success Screen - shows after all transactions complete
+function SuccessScreen() {
+  const router = useRouter()
+
+  return (
+    <div className="rounded-xl border border-[#E5E5E5] bg-white">
+      {/* Body */}
+      <div className="px-5 lg:px-6 py-8 lg:py-12 flex flex-col items-center text-center">
+        {/* Success Icon */}
+        <div className="w-16 h-16 rounded-full bg-[#1A1A1A] flex items-center justify-center mb-6">
+          <Check className="w-8 h-8 text-white" strokeWidth={2.5} />
+        </div>
+
+        {/* Success Message */}
+        <h2 className="text-2xl font-semibold text-[#1A1A1A] mb-2">Successfully Joined!</h2>
+        <p className="text-sm text-[#666666] max-w-md">
+          You're now part of {circleData.name}. Your first payment has been processed.
+        </p>
+
+        {/* Details */}
+        <div className="mt-8 w-full max-w-sm">
+          <div className="bg-[#FAFAFA] rounded-lg border border-[#E5E5E5] p-4 text-sm">
+            <div className="flex justify-between py-1.5">
+              <span className="text-[#666666]">Claim tokens</span>
+              <span className="font-semibold text-[#1A1A1A]">{formatNumber(circleData.contributionPerMonth)}</span>
+            </div>
+          <div className="flex justify-between py-1.5">
+            <span className="text-[#666666]">Position</span>
+            <span className="font-medium text-[#1A1A1A]">{getEntryLabel()}</span>
+          </div>
+        </div>
+        </div>
+
+        {/* CTA Button */}
+        <Button 
+          onClick={() => router.push("/?joined=true")}
+          className="w-full max-w-sm rounded-full bg-[#1A1A1A] px-6 py-4 text-sm font-semibold text-white hover:bg-[#333333] mt-8"
+        >
+          Go back to circle
         </Button>
       </div>
     </div>
@@ -334,6 +332,21 @@ export default function JoinCirclePage() {
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [executionStep, setExecutionStep] = useState(0)
   const [isExecuting, setIsExecuting] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [selectedEntry, setSelectedEntry] = useState<string>("early")
+  const [showCancelModal, setShowCancelModal] = useState(false)
+
+  // Load selected entry from localStorage
+  useEffect(() => {
+    const entry = localStorage.getItem('selectedEntry') || 'early'
+    setSelectedEntry(entry)
+    console.log('[v0] Join page loaded with selected entry:', entry)
+  }, [])
+
+  // Instant page load with skeleton
+  useEffect(() => {
+    setIsLoaded(true)
+  }, [])
 
   // Show toast notification
   const showToast = (message: string) => {
@@ -341,34 +354,32 @@ export default function JoinCirclePage() {
     setTimeout(() => setToastMessage(null), 3000)
   }
 
-  // Step 1: Sign agreement
+  // Step 1: Sign agreement - moves directly to step 2 (review & confirm)
   const handleSignAgreement = () => {
     showToast("Signing agreement...")
     setTimeout(() => {
       setAgreementSignedAt(new Date())
       setCurrentStep(2)
-    }, 1500)
+    }, 800)
   }
 
-  // Step 2: Continue to confirm
-  const handlePreviewContinue = () => {
-    setCurrentStep(3)
-  }
-
-  // Step 3: Confirm transaction with execution simulation
+  // Step 2: Confirm transaction with execution simulation
   const handleConfirm = () => {
+    console.log('[v0] User confirmed join with entry:', selectedEntry)
     setIsExecuting(true)
     showToast("Processing transactions...")
     
     // Simulate execution cascade
     setExecutionStep(1)
+    console.log('[v0] Execution step 1: Signing agreement')
     setTimeout(() => {
       setExecutionStep(2)
+      console.log('[v0] Execution step 2: Processing payment')
       setTimeout(() => {
-        setExecutionStep(3) // All done
-        setTimeout(() => {
-          router.push("/")
-        }, 500)
+        setExecutionStep(3) // All done - show success
+        setIsExecuting(false)
+        localStorage.setItem('hasJoined', 'true')
+        console.log('[v0] Join complete! Saved hasJoined to localStorage')
       }, 800)
     }, 800)
   }
@@ -389,56 +400,105 @@ export default function JoinCirclePage() {
     }
   }
 
+  // Skeleton loading screen for instant render
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col">
+        <header 
+          className="w-full border-b border-[#F0F0F0]"
+          style={{ paddingTop: 'clamp(32px, 6vh, 64px)', paddingBottom: 'clamp(16px, 2vh, 24px)' }}
+        >
+          <div className="mx-auto max-w-[760px] px-6">
+            <div className="flex items-center justify-between gap-4">
+              <div className="h-7 w-32 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="absolute left-1/2 -translate-x-1/2 h-10 w-40 bg-[#F0F0F0] rounded-full animate-pulse" />
+              <div className="h-10 w-20 bg-[#F0F0F0] rounded-md animate-pulse" />
+            </div>
+          </div>
+        </header>
+        <main className="flex-1 flex flex-col pb-8" style={{ paddingTop: 'clamp(16px, 3vh, 32px)' }}>
+          <div className="mx-auto max-w-[760px] w-full px-6">
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-8">
+              <div className="h-6 w-32 bg-[#F0F0F0] rounded animate-pulse mb-6" />
+              <div className="space-y-4">
+                <div className="h-20 bg-[#F0F0F0] rounded animate-pulse" />
+                <div className="h-20 bg-[#F0F0F0] rounded animate-pulse" />
+                <div className="h-20 bg-[#F0F0F0] rounded animate-pulse" />
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Header with Back + Title + Stepper - matching main page spacing */}
+      {/* Header with Back + Title + Stepper - matching main page spacing - hidden on success */}
+      {executionStep !== 3 && (
       <header 
         className="w-full border-b border-[#F0F0F0]"
         style={{ paddingTop: 'clamp(32px, 6vh, 64px)', paddingBottom: 'clamp(16px, 2vh, 24px)' }}
       >
         <div className="mx-auto max-w-[760px] px-6">
-          {/* Back button row */}
-          <button
-            type="button"
-            onClick={handleBack}
-            className="inline-flex items-center gap-1.5 text-[#666666] transition-colors hover:text-[#1A1A1A] mb-4"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span className="text-sm font-medium">Back</span>
-          </button>
-
-          {/* Title + Stepper row */}
-          <div className="flex items-center justify-between gap-4">
-            <h1 className="text-lg font-semibold text-[#1A1A1A]">
-              {"Join $" + formatNumber(circleData.amount) + " Circle"}
+          {/* Mobile: Two rows - controls then title */}
+          <div className="flex flex-col gap-6 lg:hidden">
+            {/* Row 1: Stepper + Cancel */}
+            <div className="flex items-center justify-between">
+              <MobileStepper currentStep={currentStep} />
+              <Button
+                variant="outline"
+                onClick={() => setShowCancelModal(true)}
+                className="text-sm"
+              >
+                Cancel
+              </Button>
+            </div>
+            {/* Row 2: Title - centered */}
+            <h1 className="text-xl font-semibold text-[#1A1A1A] text-center">
+              Join Circle
             </h1>
+          </div>
 
-            {/* Stepper - desktop shows full, mobile shows compact */}
-            <div className="hidden lg:block">
+          {/* Desktop: Single row with title, stepper, cancel */}
+          <div className="hidden lg:flex items-center justify-between gap-4">
+            <h1 className="text-lg font-semibold text-[#1A1A1A]">
+              Join Circle
+            </h1>
+            <div className="absolute left-1/2 -translate-x-1/2">
               <NumericStepper currentStep={currentStep} onStepClick={handleStepClick} />
             </div>
-            <div className="lg:hidden">
-              <MobileStepper currentStep={currentStep} />
-            </div>
+            <Button
+              variant="outline"
+              onClick={() => setShowCancelModal(true)}
+              className="text-sm"
+            >
+              Cancel
+            </Button>
           </div>
         </div>
       </header>
+      )}
 
       <main className="flex-1 flex flex-col pb-8" style={{ paddingTop: 'clamp(16px, 3vh, 32px)' }}>
         <div className="mx-auto max-w-[760px] w-full px-6">
-          {currentStep === 1 && (
-            <TermsStep onSign={handleSignAgreement} />
-          )}
-          {currentStep === 2 && (
-            <PreviewStep onContinue={handlePreviewContinue} />
-          )}
-          {currentStep === 3 && (
-            <ConfirmStep 
-              onConfirm={handleConfirm}
-              agreementSignedAt={agreementSignedAt}
-              executionStep={executionStep}
-              isExecuting={isExecuting}
-            />
+          {executionStep === 3 ? (
+            <SuccessScreen />
+          ) : (
+            <>
+  {currentStep === 1 && (
+    <TermsStep onSign={handleSignAgreement} />
+  )}
+  {currentStep === 2 && (
+    <ReviewAndConfirmStep
+      onConfirm={handleConfirm}
+      agreementSignedAt={agreementSignedAt}
+      executionStep={executionStep}
+      isExecuting={isExecuting}
+      getEntryLabel={() => getEntryLabel(selectedEntry)}
+    />
+  )}
+            </>
           )}
         </div>
       </main>
@@ -448,6 +508,33 @@ export default function JoinCirclePage() {
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#1A1A1A] text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 z-50">
           <Loader2 className="h-4 w-4 animate-spin" />
           <span className="text-sm font-medium">{toastMessage}</span>
+        </div>
+      )}
+
+      {/* Cancel confirmation modal */}
+      {showCancelModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-6">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl">
+            <h2 className="text-xl font-semibold text-[#1A1A1A] mb-2">Cancel joining?</h2>
+            <p className="text-sm text-[#666666] mb-6">
+              Your progress will be lost and you'll need to start over if you want to join this circle later.
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowCancelModal(false)}
+                className="flex-1"
+              >
+                Continue Joining
+              </Button>
+              <Button
+                onClick={() => router.push("/")}
+                className="flex-1 bg-[#1A1A1A] text-white hover:bg-[#333333]"
+              >
+                Yes, Cancel
+              </Button>
+            </div>
+          </div>
         </div>
       )}
     </div>
