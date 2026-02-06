@@ -12,6 +12,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         script: ['var(--font-dancing-script)', 'cursive'],
+        champion: ['"Champ W90 Ultra"', 'cursive'],
       },
       colors: {
         background: 'hsl(var(--background))',
