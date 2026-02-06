@@ -984,18 +984,38 @@ function SlotsCard({ hasJoined }: { hasJoined: boolean }) {
 
 export default function FundingCirclePage() {
   const { toast } = useToast()
-  const [isWalletConnected, setIsWalletConnected] = useState(false)
-  const [hasJoined, setHasJoined] = useState(false)
-  const [selectedEntry, setSelectedEntry] = useState<string>("")
+  const [isWalletConnected, setIsWalletConnected] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('walletConnected') === 'true'
+    }
+    return false
+  })
+  const [hasJoined, setHasJoined] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('hasJoined') === 'true'
+    }
+    return false
+  })
+  const [selectedEntry, setSelectedEntry] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('selectedEntry') || ""
+    }
+    return ""
+  })
   const [hoveredEntry, setHoveredEntry] = useState<string>("")
 
   // Check if user just completed joining (coming back from /join)
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     if (urlParams.get('joined') === 'true') {
+      console.log('[v0] User joined - setting joined state')
+      localStorage.setItem('walletConnected', 'true')
+      localStorage.setItem('hasJoined', 'true')
+      localStorage.setItem('selectedEntry', 'early')
+      
       setIsWalletConnected(true)
       setHasJoined(true)
-      setSelectedEntry("early") // Set to the entry type they joined with
+      setSelectedEntry("early")
       
       // Clean up URL
       window.history.replaceState({}, '', window.location.pathname)
@@ -1009,6 +1029,8 @@ export default function FundingCirclePage() {
     })
     
     setTimeout(() => {
+      localStorage.setItem('walletConnected', 'true')
+      localStorage.setItem('selectedEntry', 'early')
       setIsWalletConnected(true)
       setSelectedEntry("early") // Auto-select early entry after wallet connects
     }, 1500)
