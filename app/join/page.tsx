@@ -384,6 +384,7 @@ export default function JoinCirclePage() {
   const [isExecuting, setIsExecuting] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const [selectedEntry, setSelectedEntry] = useState<string>("early")
+  const [showCancelModal, setShowCancelModal] = useState(false)
 
   // Load selected entry from localStorage
   useEffect(() => {
@@ -458,13 +459,10 @@ export default function JoinCirclePage() {
           style={{ paddingTop: 'clamp(32px, 6vh, 64px)', paddingBottom: 'clamp(16px, 2vh, 24px)' }}
         >
           <div className="mx-auto max-w-[760px] px-6">
-            <Link href="/" className="inline-flex items-center gap-1.5 text-[#666666] transition-colors hover:text-[#1A1A1A] mb-4">
-              <ArrowLeft className="h-4 w-4" />
-              <span className="text-sm font-medium">Back</span>
-            </Link>
             <div className="flex items-center justify-between gap-4">
-              <div className="h-7 w-48 bg-[#F0F0F0] rounded animate-pulse" />
-              <div className="h-10 w-40 bg-[#F0F0F0] rounded-full animate-pulse" />
+              <div className="h-7 w-32 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="absolute left-1/2 -translate-x-1/2 h-10 w-40 bg-[#F0F0F0] rounded-full animate-pulse" />
+              <div className="h-10 w-20 bg-[#F0F0F0] rounded-md animate-pulse" />
             </div>
           </div>
         </header>
@@ -492,29 +490,28 @@ export default function JoinCirclePage() {
         style={{ paddingTop: 'clamp(32px, 6vh, 64px)', paddingBottom: 'clamp(16px, 2vh, 24px)' }}
       >
         <div className="mx-auto max-w-[760px] px-6">
-          {/* Back button row */}
-          <button
-            type="button"
-            onClick={handleBack}
-            className="inline-flex items-center gap-1.5 text-[#666666] transition-colors hover:text-[#1A1A1A] mb-4"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span className="text-sm font-medium">Back</span>
-          </button>
-
-          {/* Title + Stepper row */}
+          {/* Title + Stepper + Cancel row */}
           <div className="flex items-center justify-between gap-4">
             <h1 className="text-lg font-semibold text-[#1A1A1A]">
               Join Circle
             </h1>
 
-            {/* Stepper - desktop shows full, mobile shows compact */}
-            <div className="hidden lg:block">
+            {/* Stepper - centered, desktop shows full, mobile shows compact */}
+            <div className="hidden lg:block absolute left-1/2 -translate-x-1/2">
               <NumericStepper currentStep={currentStep} onStepClick={handleStepClick} />
             </div>
-            <div className="lg:hidden">
+            <div className="lg:hidden absolute left-1/2 -translate-x-1/2">
               <MobileStepper currentStep={currentStep} />
             </div>
+
+            {/* Cancel button */}
+            <Button
+              variant="outline"
+              onClick={() => setShowCancelModal(true)}
+              className="text-sm"
+            >
+              Cancel
+            </Button>
           </div>
         </div>
       </header>
@@ -550,6 +547,33 @@ export default function JoinCirclePage() {
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#1A1A1A] text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 z-50">
           <Loader2 className="h-4 w-4 animate-spin" />
           <span className="text-sm font-medium">{toastMessage}</span>
+        </div>
+      )}
+
+      {/* Cancel confirmation modal */}
+      {showCancelModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-6">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl">
+            <h2 className="text-xl font-semibold text-[#1A1A1A] mb-2">Cancel joining?</h2>
+            <p className="text-sm text-[#666666] mb-6">
+              Your progress will be lost and you'll need to start over if you want to join this circle later.
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowCancelModal(false)}
+                className="flex-1"
+              >
+                Continue Joining
+              </Button>
+              <Button
+                onClick={() => router.push("/")}
+                className="flex-1 bg-[#1A1A1A] text-white hover:bg-[#333333]"
+              >
+                Yes, Cancel
+              </Button>
+            </div>
+          </div>
         </div>
       )}
     </div>
