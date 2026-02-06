@@ -48,15 +48,15 @@ body {
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
     --compact-card-height: 200px;
-    --entry-early-default: 47 88% 66%;
-    --entry-early-hover: 47 88% 59%;
-    --entry-early-active: 47 88% 52%;
-    --entry-middle-default: 178 61% 59%;
-    --entry-middle-hover: 178 61% 52%;
-    --entry-middle-active: 178 61% 45%;
-    --entry-late-default: 244 100% 69%;
-    --entry-late-hover: 244 100% 62%;
-    --entry-late-active: 244 100% 55%;
+    --entry-early-default: 43 100% 39%;
+    --entry-early-hover: 43 100% 35%;
+    --entry-early-active: 43 100% 31%;
+    --entry-middle-default: 176 59% 45%;
+    --entry-middle-hover: 176 59% 40%;
+    --entry-middle-active: 176 59% 35%;
+    --entry-late-default: 239 100% 68%;
+    --entry-late-hover: 239 100% 63%;
+    --entry-late-active: 239 100% 58%;
   }
   .dark {
     --background: 0 0% 3.9%;
