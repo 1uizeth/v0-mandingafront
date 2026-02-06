@@ -725,6 +725,16 @@ function EntryStatusCard({ isWalletConnected, hasJoined, selectedEntry, hoveredE
       return
     }
     
+    // If user has already joined, show toast instead of changing selection
+    if (hasJoined) {
+      const entryLabel = entryGroups.find(g => g.id === selectedEntry)?.label || "this entry"
+      toast({
+        title: `You've joined this circle on ${entryLabel}`,
+        duration: 4000,
+      })
+      return
+    }
+    
     // Start simulation for selected entry
     onSelectEntry(entryId)
     console.log("[v0] Starting simulation for:", entryId)
