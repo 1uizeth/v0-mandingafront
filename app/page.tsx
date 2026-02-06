@@ -759,10 +759,10 @@ function EntryStatusCard({ isWalletConnected, hasJoined, selectedEntry, hoveredE
               transition-all duration-200 ease-out
               focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
               cursor-pointer
-              ${selectedEntry === group.id ? 'ring-2 ring-inset' : ''}
+              ${selectedEntry === group.id && !hasJoined ? 'ring-2 ring-inset' : ''}
             `}
             style={{
-              backgroundColor: hoveredEntry === group.id || selectedEntry === group.id ? `color-mix(in srgb, ${group.colorDefault} 10%, transparent)` : 'transparent',
+              backgroundColor: hoveredEntry === group.id || (selectedEntry === group.id && !hasJoined) ? `color-mix(in srgb, ${group.colorDefault} 10%, transparent)` : 'transparent',
               '--tw-ring-color': group.colorDefault,
               '--focus-ring': group.colorDefault,
             } as React.CSSProperties}
