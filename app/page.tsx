@@ -216,7 +216,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
         nextRoundLabel: "Next round - Early",
         nextRoundDate: "March 1",
         color: "hsl(var(--entry-early-default))",
-        percentage: 33.33 // 8/24
+        percentage: (1 / 24) * 100 // Round 1 of 24 total rounds
       }
     } else if (activeEntry === "middle") {
       return {
@@ -227,7 +227,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
         nextRoundLabel: "Next round - Middle",
         nextRoundDate: "November 1",
         color: "hsl(var(--entry-middle-default))",
-        percentage: 66.66 // 16/24
+        percentage: (9 / 24) * 100 // Round 9 of 24 total rounds
       }
     } else if (activeEntry === "late") {
       return {
@@ -238,7 +238,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
         nextRoundLabel: "Next round - Late",
         nextRoundDate: "July 1",
         color: "hsl(var(--entry-late-default))",
-        percentage: 100 // 24/24
+        percentage: (17 / 24) * 100 // Round 17 of 24 total rounds
       }
     }
     return null
@@ -315,10 +315,9 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
         <div className="h-2 w-full overflow-hidden rounded-full bg-[#E5E5E5] relative">
           {simulationData ? (
             <div 
-              className="h-full rounded-full transition-all absolute" 
+              className="h-full rounded-full transition-all absolute left-0" 
               style={{ 
-                left: selectedEntry === "early" ? "0%" : selectedEntry === "middle" ? "33.33%" : "66.66%",
-                width: "33.33%",
+                width: `${simulationData.percentage}%`,
                 backgroundColor: simulationData.color
               }} 
             />
