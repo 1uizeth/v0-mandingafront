@@ -797,7 +797,7 @@ export default function FundingCirclePage() {
   const { toast } = useToast()
   const [isWalletConnected, setIsWalletConnected] = useState(false)
   const [hasJoined, setHasJoined] = useState(false)
-  const [selectedEntry, setSelectedEntry] = useState<string>("early")
+  const [selectedEntry, setSelectedEntry] = useState<string>("")
 
   const handleConnectWallet = () => {
     toast({
@@ -807,6 +807,7 @@ export default function FundingCirclePage() {
     
     setTimeout(() => {
       setIsWalletConnected(true)
+      setSelectedEntry("early") // Auto-select early entry after wallet connects
     }, 1500)
   }
 
