@@ -431,7 +431,7 @@ function PaymentVisualizationCard() {
 }
 
 // FULL CARD: Entry Status
-// Three color-coded dot grids with fluid responsive layout - circles flow in lines
+// Responsive: stacked rows on mobile/tablet, 3 columns with 4x2 grids on desktop
 function EntryStatusCard() {
   const entryGroups = [
     {
@@ -455,31 +455,34 @@ function EntryStatusCard() {
   ]
 
   return (
-    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col gap-8`}>
-      {entryGroups.map((group, groupIndex) => (
-        <div key={groupIndex} className="flex flex-col items-center gap-4">
-          {/* Fluid circle grid - wraps based on available space */}
-          <div className="flex flex-wrap justify-center gap-2">
-            {Array.from({ length: group.count }).map((_, i) => (
-              <div
-                key={i}
-                className="rounded-full flex-shrink-0"
-                style={{
-                  width: '48px',
-                  height: '48px',
-                  backgroundColor: group.color
-                }}
-              />
-            ))}
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L}`}>
+      {/* Responsive container: stacked on mobile, 3 columns on desktop */}
+      <div className="flex flex-col gap-8 lg:grid lg:grid-cols-3 lg:gap-6">
+        {entryGroups.map((group, groupIndex) => (
+          <div key={groupIndex} className="flex flex-col items-center gap-3">
+            {/* Circles: single row wrap on mobile, 4x2 grid on desktop */}
+            <div className="flex flex-wrap justify-center gap-2 lg:grid lg:grid-cols-4 lg:gap-2">
+              {Array.from({ length: group.count }).map((_, i) => (
+                <div
+                  key={i}
+                  className="rounded-full flex-shrink-0"
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    backgroundColor: group.color
+                  }}
+                />
+              ))}
+            </div>
+            
+            {/* Label and description */}
+            <div className="flex flex-col items-center gap-1.5 text-center">
+              <span className="font-semibold text-base" style={{ color: group.color }}>{group.label}</span>
+              <p className={`${TYPOGRAPHY.bodyMuted} text-center text-sm`}>{group.description}</p>
+            </div>
           </div>
-          
-          {/* Label and description */}
-          <div className="flex flex-col items-center gap-1.5 text-center">
-            <span className="font-semibold text-base" style={{ color: group.color }}>{group.label}</span>
-            <p className={`${TYPOGRAPHY.bodyMuted} text-center text-sm max-w-md`}>{group.description}</p>
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }
