@@ -208,7 +208,9 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
       return {
         start: 0,
         end: 8,
-        counter: "00/08",
+        counter: "01/08",
+        nextRound: "Round 1",
+        nextRoundDate: "March 1",
         color: "hsl(var(--entry-early-default))",
         percentage: 33.33 // 8/24
       }
@@ -216,7 +218,9 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
       return {
         start: 8,
         end: 16,
-        counter: "08/16",
+        counter: "09/16",
+        nextRound: "Next round for middle entry - Round 9",
+        nextRoundDate: "November 1",
         color: "hsl(var(--entry-middle-default))",
         percentage: 66.66 // 16/24
       }
@@ -224,7 +228,9 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
       return {
         start: 16,
         end: 24,
-        counter: "16/24",
+        counter: "17/24",
+        nextRound: "Next round for late entry - Round 17",
+        nextRoundDate: "July 1",
         color: "hsl(var(--entry-late-default))",
         percentage: 100 // 24/24
       }
@@ -318,11 +324,11 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
         {/* Round info */}
         <div className="flex items-start justify-between gap-1">
           <div className="flex flex-col gap-1">
-            <span className="font-semibold text-[#1A1A1A]">Round 1</span>
+            <span className="font-semibold text-[#1A1A1A]">{simulationData?.nextRound || "Round 1"}</span>
             <span className={TYPOGRAPHY.label}>Next round</span>
           </div>
           <div className="flex flex-col gap-1 items-end">
-            <span className="font-semibold text-[#1A1A1A]">March 1</span>
+            <span className="font-semibold text-[#1A1A1A]">{simulationData?.nextRoundDate || "March 1"}</span>
             <span className={TYPOGRAPHY.label}>2026</span>
           </div>
         </div>
