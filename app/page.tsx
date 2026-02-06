@@ -515,13 +515,13 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
               '--focus-ring': group.colorDefault,
             } as React.CSSProperties}
           >
-            {/* Dots grid - fixed width in list mode, centered in column mode */}
-            <div className="flex justify-center flex-shrink-0">
-              <div className="grid grid-cols-4 gap-x-3 gap-y-3 xl:gap-x-4 xl:gap-y-4">
+            {/* Dots grid - fixed width in list mode, full width in column mode */}
+            <div className="flex justify-center flex-shrink-0 xl:w-full">
+              <div className="grid grid-cols-4 gap-x-3 gap-y-3 xl:w-full xl:gap-x-6 xl:gap-y-4 xl:place-items-center">
                 {Array.from({ length: group.count }).map((_, i) => (
                   <div
                     key={i}
-                    className="rounded-full w-5 h-5 xl:w-6 xl:h-6"
+                    className="rounded-full w-5 h-5 xl:w-8 xl:h-8"
                     style={{
                       backgroundColor: group.colorDefault
                     }}
