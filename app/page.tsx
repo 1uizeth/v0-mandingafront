@@ -302,12 +302,15 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
         </div>
 
         {/* Round info */}
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center justify-between">
+        <div className="flex items-start justify-between gap-1">
+          <div className="flex flex-col gap-1">
             <span className="font-semibold text-[#1A1A1A]">Round 1</span>
-            <span className="font-semibold text-[#1A1A1A]">March 1</span>
+            <span className={TYPOGRAPHY.label}>Next round</span>
           </div>
-          <span className={TYPOGRAPHY.label}>Next round</span>
+          <div className="flex flex-col gap-1 items-end">
+            <span className="font-semibold text-[#1A1A1A]">March 1</span>
+            <span className={TYPOGRAPHY.label}>2026</span>
+          </div>
         </div>
 
         {/* Circular rings chart - shows when wallet connected */}
@@ -358,12 +361,15 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
       </div>
 
       {/* Round info */}
-      <div className="flex flex-col gap-1">
-        <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-1">
+        <div className="flex flex-col gap-1">
           <span className="font-semibold text-[#1A1A1A]">Round 1</span>
-          <span className="font-semibold text-[#1A1A1A]">{circleData.payoutDueDate}</span>
+          <span className={TYPOGRAPHY.label}>Next round</span>
         </div>
-        <span className={TYPOGRAPHY.label}>Next round</span>
+        <div className="flex flex-col gap-1 items-end">
+          <span className="font-semibold text-[#1A1A1A]">{circleData.payoutDueDate}</span>
+          <span className={TYPOGRAPHY.label}>2026</span>
+        </div>
       </div>
 
       {/* Circular rings chart */}
