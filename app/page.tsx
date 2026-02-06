@@ -273,7 +273,24 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
   }
 
   const simulationData = isWalletConnected && selectedEntry ? getSimulationData() : null
-  const rings = isWalletConnected ? getRings() : []
+  
+  // Generate rings - show all in gray with first ring black when no wallet or no selection
+  const getDefaultRings = () => {
+    const rings = []
+    const totalMonths = 24
+    
+    for (let i = 0; i < totalMonths; i++) {
+      rings.push({
+        index: i,
+        isActive: i === 0, // Only first ring is "active" (black)
+        color: i === 0 ? "#1A1A1A" : "#E5E5E5"
+      })
+    }
+    
+    return rings
+  }
+  
+  const rings = (isWalletConnected && selectedEntry) ? getRings() : getDefaultRings()
 
   if (isPreJoin) {
     return (
@@ -287,12 +304,13 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
         </div>
 
         {/* Progress bar with simulation fill when entry selected */}
-        <div className="h-2 w-full overflow-hidden rounded-full bg-[#E5E5E5]">
+        <div className="h-2 w-full overflow-hidden rounded-full bg-[#E5E5E5] relative">
           {simulationData ? (
             <div 
-              className="h-full rounded-full transition-all" 
+              className="h-full rounded-full transition-all absolute" 
               style={{ 
-                width: `${simulationData.percentage}%`,
+                left: selectedEntry === "early" ? "0%" : selectedEntry === "middle" ? "33.33%" : "66.66%",
+                width: "33.33%",
                 backgroundColor: simulationData.color
               }} 
             />
@@ -313,8 +331,8 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletC
           </div>
         </div>
 
-        {/* Circular rings chart - shows when wallet connected */}
-        {isWalletConnected && rings.length > 0 && (
+        {/* Circular rings chart - always visible */}
+        {rings.length > 0 && (
           <div className="flex justify-center mt-4">
             <svg width="240" height="240" viewBox="0 0 240 240">
               {rings.map((ring, i) => {
