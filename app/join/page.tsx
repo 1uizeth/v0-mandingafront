@@ -22,7 +22,7 @@ const MOCK_WALLET_ENS = "1uiz.eth"
   function NumericStepper({ currentStep, onStepClick }: { currentStep: Step; onStepClick?: (step: Step) => void }) {
     const steps = [
       { num: 1, label: "Agreement" },
-      { num: 2, label: "Review & Confirm" },
+      { num: 2, label: "Review" },
     ]
 
   return (
@@ -70,7 +70,7 @@ const MOCK_WALLET_ENS = "1uiz.eth"
 
   // Mobile stepper - compact inline
   function MobileStepper({ currentStep }: { currentStep: Step }) {
-    const labels = ["Agreement", "Review & Confirm"]
+    const labels = ["Agreement", "Review"]
   return (
     <span className="text-sm text-[#666666]">
       {currentStep}/3 <span className="font-medium text-[#1A1A1A]">{labels[currentStep - 1]}</span>
@@ -166,8 +166,8 @@ function ReviewAndConfirmStep({
     <div className="rounded-xl border border-[#E5E5E5] bg-white">
       {/* Header */}
       <div className="px-5 lg:px-6 pt-5 lg:pt-6">
-        <h2 className="text-lg font-semibold text-[#1A1A1A]">Review & Confirm</h2>
-        <p className="text-sm text-[#666666] mt-1">Verify your commitment and execute transaction.</p>
+        <h2 className="text-lg font-semibold text-[#1A1A1A]">Review</h2>
+        <p className="text-sm text-[#666666] mt-1">Review your commitment and confirm the transaction to complete.</p>
       </div>
 
       {/* Body */}
@@ -272,7 +272,7 @@ function ReviewAndConfirmStep({
               Processing...
             </span>
           ) : (
-            "Confirm & Execute"
+            "Confirm"
           )}
         </Button>
       </div>
@@ -440,21 +440,33 @@ export default function JoinCirclePage() {
         style={{ paddingTop: 'clamp(32px, 6vh, 64px)', paddingBottom: 'clamp(16px, 2vh, 24px)' }}
       >
         <div className="mx-auto max-w-[760px] px-6">
-          {/* Title + Stepper + Cancel row */}
-          <div className="flex items-center justify-between gap-4">
+          {/* Mobile: Two rows - controls then title */}
+          <div className="flex flex-col gap-6 lg:hidden">
+            {/* Row 1: Stepper + Cancel */}
+            <div className="flex items-center justify-between">
+              <MobileStepper currentStep={currentStep} />
+              <Button
+                variant="outline"
+                onClick={() => setShowCancelModal(true)}
+                className="text-sm"
+              >
+                Cancel
+              </Button>
+            </div>
+            {/* Row 2: Title - centered */}
+            <h1 className="text-xl font-semibold text-[#1A1A1A] text-center">
+              Join Circle
+            </h1>
+          </div>
+
+          {/* Desktop: Single row with title, stepper, cancel */}
+          <div className="hidden lg:flex items-center justify-between gap-4">
             <h1 className="text-lg font-semibold text-[#1A1A1A]">
               Join Circle
             </h1>
-
-            {/* Stepper - centered, desktop shows full, mobile shows compact */}
-            <div className="hidden lg:block absolute left-1/2 -translate-x-1/2">
+            <div className="absolute left-1/2 -translate-x-1/2">
               <NumericStepper currentStep={currentStep} onStepClick={handleStepClick} />
             </div>
-            <div className="lg:hidden absolute left-1/2 -translate-x-1/2">
-              <MobileStepper currentStep={currentStep} />
-            </div>
-
-            {/* Cancel button */}
             <Button
               variant="outline"
               onClick={() => setShowCancelModal(true)}
