@@ -304,7 +304,7 @@ function SuccessScreen() {
           <div className="bg-[#FAFAFA] rounded-lg border border-[#E5E5E5] p-4 text-sm">
             <div className="flex justify-between py-1.5">
               <span className="text-[#666666]">Claim tokens</span>
-              <span className="font-semibold text-[#1A1A1A]">{formatNumber(circleData.totalCommitment)}</span>
+              <span className="font-semibold text-[#1A1A1A]">{formatNumber(circleData.contributionPerMonth)}</span>
             </div>
           <div className="flex justify-between py-1.5">
             <span className="text-[#666666]">Position</span>
@@ -434,7 +434,8 @@ export default function JoinCirclePage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Header with Back + Title + Stepper - matching main page spacing */}
+      {/* Header with Back + Title + Stepper - matching main page spacing - hidden on success */}
+      {executionStep !== 3 && (
       <header 
         className="w-full border-b border-[#F0F0F0]"
         style={{ paddingTop: 'clamp(32px, 6vh, 64px)', paddingBottom: 'clamp(16px, 2vh, 24px)' }}
@@ -477,6 +478,7 @@ export default function JoinCirclePage() {
           </div>
         </div>
       </header>
+      )}
 
       <main className="flex-1 flex flex-col pb-8" style={{ paddingTop: 'clamp(16px, 3vh, 32px)' }}>
         <div className="mx-auto max-w-[760px] w-full px-6">
