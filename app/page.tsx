@@ -231,10 +231,10 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
 
   // Joined state
   return (
-    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col gap-3`}>
       {/* Header: Title | Counter */}
       <div className="flex items-center justify-between">
-        <span className={TYPOGRAPHY.label}>Payout</span>
+        <span className={TYPOGRAPHY.label}>Payouts</span>
         <span className={TYPOGRAPHY.caption}>
           {String(circleData.payoutProgress).padStart(2, "0")}/{circleData.totalMonths}
         </span>
@@ -248,15 +248,17 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
         />
       </div>
 
-      {/* Footer row: label left, date right */}
+      {/* Due info row: label left, date right */}
       <div className="flex items-center justify-between">
-        <span className={TYPOGRAPHY.label}>Next due on</span>
+        <span className="font-semibold text-[#1A1A1A]">Next due on</span>
         <span className="font-semibold text-[#1A1A1A]">{circleData.payoutDueDate}</span>
       </div>
 
-      {/* Large amount pill */}
-      <div className="rounded-full bg-[#F5F5F5] px-6 py-3 text-center">
-        <span className={`${TYPOGRAPHY.display} text-[#1A1A1A]`}>${formatNumber(circleData.amount)}</span>
+      {/* Large centered amount pill - primary focus */}
+      <div className="flex justify-center mt-2">
+        <div className="rounded-full bg-[#F5F5F5] px-8 py-4">
+          <span className="text-5xl font-semibold text-[#1A1A1A] italic tracking-tight">${formatNumber(circleData.amount)}</span>
+        </div>
       </div>
     </div>
   )
