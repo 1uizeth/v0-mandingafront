@@ -522,15 +522,13 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
               }
             }}
           >
-            {/* Circles: Small 4x2 grid in list mode, larger in column mode */}
-            <div className="grid grid-cols-4 gap-1.5 flex-shrink-0 xl:gap-2">
+            {/* Circles: Compact 4x2 grid in list mode, properly sized in column mode */}
+            <div className="grid grid-cols-4 gap-1 flex-shrink-0 xl:gap-3">
               {Array.from({ length: group.count }).map((_, i) => (
                 <div
                   key={i}
-                  className="rounded-full"
+                  className="rounded-full w-8 h-8 xl:w-12 xl:h-12"
                   style={{
-                    width: '32px',
-                    height: '32px',
                     backgroundColor: group.colorDefault
                   }}
                 />
@@ -538,9 +536,9 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
             </div>
             
             {/* Text: left-aligned in list mode, centered in column mode */}
-            <div className="flex flex-col gap-1 flex-1 justify-center xl:items-center xl:text-center">
+            <div className="flex flex-col gap-1.5 flex-1 justify-center xl:items-center xl:text-center xl:gap-2">
               <span className="font-semibold text-base xl:text-lg" style={{ color: group.colorDefault }}>{group.label}</span>
-              <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-snug`}>{group.description}</p>
+              <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-relaxed xl:leading-normal`}>{group.description}</p>
             </div>
           </button>
         ))}
