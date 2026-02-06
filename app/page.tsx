@@ -528,7 +528,7 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
             }}
           >
             {/* Circles: 4x2 grid with equal row/column spacing, centered */}
-            <div className="grid grid-cols-4 gap-3 flex-shrink-0 xl:gap-5 xl:justify-self-center">
+            <div className="grid grid-cols-4 gap-3 xl:gap-5 w-fit mx-auto">
               {Array.from({ length: group.count }).map((_, i) => (
                 <div
                   key={i}
@@ -541,7 +541,7 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
             </div>
             
             {/* Text: left-aligned in list mode, centered in column mode */}
-            <div className="flex flex-col gap-0.5 flex-1 justify-center xl:items-center xl:text-center xl:gap-1.5">
+            <div className="flex flex-col gap-0.5 flex-1 justify-center xl:items-center xl:text-center xl:gap-1.5 xl:flex-initial">
               <span className="font-semibold text-base xl:text-lg whitespace-nowrap" style={{ color: group.colorDefault }}>{group.label}</span>
               <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-snug line-clamp-3`}>{group.description}</p>
             </div>
