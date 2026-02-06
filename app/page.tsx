@@ -493,6 +493,71 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
                 />
               )
             })}
+            
+            {/* Invisible hover zones for each entry group - layered from outermost to innermost */}
+            
+            {/* Late entry: rings 16-23 (outermost) - full circle to outer edge */}
+            <circle
+              cx="120"
+              cy="120"
+              r={120}
+              fill="transparent"
+              className="cursor-pointer"
+              onMouseEnter={() => onHoverEntry("late")}
+              onMouseLeave={() => onHoverEntry("")}
+              onClick={() => {
+                if (isWalletConnected) {
+                  if (hasJoined) {
+                    showJoinedToast()
+                  } else {
+                    console.log('[v0] Ring click - selecting late entry')
+                    onSelectEntry("late")
+                  }
+                }
+              }}
+            />
+            
+            {/* Middle entry: rings 8-15 - circle covering early + middle */}
+            <circle
+              cx="120"
+              cy="120"
+              r={20 + (15 * 4.2) + 2.1}
+              fill="transparent"
+              className="cursor-pointer"
+              onMouseEnter={() => onHoverEntry("middle")}
+              onMouseLeave={() => onHoverEntry("")}
+              onClick={() => {
+                if (isWalletConnected) {
+                  if (hasJoined) {
+                    showJoinedToast()
+                  } else {
+                    console.log('[v0] Ring click - selecting middle entry')
+                    onSelectEntry("middle")
+                  }
+                }
+              }}
+            />
+            
+            {/* Early entry: rings 1-7 (innermost) - on top, highest priority */}
+            <circle
+              cx="120"
+              cy="120"
+              r={20 + (7 * 4.2) + 2.1}
+              fill="transparent"
+              className="cursor-pointer"
+              onMouseEnter={() => onHoverEntry("early")}
+              onMouseLeave={() => onHoverEntry("")}
+              onClick={() => {
+                if (isWalletConnected) {
+                  if (hasJoined) {
+                    showJoinedToast()
+                  } else {
+                    console.log('[v0] Ring click - selecting early entry')
+                    onSelectEntry("early")
+                  }
+                }
+              }}
+            />
           </svg>
         </div>
       )}
