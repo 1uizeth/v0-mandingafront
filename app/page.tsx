@@ -886,8 +886,8 @@ function EntryStatusCard({ isWalletConnected, hasJoined, selectedEntry, hoveredE
             } as React.CSSProperties}
           >
             {/* Dots grid - fixed width in list mode, full width in column mode */}
-            <div className={`flex justify-center flex-shrink-0 ${!hasJoined ? 'xl:w-full' : ''}`}>
-              <div className={`grid grid-cols-4 gap-1.5 ${!hasJoined ? 'xl:w-full xl:gap-1.5 xl:place-items-center' : ''}`}>
+            <div className={`flex justify-center flex-shrink-0 ${!hasJoined ? 'xl:w-full xl:justify-center' : ''}`}>
+              <div className="grid grid-cols-4 gap-x-1.5 gap-y-1.5">
                 {Array.from({ length: group.count }).map((_, i) => (
                   <div
                     key={i}
