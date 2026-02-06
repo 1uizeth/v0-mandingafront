@@ -227,13 +227,6 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
           <span className="font-semibold text-[#1A1A1A]">Next due on</span>
           <span className="font-semibold text-[#1A1A1A]">March 1</span>
         </div>
-
-        {/* Large centered amount pill - primary focus */}
-        <div className="flex justify-center mt-2">
-          <div className="rounded-full bg-[#F5F5F5] px-8 py-4 w-full flex justify-center">
-            <span className="font-share-tech-mono text-2xl font-bold text-[#1A1A1A]">${formatNumber(circleData.amount)}</span>
-          </div>
-        </div>
       </div>
     )
   }
@@ -261,13 +254,6 @@ function PayoutCard({ isWalletConnected, hasJoined }: { isWalletConnected: boole
       <div className="flex items-center justify-between">
         <span className="font-semibold text-[#1A1A1A]">Next due on</span>
         <span className="font-semibold text-[#1A1A1A]">{circleData.payoutDueDate}</span>
-      </div>
-
-      {/* Large centered amount pill - primary focus */}
-      <div className="flex justify-center mt-2">
-        <div className="rounded-full bg-[#F5F5F5] px-8 py-4 w-full flex justify-center">
-          <span className="font-share-tech-mono text-2xl font-bold text-[#1A1A1A]">${formatNumber(circleData.amount)}</span>
-        </div>
       </div>
     </div>
   )
