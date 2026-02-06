@@ -848,7 +848,7 @@ function EnsCard() {
           rel="noopener noreferrer"
           className={`${TYPOGRAPHY.button} text-[#5298FF] transition-colors hover:opacity-70 whitespace-nowrap`}
         >
-          View on ENS ���
+          View on ENS →
         </a>
       </div>
 
