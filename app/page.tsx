@@ -822,13 +822,6 @@ function EntryStatusCard({ isWalletConnected, hasJoined, selectedEntry, hoveredE
       toast({
         title: "Please, connect your wallet",
         duration: 2000,
-        action: (
-          <button 
-            onClick={handleConnectWallet}
-            className="absolute inset-0 w-full h-full cursor-pointer"
-            aria-label="Connect wallet"
-          />
-        ),
       })
       return
     }
