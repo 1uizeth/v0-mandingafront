@@ -808,7 +808,7 @@ function EntryStatusCard({ isWalletConnected, hasJoined, selectedEntry, hoveredE
     if (!isWalletConnected) {
       toast({
         title: "Please, connect your wallet",
-        duration: 4000,
+        duration: 2000,
       })
       return
     }
@@ -818,7 +818,7 @@ function EntryStatusCard({ isWalletConnected, hasJoined, selectedEntry, hoveredE
       const entryLabel = entryGroups.find(g => g.id === selectedEntry)?.label || "this entry"
       toast({
         title: `You've joined this circle on ${entryLabel}`,
-        duration: 4000,
+        duration: 2000,
       })
       return
     }
@@ -1150,7 +1150,7 @@ export default function FundingCirclePage() {
     const entryLabel = selectedEntry === "early" ? "Early entry" : selectedEntry === "middle" ? "Middle entry" : "Late entry"
     toast({
       title: `You've joined this circle on ${entryLabel}`,
-      duration: 4000,
+      duration: 2000,
     })
   }
 
