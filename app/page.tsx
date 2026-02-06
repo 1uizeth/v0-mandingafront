@@ -502,48 +502,47 @@ function EntryStatusCard({ isWalletConnected }: { isWalletConnected: boolean }) 
             className={`
               group relative
               flex items-start gap-4 p-4 rounded-2xl
-              xl:flex-col xl:items-center xl:gap-3 xl:py-6 xl:px-6
+              xl:flex xl:flex-col xl:items-center xl:gap-6 xl:py-6 xl:px-6
               transition-all duration-200 ease-out
               focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
               cursor-pointer
-              hover:border-2 hover:border-current
-              ${selectedEntry === group.id ? 'border-2 border-current' : 'border-2 border-transparent'}
+              ${selectedEntry === group.id ? 'xl:ring-2 xl:ring-inset' : ''}
             `}
             style={{
               backgroundColor: selectedEntry === group.id ? `${group.colorDefault}15` : 'transparent',
-              borderColor: selectedEntry === group.id ? group.colorDefault : 'transparent',
+              '--tw-ring-color': group.colorDefault,
               '--focus-ring': group.colorDefault,
             } as React.CSSProperties}
             onMouseEnter={(e) => {
               if (selectedEntry !== group.id) {
                 e.currentTarget.style.backgroundColor = `${group.colorDefault}08`
-                e.currentTarget.style.borderColor = group.colorDefault
               }
             }}
             onMouseLeave={(e) => {
               if (selectedEntry !== group.id) {
                 e.currentTarget.style.backgroundColor = 'transparent'
-                e.currentTarget.style.borderColor = 'transparent'
               }
             }}
           >
-            {/* Circles: 4x2 grid with equal row/column spacing, centered */}
-            <div className="grid grid-cols-4 gap-3 xl:gap-5 w-fit mx-auto">
-              {Array.from({ length: group.count }).map((_, i) => (
-                <div
-                  key={i}
-                  className="rounded-full w-5 h-5 xl:w-6 xl:h-6"
-                  style={{
-                    backgroundColor: group.colorDefault
-                  }}
-                />
-              ))}
+            {/* Dots block with fixed height for alignment */}
+            <div className="w-full flex justify-center min-h-[80px] xl:min-h-[120px] items-center">
+              <div className="grid grid-cols-4 gap-x-3 gap-y-3 xl:gap-x-4 xl:gap-y-4">
+                {Array.from({ length: group.count }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="rounded-full w-5 h-5 xl:w-6 xl:h-6"
+                    style={{
+                      backgroundColor: group.colorDefault
+                    }}
+                  />
+                ))}
+              </div>
             </div>
             
             {/* Text: left-aligned in list mode, centered in column mode */}
             <div className="flex flex-col gap-0.5 flex-1 justify-center xl:items-center xl:text-center xl:gap-1.5 xl:flex-initial">
-              <span className="font-semibold text-base xl:text-lg whitespace-nowrap" style={{ color: group.colorDefault }}>{group.label}</span>
-              <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-snug line-clamp-3`}>{group.description}</p>
+              <span className="font-semibold text-base xl:text-lg whitespace-nowrap leading-tight" style={{ color: group.colorDefault }}>{group.label}</span>
+              <p className={`${TYPOGRAPHY.bodyMuted} text-sm leading-snug line-clamp-3 xl:max-w-[220px]`}>{group.description}</p>
             </div>
           </button>
         ))}
