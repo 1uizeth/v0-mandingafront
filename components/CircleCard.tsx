@@ -23,8 +23,6 @@ interface CircleCardProps {
   statusLabel: string
   statusColor: string
   slotsLeft: number
-  entryLabel: string
-  entryColor: string
   onClick: () => void
 }
 
@@ -38,8 +36,6 @@ export function CircleCard({
   statusLabel,
   statusColor,
   slotsLeft,
-  entryLabel,
-  entryColor,
   onClick,
 }: CircleCardProps) {
   return (
@@ -72,24 +68,16 @@ export function CircleCard({
         </div>
       </div>
 
-      {/* Bottom Meta Row - Status, Slots, Entry */}
-      <div className="flex items-center justify-between text-xs">
-        {/* Left: Status with colored dot */}
-        <div className="flex items-center gap-1.5">
-          <div
-            className="w-2 h-2 rounded-full flex-shrink-0"
-            style={{ backgroundColor: statusColor }}
-          />
-          <span className="font-medium text-[#1A1A1A] whitespace-nowrap">{statusLabel}</span>
+      {/* Status and Slots - matching detail page */}
+      <div className="flex items-center justify-between">
+        {/* Left: Active/Joined badge */}
+        <div className="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-3 py-1.5">
+          <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
+          <span className="text-sm font-medium text-[#2E7D32]">{statusLabel}</span>
         </div>
-
-        {/* Center: Slots left */}
-        <span className={`${TYPOGRAPHY.caption} whitespace-nowrap`}>{slotsLeft} slots</span>
-
-        {/* Right: Entry label */}
-        <span className="text-xs font-bold whitespace-nowrap" style={{ color: entryColor }}>
-          {entryLabel}
-        </span>
+        
+        {/* Right: Slots left */}
+        <span className="text-sm font-medium text-[#666666]">{slotsLeft} slots left</span>
       </div>
 
       {/* ENS Domain Tag - styled like detail page */}
