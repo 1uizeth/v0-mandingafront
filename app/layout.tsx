@@ -1,6 +1,6 @@
 import React from "react"
 import type { Metadata, Viewport } from 'next'
-import { GeistPixel } from 'geist/font/pixel'
+import { GeistPixelLine } from 'geist/font/pixel'
 import { Patrick_Hand, Share_Tech_Mono } from 'next/font/google'
 
 import './globals.css'
@@ -26,8 +26,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${GeistPixel.variable} ${patrickHand.variable} ${shareTechMono.variable} bg-background`}>
-      <body className={`${GeistPixel.className} antialiased`}>{children}</body>
+    <html lang="en" className={`${GeistPixelLine.variable} ${patrickHand.variable} ${shareTechMono.variable} bg-background`}>
+      <body className={`${GeistPixelLine.className} antialiased`}>{children}</body>
     </html>
   )
 }
