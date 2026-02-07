@@ -143,7 +143,6 @@ export default function CirclesIndexPage() {
               slotsLeft={circle.slotsLeft}
               entryLabel={circle.entryLabel}
               entryColor={circle.entryColor}
-              onJoin={() => router.push(`/join?circle=${encodeURIComponent(circle.slug)}`)}
               onClick={() => router.push(`/${circle.slug}`)}
             />
           ))}
