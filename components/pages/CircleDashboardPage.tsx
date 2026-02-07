@@ -25,7 +25,7 @@ const TYPOGRAPHY = {
   h3: "text-base font-semibold",
   
   // Body text: Default paragraph content
-  body: "text-sm font-normal",
+  body: "text-sm font-semibold",
   
   // Body muted: Secondary copy, descriptions
   bodyMuted: "text-xs font-bold text-[#999999]",
@@ -37,7 +37,7 @@ const TYPOGRAPHY = {
   caption: "text-xs font-bold text-[#999999]",
   
   // Button: Button and link text
-  button: "text-sm font-medium",
+  button: "text-sm font-semibold",
 }
 
 // ===== DESIGN TOKENS: Spacing & Padding System =====
@@ -139,7 +139,7 @@ function Header({ circle, isWalletConnected, onConnectWallet, onDisconnectWallet
 
         {/* Column 2: Title - always centered */}
         <div className="justify-self-center text-center whitespace-nowrap">
-          <h1 className="text-lg font-semibold text-[#1A1A1A]">
+          <h1 className="text-2xl font-bold text-[#1A1A1A]">
             ${formatNumber(circle.amount)} {circle.title}
           </h1>
         </div>
@@ -743,7 +743,7 @@ function PaymentVisualizationCard({ circle, isWalletConnected, hasJoined, select
       {/* Join/Pay button - shows when wallet is connected and entry is selected */}
       {isWalletConnected && selectedEntry && (
         <Button 
-          className="w-full rounded-full text-white transition-colors"
+          className="w-full rounded-full text-white font-bold text-base transition-all hover:opacity-80 hover:scale-[0.98]"
           style={{ backgroundColor: getButtonColor() }}
           asChild
         >

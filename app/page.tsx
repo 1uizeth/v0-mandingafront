@@ -20,7 +20,7 @@ type EntryFilter = "all" | "early" | "middle" | "late"
 const TYPOGRAPHY = {
   h1: "text-2xl font-bold",
   label: "text-xs font-bold text-[#666666]",
-  body: "text-sm font-normal",
+  body: "text-sm font-semibold",
 }
 
 export default function CirclesIndexPage() {
