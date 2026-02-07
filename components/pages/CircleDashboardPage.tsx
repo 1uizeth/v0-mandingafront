@@ -747,7 +747,7 @@ function PaymentVisualizationCard({ circle, isWalletConnected, hasJoined, select
           style={{ backgroundColor: getButtonColor() }}
           asChild
         >
-          <Link href={hasJoined ? "/pay" : "/join"}>{hasJoined ? "Pay next installment" : "Join"}</Link>
+          <Link href={hasJoined ? "/pay" : `/join?circle=${encodeURIComponent(circle.slug)}`}>{hasJoined ? "Pay next installment" : "Join"}</Link>
         </Button>
       )}
     </div>

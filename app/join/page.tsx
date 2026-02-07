@@ -2,7 +2,7 @@
 
 import { ArrowLeft, Check, Loader2 } from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
 import { circleData, getEntryLabel, getEntryData } from "@/lib/circle-data"
@@ -281,7 +281,7 @@ function ReviewAndConfirmStep({
 }
 
 // Success Screen - shows after all transactions complete
-function SuccessScreen() {
+function SuccessScreen({ circleSlug }: { circleSlug: string | null }) {
   const router = useRouter()
 
   return (
@@ -315,7 +315,7 @@ function SuccessScreen() {
 
         {/* CTA Button */}
         <Button 
-          onClick={() => router.push("/?joined=true")}
+          onClick={() => router.push(circleSlug ? `/${circleSlug}?joined=true` : "/?joined=true")}
           className="w-full max-w-sm rounded-full bg-[#1A1A1A] px-6 py-4 text-sm font-semibold text-white hover:bg-[#333333] mt-8"
         >
           Go back to circle
@@ -327,6 +327,7 @@ function SuccessScreen() {
 
 export default function JoinCirclePage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [currentStep, setCurrentStep] = useState<Step>(1)
   const [agreementSignedAt, setAgreementSignedAt] = useState<Date | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
@@ -335,6 +336,14 @@ export default function JoinCirclePage() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [selectedEntry, setSelectedEntry] = useState<string>("early")
   const [showCancelModal, setShowCancelModal] = useState(false)
+  const [circleSlug, setCircleSlug] = useState<string | null>(null)
+
+  // Load circle slug from query params
+  useEffect(() => {
+    const slug = searchParams.get('circle')
+    setCircleSlug(slug)
+    console.log('[v0] Join page loaded for circle:', slug)
+  }, [searchParams])
 
   // Load selected entry from localStorage
   useEffect(() => {
@@ -396,7 +405,7 @@ export default function JoinCirclePage() {
     if (currentStep > 1) {
       setCurrentStep((currentStep - 1) as Step)
     } else {
-      router.push("/")
+      router.push(circleSlug ? `/${circleSlug}` : "/")
     }
   }
 
@@ -483,7 +492,7 @@ export default function JoinCirclePage() {
       <main className="flex-1 flex flex-col pb-8" style={{ paddingTop: 'clamp(16px, 3vh, 32px)' }}>
         <div className="mx-auto max-w-[760px] w-full px-6">
           {executionStep === 3 ? (
-            <SuccessScreen />
+            <SuccessScreen circleSlug={circleSlug} />
           ) : (
             <>
   {currentStep === 1 && (
@@ -528,7 +537,7 @@ export default function JoinCirclePage() {
                 Continue Joining
               </Button>
               <Button
-                onClick={() => router.push("/")}
+                onClick={() => router.push(circleSlug ? `/${circleSlug}` : "/")}
                 className="flex-1 bg-[#1A1A1A] text-white hover:bg-[#333333]"
               >
                 Yes, Cancel
