@@ -1,5 +1,5 @@
 import React from "react"
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono, Patrick_Hand, Share_Tech_Mono } from 'next/font/google'
 
 import './globals.css'
@@ -15,13 +15,19 @@ export const metadata: Metadata = {
   generator: 'v0.app',
 }
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${patrickHand.variable} ${shareTechMono.variable}`}>
+    <html lang="en" className={`${patrickHand.variable} ${shareTechMono.variable} bg-background`}>
       <body className="font-sans antialiased">{children}</body>
     </html>
   )
