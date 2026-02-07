@@ -47,24 +47,10 @@ export function CircleCard({
       onClick={onClick}
       className="rounded-xl border border-[#E5E5E5] bg-white p-5 flex flex-col gap-4 cursor-pointer hover:border-[#333333] transition-colors"
     >
-      {/* Top Row - Monthly payment and duration */}
-      <div className="flex items-start justify-between">
-        {/* Left: Monthly payment */}
-        <div className="flex flex-col gap-0.5">
-          <span className="text-2xl font-bold text-[#1A1A1A] leading-none whitespace-nowrap">
-            ${formatNumber(monthlyPayment)}
-          </span>
-          <span className={TYPOGRAPHY.caption}>per month</span>
-        </div>
-
-        {/* Right: Duration */}
-        <div className="flex flex-col items-end gap-0.5">
-          <span className="text-xl font-semibold text-[#1A1A1A] leading-none whitespace-nowrap">
-            {durationMonths} mo
-          </span>
-          <span className={TYPOGRAPHY.caption}>{durationLabel}</span>
-        </div>
-      </div>
+      {/* Header - Payment summary */}
+      <h2 className="text-base font-semibold text-[#1A1A1A] text-center">
+        Pay ${formatNumber(monthlyPayment)} /mo for {durationMonths} months
+      </h2>
 
       {/* Center Visual - Large Circle with Amount - expanded to full width */}
       <div className="flex items-center justify-center py-4 -mx-5 px-5">
