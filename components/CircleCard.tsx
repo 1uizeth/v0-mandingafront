@@ -138,7 +138,7 @@ export function CircleCard({
         setIsHoveringRings(false)
         setHoveredEntry(null)
       }}
-      className="rounded-xl border border-[#E5E5E5] p-5 flex flex-col gap-4 cursor-pointer hover:border-[#333333] transition-all duration-200"
+      className="rounded-xl border border-[#E5E5E5] p-5 flex flex-col gap-4 cursor-pointer transition-all duration-200"
       style={{
         backgroundColor: isHoveringCard ? "#FAFAFA" : "#FFFFFF"
       }}
