@@ -42,6 +42,19 @@ export interface Circle {
   entryLabel: "Early entry" | "Middle entry" | "Late entry"
   entryColor: string
   nextPayoutInDays: number
+  // Entry-specific data for interactive card
+  earlyEntry: {
+    slotsLeft: number
+    payoutPeriod: string
+  }
+  middleEntry: {
+    slotsLeft: number
+    payoutPeriod: string
+  }
+  lateEntry: {
+    slotsLeft: number
+    payoutPeriod: string
+  }
 }
 
 // Mock circles data
@@ -79,6 +92,18 @@ export const circles: Circle[] = [
     entryLabel: "Early entry",
     entryColor: "#D4AF37",
     nextPayoutInDays: 26,
+    earlyEntry: {
+      slotsLeft: 8,
+      payoutPeriod: "Payout between March and October 2026"
+    },
+    middleEntry: {
+      slotsLeft: 7,
+      payoutPeriod: "Payout between November 2026 and June 2027"
+    },
+    lateEntry: {
+      slotsLeft: 6,
+      payoutPeriod: "Payout between July 2027 and February 2028"
+    },
   },
   {
     slug: createSlug(15000, "ethberlin.mandinga.eth"),
@@ -112,6 +137,18 @@ export const circles: Circle[] = [
     entryLabel: "Middle entry",
     entryColor: "#5F9EA0",
     nextPayoutInDays: 56,
+    earlyEntry: {
+      slotsLeft: 5,
+      payoutPeriod: "Payout between April and November 2026"
+    },
+    middleEntry: {
+      slotsLeft: 6,
+      payoutPeriod: "Payout between December 2026 and July 2027"
+    },
+    lateEntry: {
+      slotsLeft: 4,
+      payoutPeriod: "Payout between August 2027 and March 2028"
+    },
   },
   {
     slug: createSlug(10000, "ethglobal.mandinga.eth"),
@@ -146,6 +183,18 @@ export const circles: Circle[] = [
     entryLabel: "Early entry",
     entryColor: "#D4AF37",
     nextPayoutInDays: 86,
+    earlyEntry: {
+      slotsLeft: 7,
+      payoutPeriod: "Payout between May and December 2026"
+    },
+    middleEntry: {
+      slotsLeft: 6,
+      payoutPeriod: "Payout between January 2027 and August 2027"
+    },
+    lateEntry: {
+      slotsLeft: 5,
+      payoutPeriod: "Payout between September 2027 and April 2028"
+    },
   },
   {
     slug: createSlug(25000, "ethcc.mandinga.eth"),
@@ -178,6 +227,18 @@ export const circles: Circle[] = [
     entryLabel: "Late entry",
     entryColor: "#6A5ACD",
     nextPayoutInDays: 5,
+    earlyEntry: {
+      slotsLeft: 4,
+      payoutPeriod: "Payout between February and September 2026"
+    },
+    middleEntry: {
+      slotsLeft: 3,
+      payoutPeriod: "Payout between October 2026 and May 2027"
+    },
+    lateEntry: {
+      slotsLeft: 3,
+      payoutPeriod: "Payout between June 2027 and January 2028"
+    },
   },
   {
     slug: createSlug(8000, "ethdenver.mandinga.eth"),
@@ -211,6 +272,18 @@ export const circles: Circle[] = [
     entryLabel: "Middle entry",
     entryColor: "#5F9EA0",
     nextPayoutInDays: 116,
+    earlyEntry: {
+      slotsLeft: 10,
+      payoutPeriod: "Payout between June 2026 and January 2027"
+    },
+    middleEntry: {
+      slotsLeft: 12,
+      payoutPeriod: "Payout between February 2027 and September 2027"
+    },
+    lateEntry: {
+      slotsLeft: 8,
+      payoutPeriod: "Payout between October 2027 and May 2028"
+    },
   },
   {
     slug: createSlug(12000, "ethwaterloo.mandinga.eth"),
@@ -244,6 +317,18 @@ export const circles: Circle[] = [
     entryLabel: "Late entry",
     entryColor: "#6A5ACD",
     nextPayoutInDays: 146,
+    earlyEntry: {
+      slotsLeft: 9,
+      payoutPeriod: "Payout between July 2026 and February 2027"
+    },
+    middleEntry: {
+      slotsLeft: 8,
+      payoutPeriod: "Payout between March 2027 and October 2027"
+    },
+    lateEntry: {
+      slotsLeft: 8,
+      payoutPeriod: "Payout between November 2027 and June 2028"
+    },
   },
 ]
 

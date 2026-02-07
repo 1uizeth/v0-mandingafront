@@ -141,6 +141,9 @@ export default function CirclesIndexPage() {
               statusLabel={circle.statusLabel}
               statusColor={circle.statusColor}
               slotsLeft={circle.slotsLeft}
+              earlyEntry={circle.earlyEntry}
+              middleEntry={circle.middleEntry}
+              lateEntry={circle.lateEntry}
               onClick={() => router.push(`/${circle.slug}`)}
             />
           ))}

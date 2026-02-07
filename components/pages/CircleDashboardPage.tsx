@@ -1075,10 +1075,12 @@ function SlotsCard({ circle, hasJoined }: { circle: Circle; hasJoined: boolean }
         <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
         <span className={`${TYPOGRAPHY.button} text-[#2E7D32]`}>{hasJoined ? "Joined" : "Active"}</span>
       </div>
-      {/* Slots count or joined date */}
-      <span className={`${TYPOGRAPHY.button} text-[#666666]`}>
-        {hasJoined ? getJoinedText() : `${circle.slotsLeft} slots left`}
-      </span>
+      {/* Slots count or joined date badge */}
+      <div className="rounded-2xl bg-[#F5F5F5] px-3 py-1.5">
+        <span className={`${TYPOGRAPHY.button} text-[#666666]`}>
+          {hasJoined ? getJoinedText() : `${circle.slotsLeft} slots left`}
+        </span>
+      </div>
     </div>
   )
 }
