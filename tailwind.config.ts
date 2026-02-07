@@ -11,6 +11,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
+        sans: ['var(--font-geist-pixel-line)', 'monospace'],
         handwriting: ['var(--font-patrick-hand)', 'cursive'],
         'share-tech-mono': ['var(--font-share-tech-mono)', 'monospace'],
       },

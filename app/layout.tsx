@@ -1,11 +1,10 @@
 import React from "react"
-import type { Metadata } from 'next'
-import { Geist, Geist_Mono, Patrick_Hand, Share_Tech_Mono } from 'next/font/google'
+import type { Metadata, Viewport } from 'next'
+import { GeistPixelLine } from 'geist/font/pixel'
+import { Patrick_Hand, Share_Tech_Mono } from 'next/font/google'
 
 import './globals.css'
 
-const _geist = Geist({ subsets: ['latin'] })
-const _geistMono = Geist_Mono({ subsets: ['latin'] })
 export const patrickHand = Patrick_Hand({ weight: '400', subsets: ['latin'], variable: '--font-patrick-hand' })
 export const shareTechMono = Share_Tech_Mono({ weight: '400', subsets: ['latin'], variable: '--font-share-tech-mono' })
 
@@ -15,14 +14,20 @@ export const metadata: Metadata = {
   generator: 'v0.app',
 }
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${patrickHand.variable} ${shareTechMono.variable}`}>
-      <body className="font-sans antialiased">{children}</body>
+    <html lang="en" className={`${GeistPixelLine.variable} ${patrickHand.variable} ${shareTechMono.variable} bg-background`}>
+      <body className={`${GeistPixelLine.className} antialiased`}>{children}</body>
     </html>
   )
 }

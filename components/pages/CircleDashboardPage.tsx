@@ -1,14 +1,12 @@
 "use client"
 
-import * as React from "react"
-
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Check } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
-
-// Main funding circle page component
+import type { Circle } from "@/lib/circles"
 
 // Format number consistently (avoids hydration mismatch from toLocaleString)
 function formatNumber(num: number): string {
@@ -59,41 +57,12 @@ const GAP_XL = "gap-8"     // 32px
 // Grid gap token (unified for all card-to-card spacing)
 const GRID_GAP = "gap-6"     // 24px - consistent horizontal and vertical spacing
 
-
-// Mock data for the funding circle
-const circleData = {
-  status: "active" as const,
-  amount: 20000,
-  title: "for Devcon 2026",
-  slotsLeft: 21,
-  joinedDate: new Date(), // Used when hasJoined is true
-  startDate: "February, 2026",
-  endDate: "March, 2028",
-  monthlyAmount: 892,
-  totalMonths: 24,
-  currentMonth: 1,
-  earlyEntryMonths: [2, 3, 4, 5, 6, 7, 8],
-  payoutProgress: 1,
-  installmentProgress: 1,
-  dueAmount: 892,
-  payoutDueDate: "March",
-  nextDueDate: new Date(2026, 2, 5), // March 5, 2026
-  ensDomain: "devcon.mandinga.eth",
-  ensUrl: "https://app.ens.domains/devcon.mandinga.eth",
-  arcscanUrl: "https://arcscan.io",
-  members: [
-    { name: "sassai.eth", joinedDaysAgo: 1 },
-    { name: "vitalik.eth", joinedDaysAgo: 2 },
-    { name: "1uiz.eth", joinedDaysAgo: 3 },
-  ],
-}
-
 // Mock connected wallet ENS name
 const MOCK_WALLET_ENS = "1uiz.eth"
 
 // Wallet Button Component with disconnect on hover
 function WalletButton({ onDisconnect }: { onDisconnect: () => void }) {
-  const [isHovered, setIsHovered] = React.useState(false)
+  const [isHovered, setIsHovered] = useState(false)
 
   return (
     <div
@@ -115,48 +84,41 @@ function WalletButton({ onDisconnect }: { onDisconnect: () => void }) {
   )
 }
 
-function Header({ isWalletConnected, onConnectWallet, onDisconnectWallet }: { isWalletConnected: boolean; onConnectWallet: () => void; onDisconnectWallet: () => void }) {
+function Header({ circle, isWalletConnected, onConnectWallet, onDisconnectWallet }: { circle: Circle; isWalletConnected: boolean; onConnectWallet: () => void; onDisconnectWallet: () => void }) {
   return (
     <header 
       className="mx-auto max-w-[1280px] w-full px-6 md:px-10 pt-6 pb-6"
     >
-      {/* Mobile + Tablet Header (<1024px): 3-column grid for stable centering */}
-      <div 
-        className="grid lg:hidden items-center"
-        style={{ gridTemplateColumns: '1fr auto 1fr' }}
-      >
-        {/* Column 1: Back button - start aligned */}
-        <div className="justify-self-start">
+      {/* Mobile + Tablet Header (<1024px): Two rows - controls then title */}
+      <div className="flex flex-col gap-6 lg:hidden">
+        {/* Row 1: Back button + Connect wallet */}
+        <div className="flex items-center justify-between">
           <Link
-            href="#"
+            href="/"
             className="inline-flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70"
           >
             <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
             <span className="text-sm md:text-base whitespace-nowrap">Back</span>
           </Link>
+          <div>
+            {isWalletConnected ? (
+              <WalletButton onDisconnect={onDisconnectWallet} />
+            ) : (
+              <Button 
+                variant="outline" 
+                className="rounded-full border-[#E5E5E5] px-4 py-1.5 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent"
+                onClick={onConnectWallet}
+              >
+                Connect wallet
+              </Button>
+            )}
+          </div>
         </div>
 
-        {/* Column 2: Title - always centered */}
-        <div className="justify-self-center text-center">
-          <h1 className="text-lg font-semibold text-[#1A1A1A] whitespace-nowrap">
-            ${formatNumber(circleData.amount)} {circleData.title}
-          </h1>
-        </div>
-
-        {/* Column 3: Wallet - end aligned */}
-        <div className="justify-self-end">
-          {isWalletConnected ? (
-            <WalletButton onDisconnect={onDisconnectWallet} />
-          ) : (
-            <Button 
-              variant="outline" 
-              className="rounded-full border-[#E5E5E5] px-4 py-1.5 text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5] bg-transparent"
-              onClick={onConnectWallet}
-            >
-              Connect wallet
-            </Button>
-          )}
-        </div>
+        {/* Row 2: Title - centered */}
+        <h1 className="text-xl font-semibold text-[#1A1A1A] text-center">
+          ${formatNumber(circle.amount)} {circle.title}
+        </h1>
       </div>
 
       {/* Desktop Header (1024px+) - 3-column grid: left auto-center auto-right */}
@@ -167,7 +129,7 @@ function Header({ isWalletConnected, onConnectWallet, onDisconnectWallet }: { is
         {/* Column 1: Back button - start aligned */}
         <div className="justify-self-start">
           <Link
-            href="#"
+            href="/"
             className="inline-flex items-center gap-2 text-[#1A1A1A] font-medium transition-opacity hover:opacity-70 whitespace-nowrap"
           >
             <ArrowLeft className="h-5 w-5 flex-shrink-0" />
@@ -178,7 +140,7 @@ function Header({ isWalletConnected, onConnectWallet, onDisconnectWallet }: { is
         {/* Column 2: Title - always centered */}
         <div className="justify-self-center text-center whitespace-nowrap">
           <h1 className="text-lg font-semibold text-[#1A1A1A]">
-            ${formatNumber(circleData.amount)} {circleData.title}
+            ${formatNumber(circle.amount)} {circle.title}
           </h1>
         </div>
 
@@ -203,18 +165,18 @@ function Header({ isWalletConnected, onConnectWallet, onDisconnectWallet }: { is
 
 // FULL CARD: Timeline (Started on / Ends on)
 // Compact, content-driven layout - no min-height or forced height
-function TimelineCard() {
+function TimelineCard({ circle }: { circle: Circle }) {
   return (
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
       {/* Row 1: Started on */}
       <div className="flex items-center justify-between">
         <p className={TYPOGRAPHY.label}>Started on</p>
-        <p className="font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.startDate}</p>
+        <p className="font-semibold text-[#1A1A1A] whitespace-nowrap">{circle.startDate}</p>
       </div>
       {/* Row 2: Ends on */}
       <div className="flex items-center justify-between">
         <p className={TYPOGRAPHY.label}>Ends on</p>
-        <p className="font-semibold text-[#1A1A1A] whitespace-nowrap">{circleData.endDate}</p>
+        <p className="font-semibold text-[#1A1A1A] whitespace-nowrap">{circle.endDate}</p>
       </div>
       </div>
     )
@@ -224,9 +186,9 @@ function TimelineCard() {
 // Header: Title | Counter ("01/24")
 // Progress bar with minimum 1% visible fill indicator
 // Round info and rings visualization
-function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry, onHoverEntry, onSelectEntry, showJoinedToast }: { isWalletConnected: boolean; hasJoined: boolean; selectedEntry: string; hoveredEntry: string; onHoverEntry: (id: string) => void; onSelectEntry: (id: string) => void; showJoinedToast: () => void }) {
+function PayoutCard({ circle, isWalletConnected, hasJoined, selectedEntry, hoveredEntry, onHoverEntry, onSelectEntry, showJoinedToast }: { circle: Circle; isWalletConnected: boolean; hasJoined: boolean; selectedEntry: string; hoveredEntry: string; onHoverEntry: (id: string) => void; onSelectEntry: (id: string) => void; showJoinedToast: () => void }) {
   const isPreJoin = !isWalletConnected || !hasJoined
-  const progressPercentage = Math.max(1, (circleData.payoutProgress / circleData.totalMonths) * 100)
+  const progressPercentage = Math.max(1, (circle.payoutProgress / circle.totalMonths) * 100)
   
   // Use hovered entry if present, otherwise use selected entry
   const activeEntry = hoveredEntry || selectedEntry
@@ -339,7 +301,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
         <div className="flex items-center justify-between">
           <span className={TYPOGRAPHY.label}>Payouts</span>
           <span className={TYPOGRAPHY.caption}>
-            {simulationData ? simulationData.counter : `00/${circleData.totalMonths}`}
+            {simulationData ? simulationData.counter : `00/${circle.totalMonths}`}
           </span>
         </div>
 
@@ -471,7 +433,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
       <div className="flex items-center justify-between">
         <span className={TYPOGRAPHY.label}>Payouts</span>
         <span className={TYPOGRAPHY.caption}>
-          {simulationData ? simulationData.counter : `${String(circleData.payoutProgress).padStart(2, "0")}/${circleData.totalMonths}`}
+          {simulationData ? simulationData.counter : `${String(circle.payoutProgress).padStart(2, "0")}/${circle.totalMonths}`}
         </span>
       </div>
 
@@ -501,7 +463,7 @@ function PayoutCard({ isWalletConnected, hasJoined, selectedEntry, hoveredEntry,
           <span className={TYPOGRAPHY.label}>{simulationData?.nextRoundLabel || "Next round"}</span>
         </div>
         <div className="flex flex-col gap-1 items-end">
-          <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">{simulationData?.nextRoundDate || circleData.payoutDueDate}</span>
+          <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">{simulationData?.nextRoundDate || circle.payoutDueDate}</span>
           <span className={TYPOGRAPHY.label}>{simulationData?.nextRoundYear || "2026"}</span>
         </div>
       </div>
@@ -720,13 +682,13 @@ function CircleGrid({
 
 // FULL CARD: Payment Container
 // Container card with title and embedded Installments sub-card
-function PaymentVisualizationCard({ isWalletConnected, hasJoined, selectedEntry }: { isWalletConnected: boolean; hasJoined: boolean; selectedEntry: string }) {
-  const progressPercentage = Math.max(1, (circleData.installmentProgress / circleData.totalMonths) * 100)
+function PaymentVisualizationCard({ circle, isWalletConnected, hasJoined, selectedEntry }: { circle: Circle; isWalletConnected: boolean; hasJoined: boolean; selectedEntry: string }) {
+  const progressPercentage = Math.max(1, (circle.installmentProgress / circle.totalMonths) * 100)
   
   // Calculate days until next payment
   const getDaysUntilDue = () => {
     const now = new Date()
-    const nextDue = new Date(circleData.nextDueDate)
+    const nextDue = new Date(circle.nextDueDate)
     const diffTime = nextDue.getTime() - now.getTime()
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
     return diffDays
@@ -745,7 +707,7 @@ function PaymentVisualizationCard({ isWalletConnected, hasJoined, selectedEntry 
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
       {/* Centered title */}
       <h2 className={`${TYPOGRAPHY.h3} text-[#1A1A1A] text-center`}>
-        Pay ${formatNumber(circleData.monthlyAmount)} /mo for {circleData.totalMonths} months
+        Pay ${formatNumber(circle.monthlyAmount)} /mo for {circle.totalMonths} months
       </h2>
       
       {/* Embedded Installments sub-card */}
@@ -754,7 +716,7 @@ function PaymentVisualizationCard({ isWalletConnected, hasJoined, selectedEntry 
         <div className="flex items-center justify-between">
           <span className={TYPOGRAPHY.label}>Installments</span>
           <span className={TYPOGRAPHY.caption}>
-            {String(circleData.installmentProgress).padStart(2, "0")}/{circleData.totalMonths}
+            {String(circle.installmentProgress).padStart(2, "0")}/{circle.totalMonths}
           </span>
         </div>
 
@@ -774,20 +736,20 @@ function PaymentVisualizationCard({ isWalletConnected, hasJoined, selectedEntry 
               : "Due now"
             }
           </span>
-          <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.dueAmount)}</span>
+          <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circle.dueAmount)}</span>
         </div>
-
-        {/* Join/Pay button - shows when wallet is connected and entry is selected */}
-        {isWalletConnected && selectedEntry && (
-          <Button 
-            className="w-full rounded-full text-white mt-2 transition-colors"
-            style={{ backgroundColor: getButtonColor() }}
-            asChild
-          >
-            <Link href={hasJoined ? "/pay" : "/join"}>{hasJoined ? "Pay next installment" : "Join"}</Link>
-          </Button>
-        )}
       </div>
+
+      {/* Join/Pay button - shows when wallet is connected and entry is selected */}
+      {isWalletConnected && selectedEntry && (
+        <Button 
+          className="w-full rounded-full text-white transition-colors"
+          style={{ backgroundColor: getButtonColor() }}
+          asChild
+        >
+          <Link href={hasJoined ? "/pay" : `/join?circle=${encodeURIComponent(circle.slug)}`}>{hasJoined ? "Pay next installment" : "Join"}</Link>
+        </Button>
+      )}
     </div>
   )
 }
@@ -847,8 +809,10 @@ function EntryStatusCard({ isWalletConnected, hasJoined, selectedEntry, hoveredE
     }
     
     // Start simulation for selected entry
+    console.log("[v0] User selected entry:", entryId)
     onSelectEntry(entryId)
-    console.log("[v0] Starting simulation for:", entryId)
+    localStorage.setItem('selectedEntry', entryId)
+    console.log("[v0] Entry saved to localStorage:", localStorage.getItem('selectedEntry'))
   }
 
   // Filter to only show selected entry when joined
@@ -918,8 +882,8 @@ function EntryStatusCard({ isWalletConnected, hasJoined, selectedEntry, hoveredE
 // FULL CARD: Installment Progress
 // Header: Title | Counter ("01/24")
 // Progress bar with minimum 1% visible fill indicator
-function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: boolean; hasJoined: boolean }) {
-  const progressPercentage = Math.max(1, (circleData.installmentProgress / circleData.totalMonths) * 100)
+function InstallmentCard({ circle, isWalletConnected, hasJoined }: { circle: Circle; isWalletConnected: boolean; hasJoined: boolean }) {
+  const progressPercentage = Math.max(1, (circle.installmentProgress / circle.totalMonths) * 100)
   const isPreJoin = !isWalletConnected || !hasJoined
 
   if (isPreJoin) {
@@ -939,7 +903,7 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
         {/* Content row: text left, amount right */}
         <div className="flex items-center justify-between">
           <span className="font-semibold text-[#1A1A1A]">Due on sign up</span>
-          <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.monthlyAmount)}</span>
+          <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circle.monthlyAmount)}</span>
         </div>
       </div>
     )
@@ -948,7 +912,7 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
   // Calculate days until next payment
   const getDaysUntilDue = () => {
     const now = new Date()
-    const nextDue = new Date(circleData.nextDueDate)
+    const nextDue = new Date(circle.nextDueDate)
     const diffTime = nextDue.getTime() - now.getTime()
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
     return diffDays
@@ -963,7 +927,7 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
       <div className="flex items-center justify-between">
         <span className={TYPOGRAPHY.label}>Installments</span>
         <span className={TYPOGRAPHY.caption}>
-          {String(circleData.installmentProgress).padStart(2, "0")}/{circleData.totalMonths}
+          {String(circle.installmentProgress).padStart(2, "0")}/{circle.totalMonths}
         </span>
       </div>
 
@@ -980,7 +944,7 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
         <span className="font-semibold text-[#1A1A1A]">
           {daysUntilDue <= 0 ? "Due now" : `Due in ${daysUntilDue} day${daysUntilDue > 1 ? 's' : ''}`}
         </span>
-        <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circleData.dueAmount)}</span>
+        <span className="font-semibold text-[#1A1A1A] whitespace-nowrap">${formatNumber(circle.dueAmount)}</span>
       </div>
 
       {/* Pay now button */}
@@ -996,7 +960,7 @@ function InstallmentCard({ isWalletConnected, hasJoined }: { isWalletConnected: 
 
 // INFRA CARD: ENS Integration
 // Header (two-column: logo+name | link) → Compact tag (matches Arc card style)
-function EnsCard() {
+function EnsCard({ circle }: { circle: Circle }) {
   return (
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
       {/* Header row: two-column layout (logo+name | link) */}
@@ -1009,7 +973,7 @@ function EnsCard() {
           <span className={`${TYPOGRAPHY.h3} text-[#5298FF]`}>ens</span>
         </div>
         <a
-          href={circleData.ensUrl}
+          href={circle.ensUrl}
           target="_blank"
           rel="noopener noreferrer"
           className={`${TYPOGRAPHY.button} text-[#5298FF] transition-colors hover:opacity-70 whitespace-nowrap`}
@@ -1021,7 +985,7 @@ function EnsCard() {
       {/* Full width centered rounded tag */}
       <div className="flex justify-center w-full">
         <div className="rounded-full bg-[#E3F2FD] px-4 py-2 w-full text-center">
-          <span className={`${TYPOGRAPHY.button} text-[#1976D2]`}>{circleData.ensDomain}</span>
+          <span className={`${TYPOGRAPHY.button} text-[#1976D2]`}>{circle.ensDomain}</span>
         </div>
       </div>
     </div>
@@ -1030,10 +994,10 @@ function EnsCard() {
 
 // FULL CARD: Active Members
 // Compact member list with consistent typography
-function MembersCard() {
+function MembersCard({ circle }: { circle: Circle }) {
   const formatJoinDate = (daysAgo: number) => `${daysAgo}d ago`
   const maxVisibleMembers = 4
-  const hasMoreMembers = circleData.members.length > maxVisibleMembers
+  const hasMoreMembers = circle.members.length > maxVisibleMembers
 
   return (
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
@@ -1041,10 +1005,10 @@ function MembersCard() {
 
       {/* Member list */}
       <div>
-        {circleData.members.slice(0, maxVisibleMembers).map((member, index) => (
+        {circle.members.slice(0, maxVisibleMembers).map((member, index) => (
           <div 
             key={member.name} 
-            className={`flex items-center justify-between gap-3 py-2 min-w-0 ${index < Math.min(circleData.members.length, maxVisibleMembers) - 1 ? 'border-b border-[#F5F5F5]' : ''}`}
+            className={`flex items-center justify-between gap-3 py-2 min-w-0 ${index < Math.min(circle.members.length, maxVisibleMembers) - 1 ? 'border-b border-[#F5F5F5]' : ''}`}
           >
             <span className="text-[#1A1A1A] truncate min-w-0">{member.name}</span>
             <span className={TYPOGRAPHY.caption}>{formatJoinDate(member.joinedDaysAgo)}</span>
@@ -1055,7 +1019,7 @@ function MembersCard() {
       {/* Overflow indicator if more members exist */}
       {hasMoreMembers && (
         <p className={TYPOGRAPHY.caption}>
-          + {circleData.members.length - maxVisibleMembers} more members
+          + {circle.members.length - maxVisibleMembers} more members
         </p>
       )}
     </div>
@@ -1064,7 +1028,7 @@ function MembersCard() {
 
 // INFRA CARD: Arc Integration
 // Header (two-column: logo+name | link)
-function ArcCard() {
+function ArcCard({ circle }: { circle: Circle }) {
   return (
     <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
       {/* Header row: two-column layout (logo+name | link) */}
@@ -1072,12 +1036,12 @@ function ArcCard() {
         <div className="flex items-center gap-2">
           {/* Official Arc logo */}
           <svg width="20" height="20" viewBox="0 0 298 312" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0,311.98c2.53-76.38,15.48-147.66,37.13-203.09C64.54,38.67,104.23,0,148.86,0s84.32,38.67,111.74,108.9c14.26,36.52,24.75,79.92,30.97,127.13.56,4.22,1.03,8.5,1.51,12.78.16.26.25.51.22.71,0,0,3.65,22.82,4.43,62.47h-.41c-5.42-4.45-69.33-54.66-175.27-40.12,1.6-17.93,3.8-35.37,6.64-52.09.15-.85.31-1.68.46-2.53,41.55-1.25,77.92,3.57,105.81,9.9-.1-.66-.19-1.34-.3-2-5.73-35.7-14.19-68.38-25.1-96.31-17.83-45.67-41.1-74.04-60.71-74.04s-42.88,28.37-60.71,74.04c-4.32,11.05-8.25,22.83-11.77,35.25-4.95,17.41-9.11,36.08-12.44,55.69-4.92,28.97-7.99,60.03-9.12,92.22H0Z" fill="#1A1A1A"/>
+            <path d="M0,311.98c2.53-76.38,15.48-147.66,37.13-203.09C64.54,38.67,104.23,0,148.86,0s84.32,38.67,111.74,108.9c14.26,36.52,24.75,79.92,30.97,127.13.56,4.22,1.03,8.50,1.51,12.78.16.26.25.51.22.71,0,0,3.65,22.82,4.43,62.47h-.41c-5.42-4.45-69.33-54.66-175.27-40.12,1.6-17.93,3.8-35.37,6.64-52.09.15-.85.31-1.68.46-2.53,41.55-1.25,77.92,3.57,105.81,9.9-.10-.66-.19-1.34-.30-2-5.73-35.7-14.19-68.38-25.10-96.31-17.83-45.67-41.10-74.04-60.71-74.04s-42.88,28.37-60.71,74.04c-4.32,11.05-8.25,22.83-11.77,35.25-4.95,17.41-9.11,36.08-12.44,55.69-4.92,28.97-7.99,60.03-9.12,92.22H0Z" fill="#1A1A1A"/>
           </svg>
           <span className={`${TYPOGRAPHY.h3} text-[#1A1A1A]`}>Arc</span>
         </div>
         <a
-          href={circleData.arcscanUrl}
+          href={circle.arcscanUrl}
           target="_blank"
           rel="noopener noreferrer"
           className={`${TYPOGRAPHY.button} text-[#1A1A1A] transition-colors hover:opacity-70 whitespace-nowrap`}
@@ -1090,12 +1054,12 @@ function ArcCard() {
 }
 
 // Slots card - Active/Joined badge + slots count or joined date
-function SlotsCard({ hasJoined }: { hasJoined: boolean }) {
+function SlotsCard({ circle, hasJoined }: { circle: Circle; hasJoined: boolean }) {
   const getJoinedText = () => {
-    if (!hasJoined || !circleData.joinedDate) return ""
+    if (!hasJoined || !circle.joinedDate) return ""
     
     const now = new Date()
-    const joined = new Date(circleData.joinedDate)
+    const joined = new Date(circle.joinedDate)
     const diffTime = Math.abs(now.getTime() - joined.getTime())
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
     
@@ -1111,57 +1075,64 @@ function SlotsCard({ hasJoined }: { hasJoined: boolean }) {
         <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
         <span className={`${TYPOGRAPHY.button} text-[#2E7D32]`}>{hasJoined ? "Joined" : "Active"}</span>
       </div>
-      {/* Slots count or joined date */}
-      <span className={`${TYPOGRAPHY.button} text-[#666666]`}>
-        {hasJoined ? getJoinedText() : `${circleData.slotsLeft} slots left`}
-      </span>
+      {/* Slots count or joined date badge */}
+      <div className="rounded-2xl bg-[#F5F5F5] px-3 py-1.5">
+        <span className={`${TYPOGRAPHY.button} text-[#666666]`}>
+          {hasJoined ? getJoinedText() : `${circle.slotsLeft} slots left`}
+        </span>
+      </div>
     </div>
   )
 }
 
-export default function FundingCirclePage() {
+export default function CircleDashboardPage({ circle }: { circle: Circle }) {
   const { toast } = useToast()
-  const [isWalletConnected, setIsWalletConnected] = React.useState(false)
-  const [hasJoined, setHasJoined] = React.useState(false)
-  const [selectedEntry, setSelectedEntry] = React.useState<string>("")
-  const [hoveredEntry, setHoveredEntry] = React.useState<string>("")
-  const [isLoaded, setIsLoaded] = React.useState(false)
+  const [isWalletConnected, setIsWalletConnected] = useState(false)
+  const [hasJoined, setHasJoined] = useState(false)
+  const [selectedEntry, setSelectedEntry] = useState<string>("")
+  const [hoveredEntry, setHoveredEntry] = useState<string>("")
+  const [isLoaded, setIsLoaded] = useState(false)
 
   // Instant page load
-  React.useEffect(() => {
+  useEffect(() => {
     setIsLoaded(true)
   }, [])
 
   // Load state from localStorage on mount (client-only, after hydration)
-  React.useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    
-    // Check if user just completed joining (coming back from /join)
-    if (urlParams.get('joined') === 'true') {
-      console.log('[v0] User joined - setting joined state')
-      localStorage.setItem('walletConnected', 'true')
-      localStorage.setItem('hasJoined', 'true')
-      localStorage.setItem('selectedEntry', 'early')
+  useEffect(() => {
+    const loadState = () => {
+      const storedWallet = localStorage.getItem('walletConnected')
+      const storedJoined = localStorage.getItem('hasJoined')
+      const storedEntry = localStorage.getItem('selectedEntry')
       
-      setIsWalletConnected(true)
-      setHasJoined(true)
-      setSelectedEntry("early")
+      console.log('[v0] Loading state from localStorage:', { storedWallet, storedJoined, storedEntry })
       
-      // Clean up URL
-      window.history.replaceState({}, '', window.location.pathname)
-    } else {
-      // Load persisted state from localStorage
-      const savedWalletConnected = localStorage.getItem('walletConnected') === 'true'
-      const savedHasJoined = localStorage.getItem('hasJoined') === 'true'
-      const savedSelectedEntry = localStorage.getItem('selectedEntry') || ""
+      if (storedWallet === 'true') setIsWalletConnected(true)
+      else setIsWalletConnected(false)
       
-      if (savedWalletConnected) setIsWalletConnected(true)
-      if (savedHasJoined) setHasJoined(true)
-      if (savedSelectedEntry) setSelectedEntry(savedSelectedEntry)
+      if (storedJoined === 'true') setHasJoined(true)
+      else setHasJoined(false)
+      
+      if (storedEntry) setSelectedEntry(storedEntry)
+      else setSelectedEntry("")
     }
+    
+    loadState()
+    
+    // Refresh state when page becomes visible (user returns from join page)
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        console.log('[v0] Page became visible - refreshing state')
+        loadState()
+      }
+    }
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [])
 
   const handleConnectWallet = () => {
+    console.log('[v0] Connecting wallet...')
     toast({
       title: "Connecting wallet...",
       duration: 2000,
@@ -1172,6 +1143,7 @@ export default function FundingCirclePage() {
       localStorage.setItem('selectedEntry', 'early')
       setIsWalletConnected(true)
       setSelectedEntry("early") // Auto-select early entry after wallet connects
+      console.log('[v0] Wallet connected - auto-selected early entry')
     }, 1500)
   }
 
@@ -1184,18 +1156,14 @@ export default function FundingCirclePage() {
   }
 
   const handleDisconnectWallet = () => {
-    // Clear localStorage
+    console.log('[v0] Disconnecting wallet - clearing all state')
     localStorage.removeItem('walletConnected')
     localStorage.removeItem('hasJoined')
     localStorage.removeItem('selectedEntry')
-    
-    // Reset state to before-joining
     setIsWalletConnected(false)
     setHasJoined(false)
     setSelectedEntry("")
-    setHoveredEntry("")
-    
-    console.log('[v0] Wallet disconnected - reset to before-joining state')
+    console.log('[v0] Wallet disconnected - reset to initial state')
   }
 
   // Skeleton loading screen for instant render
@@ -1216,22 +1184,119 @@ export default function FundingCirclePage() {
         <main className="flex-1 flex flex-col justify-center mx-auto max-w-[1280px] w-full px-6 md:px-10 pb-12 pt-4">
           {/* Mobile skeleton */}
           <div className="flex flex-col gap-4 md:hidden">
-            {[...Array(7)].map((_, i) => (
-              <div key={i} className="rounded-xl border border-[#E5E5E5] bg-white p-6 h-48 animate-pulse">
-                <div className="h-4 w-24 bg-[#F0F0F0] rounded mb-4" />
-                <div className="h-32 bg-[#F0F0F0] rounded" />
+            {/* SlotsCard skeleton - short horizontal */}
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex items-center justify-between">
+              <div className="h-7 w-20 bg-[#F0F0F0] rounded-2xl animate-pulse" />
+              <div className="h-5 w-24 bg-[#F0F0F0] rounded animate-pulse" />
+            </div>
+            {/* TimelineCard skeleton - second on mobile */}
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
+              <div className="flex justify-between items-center">
+                <div className="h-4 w-20 bg-[#F0F0F0] rounded animate-pulse" />
+                <div className="h-6 w-36 bg-[#F0F0F0] rounded animate-pulse" />
               </div>
-            ))}
+              <div className="flex justify-between items-center">
+                <div className="h-4 w-16 bg-[#F0F0F0] rounded animate-pulse" />
+                <div className="h-6 w-32 bg-[#F0F0F0] rounded animate-pulse" />
+              </div>
+            </div>
+            {/* PaymentVisualizationCard skeleton - tall with nested card */}
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
+              <div className="h-6 w-3/4 mx-auto bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
+                <div className="flex justify-between">
+                  <div className="h-5 w-16 bg-[#F0F0F0] rounded animate-pulse" />
+                  <div className="h-5 w-12 bg-[#F0F0F0] rounded animate-pulse" />
+                </div>
+                <div className="h-3 bg-[#F0F0F0] rounded-full animate-pulse" />
+                <div className="h-5 w-32 bg-[#F0F0F0] rounded animate-pulse" />
+              </div>
+              <div className="h-11 bg-[#F0F0F0] rounded-full animate-pulse" />
+            </div>
+            {/* EntryStatusCard skeleton - tall with 3 entry items */}
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
+              <div className="h-5 w-32 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="space-y-3">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="rounded-2xl border border-[#E5E5E5] p-4 flex items-center gap-6">
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {[...Array(8)].map((_, j) => (
+                        <div key={j} className="h-4 w-4 rounded-full bg-[#F0F0F0] animate-pulse" />
+                      ))}
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <div className="h-5 w-24 bg-[#F0F0F0] rounded animate-pulse" />
+                      <div className="h-4 w-48 bg-[#F0F0F0] rounded animate-pulse" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* PayoutCard skeleton */}
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
+              <div className="h-5 w-32 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="h-12 w-full bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="h-10 w-full bg-[#F0F0F0] rounded-full animate-pulse" />
+            </div>
+            {/* EnsCard skeleton */}
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex items-center justify-between">
+              <div className="h-5 w-40 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="h-4 w-4 rounded bg-[#F0F0F0] animate-pulse" />
+            </div>
+            {/* MembersCard skeleton */}
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex items-center justify-between">
+              <div className="h-5 w-32 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="h-4 w-4 rounded bg-[#F0F0F0] animate-pulse" />
+            </div>
           </div>
 
-          {/* Desktop skeleton */}
-          <div className="hidden md:grid lg:grid-cols-3 gap-4">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="rounded-xl border border-[#E5E5E5] bg-white p-6 h-64 animate-pulse">
-                <div className="h-4 w-24 bg-[#F0F0F0] rounded mb-4" />
-                <div className="h-48 bg-[#F0F0F0] rounded" />
+          {/* Desktop skeleton - matches actual grid layouts */}
+          <div className="hidden md:flex flex-col gap-4">
+            {/* Same cards as mobile but in grid layout */}
+            <div className="grid lg:grid-cols-3 gap-4">
+              {/* SlotsCard */}
+              <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex items-center justify-between">
+                <div className="h-7 w-20 bg-[#F0F0F0] rounded-2xl animate-pulse" />
+                <div className="h-5 w-24 bg-[#F0F0F0] rounded animate-pulse" />
               </div>
-            ))}
+              {/* PaymentVisualizationCard - spans 2 cols on desktop */}
+              <div className="lg:col-span-2 rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
+                <div className="h-6 w-3/4 mx-auto bg-[#F0F0F0] rounded animate-pulse" />
+                <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
+                  <div className="flex justify-between">
+                    <div className="h-5 w-16 bg-[#F0F0F0] rounded animate-pulse" />
+                    <div className="h-5 w-12 bg-[#F0F0F0] rounded animate-pulse" />
+                  </div>
+                  <div className="h-3 bg-[#F0F0F0] rounded-full animate-pulse" />
+                </div>
+                <div className="h-11 bg-[#F0F0F0] rounded-full animate-pulse" />
+              </div>
+            </div>
+            {/* EntryStatusCard - full width */}
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 flex flex-col gap-4">
+              <div className="h-5 w-32 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="grid lg:grid-cols-3 gap-4">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="rounded-2xl border border-[#E5E5E5] p-6 flex flex-col items-center gap-4">
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {[...Array(8)].map((_, j) => (
+                        <div key={j} className="h-4 w-4 rounded-full bg-[#F0F0F0] animate-pulse" />
+                      ))}
+                    </div>
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="h-5 w-24 bg-[#F0F0F0] rounded animate-pulse" />
+                      <div className="h-4 w-48 bg-[#F0F0F0] rounded animate-pulse" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Bottom row with TimelineCard, PayoutCard, EnsCard, MembersCard */}
+            <div className="grid lg:grid-cols-3 gap-4">
+              <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 h-64 bg-[#F0F0F0] animate-pulse" />
+              <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 h-64 bg-[#F0F0F0] animate-pulse" />
+              <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 h-64 bg-[#F0F0F0] animate-pulse" />
+            </div>
           </div>
         </main>
       </div>
@@ -1241,18 +1306,18 @@ export default function FundingCirclePage() {
   return (
     <>
     <div className="min-h-screen bg-white flex flex-col">
-      <Header isWalletConnected={isWalletConnected} onConnectWallet={handleConnectWallet} onDisconnectWallet={handleDisconnectWallet} />
+      <Header circle={circle} isWalletConnected={isWalletConnected} onConnectWallet={handleConnectWallet} onDisconnectWallet={handleDisconnectWallet} />
 
       <main className="flex-1 flex flex-col justify-center mx-auto max-w-[1280px] w-full px-6 md:px-10 pb-12 pt-4 box-border">
         {/* MOBILE (<768px): Single column stack */}
         <div className="flex flex-col gap-4 md:hidden">
-          <SlotsCard hasJoined={hasJoined} />
-          <PaymentVisualizationCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} />
-          <EntryStatusCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onSelectEntry={setSelectedEntry} onHoverEntry={setHoveredEntry} />
-          <TimelineCard />
-          <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} onSelectEntry={setSelectedEntry} showJoinedToast={showJoinedToast} />
-          <EnsCard />
-          <MembersCard />
+<SlotsCard circle={circle} hasJoined={hasJoined} />
+<TimelineCard circle={circle} />
+<PaymentVisualizationCard circle={circle} isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} />
+<EntryStatusCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onSelectEntry={setSelectedEntry} onHoverEntry={setHoveredEntry} />
+<PayoutCard circle={circle} isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} onSelectEntry={setSelectedEntry} showJoinedToast={showJoinedToast} />
+<EnsCard circle={circle} />
+<MembersCard circle={circle} />
         </div>
 
         {/* TABLET (768px - 1023px): 2-column grid with row-based areas */}
@@ -1268,14 +1333,14 @@ export default function FundingCirclePage() {
             "arc arc"
           `
         }}>
-          <div style={{ gridArea: 'slots' }}><SlotsCard hasJoined={hasJoined} /></div>
-          <div style={{ gridArea: 'payment' }}><PaymentVisualizationCard isWalletConnected={isWalletConnected} selectedEntry={selectedEntry} /></div>
+          <div style={{ gridArea: 'slots' }}><SlotsCard circle={circle} hasJoined={hasJoined} /></div>
+          <div style={{ gridArea: 'payment' }}><PaymentVisualizationCard circle={circle} isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} /></div>
           <div style={{ gridArea: 'entry' }}><EntryStatusCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onSelectEntry={setSelectedEntry} onHoverEntry={setHoveredEntry} /></div>
-          <div style={{ gridArea: 'timeline' }}><TimelineCard /></div>
-          <div style={{ gridArea: 'ens' }}><EnsCard /></div>
-          <div style={{ gridArea: 'payout' }}><PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} onSelectEntry={setSelectedEntry} showJoinedToast={showJoinedToast} /></div>
-          <div style={{ gridArea: 'members' }}><MembersCard /></div>
-          <div style={{ gridArea: 'arc' }}><ArcCard /></div>
+          <div style={{ gridArea: 'timeline' }}><TimelineCard circle={circle} /></div>
+          <div style={{ gridArea: 'ens' }}><EnsCard circle={circle} /></div>
+          <div style={{ gridArea: 'payout' }}><PayoutCard circle={circle} isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} onSelectEntry={setSelectedEntry} showJoinedToast={showJoinedToast} /></div>
+          <div style={{ gridArea: 'members' }}><MembersCard circle={circle} /></div>
+          <div style={{ gridArea: 'arc' }}><ArcCard circle={circle} /></div>
         </div>
 
         {/* DESKTOP (1024px+): Redesigned 3-column layout */}
@@ -1290,22 +1355,22 @@ export default function FundingCirclePage() {
         >
           {/* COLUMN 1: Left stack (Started/Ends, Payout) */}
           <div className={`flex flex-col ${GAP_M}`}>
-            <TimelineCard />
-            <PayoutCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} onSelectEntry={setSelectedEntry} showJoinedToast={showJoinedToast} />
+            <TimelineCard circle={circle} />
+            <PayoutCard circle={circle} isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onHoverEntry={setHoveredEntry} onSelectEntry={setSelectedEntry} showJoinedToast={showJoinedToast} />
           </div>
 
           {/* COLUMN 2: Center stack - WIDER (Pay container with embedded Installments, Entry Status) */}
           <div className={`flex flex-col ${GAP_M}`}>
-            <PaymentVisualizationCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} />
+            <PaymentVisualizationCard circle={circle} isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} />
             <EntryStatusCard isWalletConnected={isWalletConnected} hasJoined={hasJoined} selectedEntry={selectedEntry} hoveredEntry={hoveredEntry} onSelectEntry={setSelectedEntry} onHoverEntry={setHoveredEntry} />
           </div>
 
           {/* COLUMN 3: Right stack (Open slots, ENS, Members, Arc) */}
           <div className={`flex flex-col ${GAP_M}`}>
-            <SlotsCard hasJoined={hasJoined} />
-            <MembersCard />
-            <EnsCard />
-            <ArcCard />
+            <SlotsCard circle={circle} hasJoined={hasJoined} />
+            <MembersCard circle={circle} />
+            <EnsCard circle={circle} />
+            <ArcCard circle={circle} />
           </div>
         </div>
       </main>
