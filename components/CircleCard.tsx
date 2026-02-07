@@ -96,27 +96,31 @@ export function CircleCard({
 
     for (let i = 0; i < totalMonths; i++) {
       let color = "#E5E5E5" // Default gray
+      let opacity = 0.3 // Light gray for inactive rings, matching dashboard
 
-      // When hovering rings, show active colors
+      // When hovering rings, show active colors with full opacity
       if (isHoveringRings) {
         // Early entry: rings 0-7 (innermost) - including first ring
         if (hoveredEntry === "early" && i < 8) {
           color = "#D4AF37"
+          opacity = 1
         }
         // Middle entry: rings 8-15
         else if (hoveredEntry === "middle" && i >= 8 && i < 16) {
           color = "#5F9EA0"
+          opacity = 1
         }
         // Late entry: rings 16-23 (outermost)
         else if (hoveredEntry === "late" && i >= 16) {
           color = "#6A5ACD"
+          opacity = 1
         }
       }
 
       rings.push({
         index: i,
         color,
-        opacity: 1
+        opacity
       })
     }
 
