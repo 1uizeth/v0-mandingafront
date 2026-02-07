@@ -4,7 +4,7 @@ import { ArrowLeft, Check, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { circleData, getEntryLabel, getEntryData } from "@/lib/circle-data"
 
 // Format number consistently (avoids hydration mismatch from toLocaleString)
@@ -325,7 +325,7 @@ function SuccessScreen({ circleSlug }: { circleSlug: string | null }) {
   )
 }
 
-export default function JoinCirclePage() {
+function JoinCirclePageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [currentStep, setCurrentStep] = useState<Step>(1)
@@ -547,5 +547,17 @@ export default function JoinCirclePage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function JoinCirclePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-[#FAFAFA]">
+        <Loader2 className="h-8 w-8 animate-spin text-[#1A1A1A]" />
+      </div>
+    }>
+      <JoinCirclePageContent />
+    </Suspense>
   )
 }
