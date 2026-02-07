@@ -183,7 +183,35 @@ function TimelineCard({ circle }: { circle: Circle }) {
     )
   }
 
-// Simple placeholder card for Payout Progress
+// Visualization Card with centered circle pattern
+function VisualizationCard() {
+  return (
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex items-center justify-center`} style={{ minHeight: '320px' }}>
+      {/* Concentric circles pattern */}
+      <div className="relative w-64 h-64 flex items-center justify-center">
+        {[...Array(8)].map((_, i) => {
+          const size = 256 - (i * 24)
+          const opacity = 0.08 + (i * 0.02)
+          return (
+            <div
+              key={i}
+              className="absolute rounded-full border border-[#E5E5E5]"
+              style={{
+                width: `${size}px`,
+                height: `${size}px`,
+                opacity: opacity
+              }}
+            />
+          )
+        })}
+        {/* Center circle */}
+        <div className="relative z-10 w-16 h-16 rounded-full border-4 border-[#1A1A1A] bg-white" />
+      </div>
+    </div>
+  )
+}
+
+// Payout card for left column - compact version
 function PayoutCard({ circle }: { circle: Circle }) {
   const progressPercentage = Math.max(1, (circle.payoutProgress / circle.durationMonths) * 100)
   
@@ -220,31 +248,184 @@ function PayoutCard({ circle }: { circle: Circle }) {
   )
 }
 
-// Simple placeholder for CTA
-function CTACard({ circle, hasJoined }: { circle: Circle; hasJoined: boolean }) {
-  if (hasJoined) {
-    return (
-      <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L}`}>
-        <div className="flex items-center justify-center gap-2 text-[#10B981]">
-          <Check className="h-5 w-5" />
-          <span className="font-semibold">You've joined this circle</span>
-        </div>
-      </div>
-    )
-  }
+// Payment Details Card (center column)
+function PaymentDetailsCard({ circle }: { circle: Circle }) {
+  const progressPercentage = Math.max(1, (circle.installmentProgress / circle.durationMonths) * 100)
   
   return (
-    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col ${GAP_M}`}>
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="font-semibold text-[#1A1A1A]">${formatNumber(circle.monthlyPayment)}/mo</p>
-          <p className={TYPOGRAPHY.label}>for {circle.durationMonths} months</p>
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col gap-5`}>
+      {/* Title */}
+      <h2 className="text-base font-semibold text-[#1A1A1A]">
+        Pay ${formatNumber(circle.monthlyPayment)}/mo for {circle.durationMonths} months
+      </h2>
+      
+      {/* Installments section */}
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <span className={TYPOGRAPHY.label}>Installments</span>
+          <span className={TYPOGRAPHY.caption}>
+            {String(circle.installmentProgress).padStart(2, "0")}/{circle.durationMonths}
+          </span>
         </div>
-        <Link href="/join">
-          <Button className="rounded-full bg-[#1A1A1A] px-6 py-2 text-sm font-semibold text-white hover:bg-[#333333]">
-            Join now
-          </Button>
-        </Link>
+        
+        {/* Progress bar */}
+        <div className="h-2 w-full overflow-hidden rounded-full bg-[#E5E5E5] relative">
+          <div
+            className="h-full bg-[#1A1A1A] rounded-full transition-all"
+            style={{ width: `${progressPercentage}%` }}
+          />
+        </div>
+        
+        {/* Due now amount */}
+        <div className="rounded-lg bg-[#FAFAFA] px-4 py-3 flex items-center justify-between">
+          <span className="text-sm font-medium text-[#666666]">Due now</span>
+          <span className="text-base font-semibold text-[#1A1A1A]">${formatNumber(circle.dueAmount)}</span>
+        </div>
+      </div>
+      
+      {/* Payout tiers */}
+      <div className="flex flex-col gap-4 pt-2">
+        {/* Early entry */}
+        <div className="flex items-start gap-3">
+          <div className="flex items-center gap-1.5 pt-0.5">
+            {[...Array(8)].map((_, i) => (
+              <div
+                key={i}
+                className="w-3 h-3 rounded-full border-2"
+                style={{ borderColor: '#D4AF37', backgroundColor: 'transparent' }}
+              />
+            ))}
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-semibold text-[#1A1A1A]">Early entry</span>
+            <span className="text-xs text-[#999999]">Payout between March - October 2026</span>
+          </div>
+        </div>
+        
+        {/* Middle entry */}
+        <div className="flex items-start gap-3">
+          <div className="flex items-center gap-1.5 pt-0.5">
+            {[...Array(8)].map((_, i) => (
+              <div
+                key={i}
+                className="w-3 h-3 rounded-full border-2"
+                style={{ borderColor: '#5F9EA0', backgroundColor: 'transparent' }}
+              />
+            ))}
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-semibold text-[#1A1A1A]">Middle entry</span>
+            <span className="text-xs text-[#999999]">Payout between November 2026 - June 2027</span>
+          </div>
+        </div>
+        
+        {/* Late entry */}
+        <div className="flex items-start gap-3">
+          <div className="flex items-center gap-1.5 pt-0.5">
+            {[...Array(8)].map((_, i) => (
+              <div
+                key={i}
+                className="w-3 h-3 rounded-full border-2"
+                style={{ borderColor: '#6A5ACD', backgroundColor: 'transparent' }}
+              />
+            ))}
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-semibold text-[#1A1A1A]">Late entry</span>
+            <span className="text-xs text-[#999999]">Payout between July 2027 - February 2028</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Status Card (right column)
+function StatusCard({ circle }: { circle: Circle }) {
+  return (
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex items-center justify-between`}>
+      <div className="flex items-center gap-2">
+        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: circle.statusColor }} />
+        <span className="text-sm font-medium text-[#1A1A1A]">{circle.statusLabel}</span>
+      </div>
+      <span className="text-sm text-[#666666]">{circle.slotsLeft} slots left</span>
+    </div>
+  )
+}
+
+// Members Card (right column)
+function MembersCard({ circle }: { circle: Circle }) {
+  return (
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col gap-4`}>
+      <h3 className="text-base font-semibold text-[#1A1A1A]">Members</h3>
+      
+      <div className="flex flex-col gap-3">
+        {circle.members.map((member, idx) => (
+          <div key={idx} className="flex items-center justify-between">
+            <span className="text-sm text-[#1A1A1A]">{member.name}</span>
+            <span className="text-xs text-[#999999]">{member.joinedDaysAgo}d ago</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ENS Card (right column)
+function ENSCard({ circle }: { circle: Circle }) {
+  return (
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col gap-4`}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-full bg-[#5298FF] flex items-center justify-center">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 2L10 6L14 8L10 10L8 14L6 10L2 8L6 6L8 2Z" fill="white"/>
+            </svg>
+          </div>
+          <span className="text-sm font-medium text-[#1A1A1A]">ens</span>
+        </div>
+        <a 
+          href={circle.ensUrl} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-xs font-medium text-[#5298FF] hover:underline flex items-center gap-1"
+        >
+          View on ENS
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 9L9 3M9 3H4.5M9 3V7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </a>
+      </div>
+      
+      <div className="rounded-lg bg-[#F0F7FF] px-3 py-2">
+        <span className="text-sm text-[#1A1A1A]">{circle.ensDomain}</span>
+      </div>
+    </div>
+  )
+}
+
+// Arc Card (right column)
+function ArcCard({ circle }: { circle: Circle }) {
+  return (
+    <div className={`rounded-xl border border-[#E5E5E5] bg-white ${PADDING_L} flex flex-col gap-4`}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-full bg-[#1A1A1A] flex items-center justify-center text-white font-bold text-xs">
+            A
+          </div>
+          <span className="text-sm font-medium text-[#1A1A1A]">Arc</span>
+        </div>
+        <a 
+          href={circle.arcscanUrl} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-xs font-medium text-[#1A1A1A] hover:underline flex items-center gap-1"
+        >
+          View on Arcscan
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 9L9 3M9 3H4.5M9 3V7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </a>
       </div>
     </div>
   )
@@ -330,12 +511,28 @@ export default function CircleDetailPage() {
         onDisconnectWallet={handleDisconnectWallet}
       />
       
-      {/* Main content */}
+      {/* Main content - Three column layout */}
       <main className="mx-auto max-w-[1280px] w-full px-6 md:px-10 pb-20">
-        <div className={`grid grid-cols-1 lg:grid-cols-2 ${GRID_GAP}`}>
-          <TimelineCard circle={circle} />
-          <PayoutCard circle={circle} />
-          <CTACard circle={circle} hasJoined={hasJoined} />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left column */}
+          <div className="flex flex-col gap-6">
+            <TimelineCard circle={circle} />
+            <PayoutCard circle={circle} />
+            <VisualizationCard />
+          </div>
+          
+          {/* Center column */}
+          <div className="flex flex-col gap-6">
+            <PaymentDetailsCard circle={circle} />
+          </div>
+          
+          {/* Right column */}
+          <div className="flex flex-col gap-6">
+            <StatusCard circle={circle} />
+            <MembersCard circle={circle} />
+            <ENSCard circle={circle} />
+            <ArcCard circle={circle} />
+          </div>
         </div>
       </main>
       
