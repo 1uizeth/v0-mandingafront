@@ -743,7 +743,7 @@ function PaymentVisualizationCard({ circle, isWalletConnected, hasJoined, select
       {/* Join/Pay button - shows when wallet is connected and entry is selected */}
       {isWalletConnected && selectedEntry && (
         <Button 
-          className="w-full rounded-full text-white font-bold text-base transition-colors"
+          className="w-full rounded-full text-white font-bold text-base transition-all hover:opacity-80 hover:scale-[0.98]"
           style={{ backgroundColor: getButtonColor() }}
           asChild
         >
