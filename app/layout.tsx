@@ -1,11 +1,11 @@
 import React from "react"
 import type { Metadata, Viewport } from 'next'
-import { Geist, Geist_Mono, Patrick_Hand, Share_Tech_Mono } from 'next/font/google'
+import { GeistSans } from 'geist/font/sans'
+import { GeistMono } from 'geist/font/mono'
+import { Patrick_Hand, Share_Tech_Mono } from 'next/font/google'
 
 import './globals.css'
 
-const _geist = Geist({ subsets: ['latin'] })
-const _geistMono = Geist_Mono({ subsets: ['latin'] })
 export const patrickHand = Patrick_Hand({ weight: '400', subsets: ['latin'], variable: '--font-patrick-hand' })
 export const shareTechMono = Share_Tech_Mono({ weight: '400', subsets: ['latin'], variable: '--font-share-tech-mono' })
 
@@ -27,8 +27,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${patrickHand.variable} ${shareTechMono.variable} bg-background`}>
-      <body className="font-sans antialiased">{children}</body>
+    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable} ${patrickHand.variable} ${shareTechMono.variable} bg-background`}>
+      <body className={`${GeistSans.className} antialiased`}>{children}</body>
     </html>
   )
 }
